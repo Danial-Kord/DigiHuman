@@ -1,2 +1,2 @@
 # DigiHuman
-My BSc project at Amikabir University Of technology
+My BSc project at Amikabir University Of Technology
