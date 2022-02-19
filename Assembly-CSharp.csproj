@@ -52,10 +52,11 @@
     <ImplicitlyExpandDesignTimeFacades>false</ImplicitlyExpandDesignTimeFacades>
   </PropertyGroup>
   <ItemGroup>
-     <Compile Include="Assets\SampleSceneAssets\Scripts\PlayerMovement.cs" />
-     <Compile Include="Assets\SampleSceneAssets\Scripts\SimpleCameraController.cs" />
-     <Compile Include="Assets\SampleSceneAssets\TutorialInfo\Scripts\Readme.cs" />
-     <Compile Include="Assets\SampleSceneAssets\Scripts\LookWithMouse.cs" />
+     <Compile Include="Assets\Scripts\FrameReader.cs" />
+     <Compile Include="Assets\Satomi 3d - Anime Style\Demo\Scripts\UIManager.cs" />
+     <Compile Include="Assets\Scripts\CharacterMapper.cs" />
+     <None Include="Assets\Satomi 3d - Anime Style\Advance Unlit Shader\Advance Unlit.shader" />
+     <None Include="Assets\Satomi 3d - Anime Style\ReadMe!.txt" />
  <Reference Include="UnityEngine">
  <HintPath>C:/Program Files/Unity/Hub/Editor/2020.3.25f1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>
  </Reference>
