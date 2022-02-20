@@ -126,26 +126,31 @@ public class CharacterMapper : MonoBehaviour
     {
         PoseJsonVector poseJsonVector = FrameReader.GetBodyPartsVector(FrameReader.jsonTest.text);
         BodyPartVector[] bodyPartVectors = poseJsonVector.predictions_world;
+        
         characterBody.hips.transform.position = (bodyPartVectors[(int) BodyPoints.RightHip].position +
                                                  bodyPartVectors[(int) BodyPoints.LeftHip].position +
                                                  bodyPartVectors[(int) BodyPoints.LeftShoulder].position +
                                                  bodyPartVectors[(int) BodyPoints.RightShoulder].position) / 4;
+
+        characterBody.leftAnkle.transform.position = bodyPartVectors[(int) BodyPoints.LeftAnkle].position;
+        characterBody.rightAnkle.transform.position = bodyPartVectors[(int) BodyPoints.RightAnkle].position;
+        characterBody.leftWrist.transform.position = bodyPartVectors[(int) BodyPoints.LeftWrist].position;
+        characterBody.rightWrist.transform.position = bodyPartVectors[(int) BodyPoints.RightWrist].position;
+
+        return;
+
         characterBody.leftShoulder.transform.position = bodyPartVectors[(int) BodyPoints.LeftShoulder].position;
         characterBody.rightShoulder.transform.position = bodyPartVectors[(int) BodyPoints.RightShoulder].position;
         characterBody.leftElbow.transform.position = bodyPartVectors[(int) BodyPoints.LeftElbow].position;
         characterBody.rightElbow.transform.position = bodyPartVectors[(int) BodyPoints.RightElbow].position;
-        characterBody.leftWrist.transform.position = bodyPartVectors[(int) BodyPoints.LeftWrist].position;
-        characterBody.rightWrist.transform.position = bodyPartVectors[(int) BodyPoints.RightWrist].position;
+
         characterBody.leftHip.transform.position = bodyPartVectors[(int) BodyPoints.LeftHip].position;
         characterBody.rightHip.transform.position = bodyPartVectors[(int) BodyPoints.RightHip].position;
         characterBody.leftKnee.transform.position = bodyPartVectors[(int) BodyPoints.LeftKnee].position;
         characterBody.rightKnee.transform.position = bodyPartVectors[(int) BodyPoints.RightKnee].position;
         characterBody.leftHeel.transform.position = bodyPartVectors[(int) BodyPoints.LeftHeel].position;
         characterBody.rightHeel.transform.position = bodyPartVectors[(int) BodyPoints.RightHeel].position;
-        characterBody.leftAnkle.transform.position = bodyPartVectors[(int) BodyPoints.LeftAnkle].position;
-        characterBody.rightAnkle.transform.position = bodyPartVectors[(int) BodyPoints.RightAnkle].position;
 
-        return;
         PoseJson poseJson = FrameReader.poseJson;
         BodyPart[] bodyParts = poseJson.predictions_world;
         characterBody.leftShoulder.transform.position = new Vector3(-bodyParts[11].x,
