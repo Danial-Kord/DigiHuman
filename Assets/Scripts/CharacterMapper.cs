@@ -124,25 +124,35 @@ public class CharacterMapper : MonoBehaviour
 
     private void Update()
     {
-        PoseJsonVector poseJsonVector = FrameReader.GetBodyPartsVector(FrameReader.jsonTest.text);
+        PoseJsonVector poseJsonVector = FrameReader.poseJsonVector;
         BodyPartVector[] bodyPartVectors = poseJsonVector.predictions_world;
-        
-        characterBody.hips.transform.position = (bodyPartVectors[(int) BodyPoints.RightHip].position +
-                                                 bodyPartVectors[(int) BodyPoints.LeftHip].position +
-                                                 bodyPartVectors[(int) BodyPoints.LeftShoulder].position +
-                                                 bodyPartVectors[(int) BodyPoints.RightShoulder].position) / 4;
-
-        characterBody.leftAnkle.transform.position = bodyPartVectors[(int) BodyPoints.LeftAnkle].position;
-        characterBody.rightAnkle.transform.position = bodyPartVectors[(int) BodyPoints.RightAnkle].position;
-        characterBody.leftWrist.transform.position = bodyPartVectors[(int) BodyPoints.LeftWrist].position;
-        characterBody.rightWrist.transform.position = bodyPartVectors[(int) BodyPoints.RightWrist].position;
-
+        try
+        {
+            characterBody.hips.transform.position = (bodyPartVectors[(int) BodyPoints.RightHip].position +
+                                                     bodyPartVectors[(int) BodyPoints.LeftHip].position +
+                                                     bodyPartVectors[(int) BodyPoints.LeftShoulder].position +
+                                                     bodyPartVectors[(int) BodyPoints.RightShoulder].position) / 4;
+            Vector3 a = bodyPartVectors[(int) BodyPoints.LeftShoulder].position -
+                        bodyPartVectors[(int) BodyPoints.RightShoulder].position;
+            Vector3 b = bodyPartVectors[(int) BodyPoints.LeftShoulder].position -
+                        bodyPartVectors[(int) BodyPoints.LeftHip].position;
+            Debug.Log(Vector3.Cross(a,b));
+            characterBody.hips.transform.eulerAngles = new Vector3(0,Vector3.Angle(Vector3.back,Vector3.Cross(a,b)),0);
+            characterBody.leftElbow.transform.position = bodyPartVectors[(int) BodyPoints.LeftElbow].position;
+            characterBody.rightElbow.transform.position = bodyPartVectors[(int) BodyPoints.RightElbow].position;
+            characterBody.leftAnkle.transform.position = bodyPartVectors[(int) BodyPoints.LeftAnkle].position;
+            characterBody.rightAnkle.transform.position = bodyPartVectors[(int) BodyPoints.RightAnkle].position;
+            characterBody.leftWrist.transform.position = bodyPartVectors[(int) BodyPoints.LeftWrist].position;
+            characterBody.rightWrist.transform.position = bodyPartVectors[(int) BodyPoints.RightWrist].position;
+        }
+        catch (Exception e)
+        {
+            Debug.Log("problem");
+        }
         return;
 
         characterBody.leftShoulder.transform.position = bodyPartVectors[(int) BodyPoints.LeftShoulder].position;
         characterBody.rightShoulder.transform.position = bodyPartVectors[(int) BodyPoints.RightShoulder].position;
-        characterBody.leftElbow.transform.position = bodyPartVectors[(int) BodyPoints.LeftElbow].position;
-        characterBody.rightElbow.transform.position = bodyPartVectors[(int) BodyPoints.RightElbow].position;
 
         characterBody.leftHip.transform.position = bodyPartVectors[(int) BodyPoints.LeftHip].position;
         characterBody.rightHip.transform.position = bodyPartVectors[(int) BodyPoints.RightHip].position;
