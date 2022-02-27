@@ -113,10 +113,93 @@ public class CharacterMapper : MonoBehaviour
     
     [SerializeField] private CharacterBody characterBody;
     public FrameReader FrameReader;
-    public GameObject model;
-    private JointPoint[] jointPoints;
+    [SerializeField]private JointPoint[] jointPoints;
+    [SerializeField] private bool IKEnable;
+    [SerializeField] private bool normalMode;
+    [Header("Character")]
+    [SerializeField] private GameObject character;
+    [SerializeField] private GameObject nose;
+    [SerializeField] private GameObject hips;
+    [Header("Debug")] 
+    [SerializeField] private bool debugMode;
+    
+    [SerializeField] private GameObject debugGameObject;
+    private GameObject[] jointsDebug;
+    private Animator anim;
     private void Start()
     {
+        if (debugMode)
+        {
+            jointsDebug = new GameObject[33];
+            for (int i = 0; i < jointsDebug.Length; i++)
+            {
+                jointsDebug[i] = Instantiate(debugGameObject);
+            }
+        } 
+        jointPoints = new JointPoint[34];
+        for (var i = 0; i < jointPoints.Length; i++) jointPoints[i] = new JointPoint();
+
+        anim = character.GetComponent<Animator>();
+
+        // Right Arm
+        jointPoints[(int) BodyPoints.RightShoulder].Transform = anim.GetBoneTransform(HumanBodyBones.RightUpperArm);
+        jointPoints[(int) BodyPoints.RightElbow].Transform = anim.GetBoneTransform(HumanBodyBones.RightLowerArm);
+        jointPoints[(int) BodyPoints.RightWrist].Transform = anim.GetBoneTransform(HumanBodyBones.RightHand);
+        // Left Arm
+        jointPoints[(int) BodyPoints.LeftShoulder].Transform = anim.GetBoneTransform(HumanBodyBones.LeftUpperArm);
+        jointPoints[(int) BodyPoints.LeftElbow].Transform = anim.GetBoneTransform(HumanBodyBones.LeftLowerArm);
+        jointPoints[(int) BodyPoints.LeftWrist].Transform = anim.GetBoneTransform(HumanBodyBones.LeftHand);
+        
+
+        // Right Leg
+        jointPoints[(int) BodyPoints.RightHip].Transform = anim.GetBoneTransform(HumanBodyBones.RightUpperLeg);
+        jointPoints[(int) BodyPoints.RightKnee].Transform = anim.GetBoneTransform(HumanBodyBones.RightLowerLeg);
+        jointPoints[(int) BodyPoints.RightAnkle].Transform = anim.GetBoneTransform(HumanBodyBones.RightFoot);
+        jointPoints[(int) BodyPoints.RightFootIndex].Transform = anim.GetBoneTransform(HumanBodyBones.RightToes);
+
+        // Left Leg
+        jointPoints[(int) BodyPoints.LeftHip].Transform = anim.GetBoneTransform(HumanBodyBones.LeftUpperLeg);
+        jointPoints[(int) BodyPoints.LeftKnee].Transform = anim.GetBoneTransform(HumanBodyBones.LeftLowerLeg);
+        jointPoints[(int) BodyPoints.LeftAnkle].Transform = anim.GetBoneTransform(HumanBodyBones.LeftFoot);
+        jointPoints[(int) BodyPoints.LeftFootIndex].Transform = anim.GetBoneTransform(HumanBodyBones.LeftToes);
+
+        // etc
+        //jointPoints[PositionIndex.abdomenUpper.Int()].Transform = anim.GetBoneTransform(HumanBodyBones.Spine);
+        jointPoints[(int) BodyPoints.Hips].Transform = hips.transform;
+        //jointPoints[PositionIndex.head.Int()].Transform = anim.GetBoneTransform(HumanBodyBones.Head);
+        //jointPoints[PositionIndex.neck.Int()].Transform = anim.GetBoneTransform(HumanBodyBones.Neck);
+        //jointPoints[PositionIndex.spine.Int()].Transform = anim.GetBoneTransform(HumanBodyBones.Spine);
+
+        // Child Settings
+        // Right Arm
+        jointPoints[(int) BodyPoints.RightShoulder].Child = jointPoints[(int) BodyPoints.RightElbow];
+        jointPoints[(int) BodyPoints.RightElbow].Child = jointPoints[(int) BodyPoints.RightWrist];
+        jointPoints[(int) BodyPoints.RightElbow].Parent = jointPoints[(int) BodyPoints.RightShoulder];
+
+        // Left Arm
+        jointPoints[(int) BodyPoints.LeftShoulder].Child = jointPoints[(int) BodyPoints.LeftElbow];
+        jointPoints[(int) BodyPoints.LeftElbow].Child = jointPoints[(int) BodyPoints.LeftWrist];
+        jointPoints[(int) BodyPoints.LeftElbow].Parent = jointPoints[(int) BodyPoints.LeftShoulder];
+
+        // Fase
+
+        // Right Leg
+      //  jointPoints[PositionIndex.rThighBend.Int()].Child = jointPoints[PositionIndex.rShin.Int()];
+      //  jointPoints[PositionIndex.rShin.Int()].Child = jointPoints[PositionIndex.rFoot.Int()];
+      //  jointPoints[PositionIndex.rFoot.Int()].Child = jointPoints[PositionIndex.rToe.Int()];
+     //   jointPoints[PositionIndex.rFoot.Int()].Parent = jointPoints[PositionIndex.rShin.Int()];
+
+        // Left Leg
+    //    jointPoints[PositionIndex.lThighBend.Int()].Child = jointPoints[PositionIndex.lShin.Int()];
+     //   jointPoints[PositionIndex.lShin.Int()].Child = jointPoints[PositionIndex.lFoot.Int()];
+      //  jointPoints[PositionIndex.lFoot.Int()].Child = jointPoints[PositionIndex.lToe.Int()];
+     //   jointPoints[PositionIndex.lFoot.Int()].Parent = jointPoints[PositionIndex.lShin.Int()];
+
+        // etc
+     //   jointPoints[PositionIndex.spine.Int()].Child = jointPoints[PositionIndex.neck.Int()];
+      //  jointPoints[PositionIndex.neck.Int()].Child = jointPoints[PositionIndex.head.Int()];
+        //jointPoints[PositionIndex.head.Int()].Child = jointPoints[PositionIndex.Nose.Int()];
+
      //   PoseJsonVector poseJsonVector = FrameReader.GetBodyPartsVector(FrameReader.jsonTest.text);
      //   BodyPartVector[] bodyPartVectors = poseJsonVector.predictions_world;
      //   Animator anim = model.GetComponent<Animator>();
@@ -126,24 +209,58 @@ public class CharacterMapper : MonoBehaviour
     {
         PoseJsonVector poseJsonVector = FrameReader.poseJsonVector;
         BodyPartVector[] bodyPartVectors = poseJsonVector.predictions_world;
+        if (debugMode)
+        {
+            for (int i = 0; i < jointsDebug.Length; i++)
+            {
+                jointsDebug[i].transform.position = bodyPartVectors[i].position;
+            }
+            return;
+        }
         try
         {
-            characterBody.hips.transform.position = (bodyPartVectors[(int) BodyPoints.RightHip].position +
-                                                     bodyPartVectors[(int) BodyPoints.LeftHip].position +
-                                                     bodyPartVectors[(int) BodyPoints.LeftShoulder].position +
-                                                     bodyPartVectors[(int) BodyPoints.RightShoulder].position) / 4;
+            if (normalMode)
+            {
+            
             Vector3 a = bodyPartVectors[(int) BodyPoints.LeftShoulder].position -
-                        bodyPartVectors[(int) BodyPoints.RightShoulder].position;
+                            bodyPartVectors[(int) BodyPoints.RightShoulder].position;
             Vector3 b = bodyPartVectors[(int) BodyPoints.LeftShoulder].position -
                         bodyPartVectors[(int) BodyPoints.LeftHip].position;
             Debug.Log(Vector3.Cross(a,b));
-            characterBody.hips.transform.eulerAngles = new Vector3(0,Vector3.Angle(Vector3.back,Vector3.Cross(a,b)),0);
-            characterBody.leftElbow.transform.position = bodyPartVectors[(int) BodyPoints.LeftElbow].position;
-            characterBody.rightElbow.transform.position = bodyPartVectors[(int) BodyPoints.RightElbow].position;
-            characterBody.leftAnkle.transform.position = bodyPartVectors[(int) BodyPoints.LeftAnkle].position;
-            characterBody.rightAnkle.transform.position = bodyPartVectors[(int) BodyPoints.RightAnkle].position;
-            characterBody.leftWrist.transform.position = bodyPartVectors[(int) BodyPoints.LeftWrist].position;
-            characterBody.rightWrist.transform.position = bodyPartVectors[(int) BodyPoints.RightWrist].position;
+            character.transform.eulerAngles = new Vector3(0,-Vector3.Angle(Vector3.back,Vector3.Cross(a,b)),0);
+            hips.transform.position = (bodyPartVectors[(int) BodyPoints.RightHip].position +
+                                            bodyPartVectors[(int) BodyPoints.LeftHip].position) / 2;
+            
+
+                for (int i = 0; i < jointPoints.Length && i < bodyPartVectors.Length; i++)
+                {
+                    if(jointPoints[i].Transform != null)
+                        jointPoints[i].Transform.position = bodyPartVectors[i].position;
+                }
+
+            }
+            else if (IKEnable)
+            {
+
+                characterBody.hips.transform.position = (bodyPartVectors[(int) BodyPoints.RightHip].position +
+                                                         bodyPartVectors[(int) BodyPoints.LeftHip].position +
+                                                         bodyPartVectors[(int) BodyPoints.LeftShoulder].position +
+                                                         bodyPartVectors[(int) BodyPoints.RightShoulder].position) / 4;
+                Vector3 a = bodyPartVectors[(int) BodyPoints.LeftShoulder].position -
+                            bodyPartVectors[(int) BodyPoints.RightShoulder].position;
+                Vector3 b = bodyPartVectors[(int) BodyPoints.LeftShoulder].position -
+                            bodyPartVectors[(int) BodyPoints.LeftHip].position;
+                Debug.Log(Vector3.Cross(a, b));
+                characterBody.hips.transform.eulerAngles =
+                    new Vector3(0, -Vector3.Angle(Vector3.back, Vector3.Cross(a, b)), 0);
+
+                characterBody.leftElbow.transform.position = bodyPartVectors[(int) BodyPoints.LeftElbow].position;
+                characterBody.rightElbow.transform.position = bodyPartVectors[(int) BodyPoints.RightElbow].position;
+                characterBody.leftAnkle.transform.position = bodyPartVectors[(int) BodyPoints.LeftAnkle].position;
+                characterBody.rightAnkle.transform.position = bodyPartVectors[(int) BodyPoints.RightAnkle].position;
+                characterBody.leftWrist.transform.position = bodyPartVectors[(int) BodyPoints.LeftWrist].position;
+                characterBody.rightWrist.transform.position = bodyPartVectors[(int) BodyPoints.RightWrist].position;
+            }
         }
         catch (Exception e)
         {
