@@ -1562,7 +1562,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 352527581}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fff0960ef4ea6e04eac66b4a7fd2189d, type: 3}
   m_Name: 
@@ -3575,8 +3575,8 @@ MonoBehaviour:
     leftHeel: {fileID: 1129934218}
     rightHeel: {fileID: 1100908225}
   FrameReader: {fileID: 744271029}
-  IKEnable: 1
-  normalMode: 0
+  IKEnable: 0
+  normalMode: 1
   character: {fileID: 352527581}
   nose: {fileID: 0}
   hips: {fileID: 1882289625}
@@ -3600,7 +3600,7 @@ MonoBehaviour:
   fractionX: 0.9
   fractionY: 0.9
   fractionZ: -0.9
-  nextFrameTime: 0.08
+  nextFrameTime: 0.05
   poseJson:
     predictions: []
     predictions_world: []
@@ -5258,7 +5258,7 @@ Transform:
   m_GameObject: {fileID: 1193169156}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -1000, y: -1000, z: 1000}
-  m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
+  m_LocalScale: {x: 0.08, y: 0.08, z: 0.08}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 11
