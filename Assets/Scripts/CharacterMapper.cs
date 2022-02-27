@@ -40,7 +40,8 @@ LeftHeel,
 RightHeel,
 LeftFootIndex,
 RightFootIndex,
-Hips
+Hips,
+Spine
 }
 
 [Serializable]
@@ -126,17 +127,10 @@ public class CharacterMapper : MonoBehaviour
     [SerializeField] private GameObject debugGameObject;
     private GameObject[] jointsDebug;
     private Animator anim;
-    private void Start()
+
+    private void InitializationHumanoidPose()
     {
-        if (debugMode)
-        {
-            jointsDebug = new GameObject[33];
-            for (int i = 0; i < jointsDebug.Length; i++)
-            {
-                jointsDebug[i] = Instantiate(debugGameObject);
-            }
-        } 
-        jointPoints = new JointPoint[34];
+       jointPoints = new JointPoint[35];
         for (var i = 0; i < jointPoints.Length; i++) jointPoints[i] = new JointPoint();
 
         anim = character.GetComponent<Animator>();
@@ -165,10 +159,11 @@ public class CharacterMapper : MonoBehaviour
 
         // etc
         //jointPoints[PositionIndex.abdomenUpper.Int()].Transform = anim.GetBoneTransform(HumanBodyBones.Spine);
-        jointPoints[(int) BodyPoints.Hips].Transform = hips.transform;
+        // jointPoints[(int) BodyPoints.Hips].Transform = hips.transform;
+        jointPoints[(int) BodyPoints.Hips].Transform = anim.GetBoneTransform(HumanBodyBones.Hips);
         //jointPoints[PositionIndex.head.Int()].Transform = anim.GetBoneTransform(HumanBodyBones.Head);
         //jointPoints[PositionIndex.neck.Int()].Transform = anim.GetBoneTransform(HumanBodyBones.Neck);
-        //jointPoints[PositionIndex.spine.Int()].Transform = anim.GetBoneTransform(HumanBodyBones.Spine);
+        jointPoints[(int) BodyPoints.Spine].Transform = anim.GetBoneTransform(HumanBodyBones.Spine);
 
         // Child Settings
         // Right Arm
@@ -184,60 +179,151 @@ public class CharacterMapper : MonoBehaviour
         // Fase
 
         // Right Leg
-      //  jointPoints[PositionIndex.rThighBend.Int()].Child = jointPoints[PositionIndex.rShin.Int()];
-      //  jointPoints[PositionIndex.rShin.Int()].Child = jointPoints[PositionIndex.rFoot.Int()];
-      //  jointPoints[PositionIndex.rFoot.Int()].Child = jointPoints[PositionIndex.rToe.Int()];
-     //   jointPoints[PositionIndex.rFoot.Int()].Parent = jointPoints[PositionIndex.rShin.Int()];
+      jointPoints[(int) BodyPoints.RightHip].Child = jointPoints[(int) BodyPoints.RightKnee];
+      jointPoints[(int) BodyPoints.RightKnee].Child = jointPoints[(int) BodyPoints.RightAnkle];
+      jointPoints[(int) BodyPoints.RightAnkle].Child = jointPoints[(int) BodyPoints.RightFootIndex];
+      jointPoints[(int) BodyPoints.RightAnkle].Parent = jointPoints[(int) BodyPoints.RightHip];
 
         // Left Leg
-    //    jointPoints[PositionIndex.lThighBend.Int()].Child = jointPoints[PositionIndex.lShin.Int()];
-     //   jointPoints[PositionIndex.lShin.Int()].Child = jointPoints[PositionIndex.lFoot.Int()];
-      //  jointPoints[PositionIndex.lFoot.Int()].Child = jointPoints[PositionIndex.lToe.Int()];
-     //   jointPoints[PositionIndex.lFoot.Int()].Parent = jointPoints[PositionIndex.lShin.Int()];
+        jointPoints[(int) BodyPoints.LeftHip].Child = jointPoints[(int) BodyPoints.LeftKnee];
+        jointPoints[(int) BodyPoints.LeftKnee].Child = jointPoints[(int) BodyPoints.LeftAnkle];
+        jointPoints[(int) BodyPoints.LeftAnkle].Child = jointPoints[(int) BodyPoints.LeftFootIndex];
+        jointPoints[(int) BodyPoints.LeftAnkle].Parent = jointPoints[(int) BodyPoints.LeftHip];
 
         // etc
      //   jointPoints[PositionIndex.spine.Int()].Child = jointPoints[PositionIndex.neck.Int()];
       //  jointPoints[PositionIndex.neck.Int()].Child = jointPoints[PositionIndex.head.Int()];
         //jointPoints[PositionIndex.head.Int()].Child = jointPoints[PositionIndex.Nose.Int()];
 
-     //   PoseJsonVector poseJsonVector = FrameReader.GetBodyPartsVector(FrameReader.jsonTest.text);
-     //   BodyPartVector[] bodyPartVectors = poseJsonVector.predictions_world;
-     //   Animator anim = model.GetComponent<Animator>();
+
+        // Set Inverse
+        Vector3 a = jointPoints[(int) BodyPoints.LeftHip].Transform.position;
+        Vector3 b = jointPoints[(int) BodyPoints.Hips].Transform.position;
+        Vector3 c = jointPoints[(int) BodyPoints.RightHip].Transform.position;
+        var forward = b.TriangleNormal(a,c);
+        foreach (var jointPoint in jointPoints)
+        {
+            if (jointPoint.Transform != null)
+            {
+                jointPoint.InitRotation = jointPoint.Transform.rotation;
+            }
+
+            if (jointPoint.Child != null)
+            {
+                jointPoint.Inverse = Quaternion.Inverse(Quaternion.LookRotation(jointPoint.Transform.position - jointPoint.Child.Transform.position, forward));
+                jointPoint.InverseRotation = jointPoint.Inverse * jointPoint.InitRotation;
+            }
+        }
+        var hip = jointPoints[(int) BodyPoints.Hips];
+        hip.Inverse = Quaternion.Inverse(Quaternion.LookRotation(forward));
+        hip.InverseRotation = hip.Inverse * hip.InitRotation;
+
+        // For Head Rotation
+        // var head = jointPoints[PositionIndex.head.Int()];
+        // head.InitRotation = jointPoints[PositionIndex.head.Int()].Transform.rotation;
+        // var gaze = jointPoints[PositionIndex.Nose.Int()].Transform.position - jointPoints[PositionIndex.head.Int()].Transform.position;
+        // head.Inverse = Quaternion.Inverse(Quaternion.LookRotation(gaze));
+        // head.InverseRotation = head.Inverse * head.InitRotation;
+        //
+        // var lHand = jointPoints[PositionIndex.lHand.Int()];
+        // var lf = TriangleNormal(lHand.Pos3D, jointPoints[PositionIndex.lMid1.Int()].Pos3D, jointPoints[PositionIndex.lThumb2.Int()].Pos3D);
+        // lHand.InitRotation = lHand.Transform.rotation;
+        // lHand.Inverse = Quaternion.Inverse(Quaternion.LookRotation(jointPoints[PositionIndex.lThumb2.Int()].Transform.position - jointPoints[PositionIndex.lMid1.Int()].Transform.position, lf));
+        // lHand.InverseRotation = lHand.Inverse * lHand.InitRotation;
+        //
+        // var rHand = jointPoints[PositionIndex.rHand.Int()];
+        // var rf = TriangleNormal(rHand.Pos3D, jointPoints[PositionIndex.rThumb2.Int()].Pos3D, jointPoints[PositionIndex.rMid1.Int()].Pos3D);
+        // rHand.InitRotation = jointPoints[PositionIndex.rHand.Int()].Transform.rotation;
+        // rHand.Inverse = Quaternion.Inverse(Quaternion.LookRotation(jointPoints[PositionIndex.rThumb2.Int()].Transform.position - jointPoints[PositionIndex.rMid1.Int()].Transform.position, rf));
+        // rHand.InverseRotation = rHand.Inverse * rHand.InitRotation;
+    }
+    
+    
+    private void Start()
+    {
+        if (debugMode)
+        {
+            jointsDebug = new GameObject[33];
+            for (int i = 0; i < jointsDebug.Length; i++)
+            {
+                jointsDebug[i] = Instantiate(debugGameObject);
+            }
+        }
+        InitializationHumanoidPose();
+        
     }
 
+    private void UpdateNormalMode(BodyPartVector[] bodyPartVectors)
+    {
+
+
+        // jointPoints[(int) BodyPoints.Hips].Transform.eulerAngles = new Vector3(0,-Vector3.Angle(Vector3.back,a.TriangleNormal(b,c)),0);
+        jointPoints[(int) BodyPoints.Hips].Transform.position = (bodyPartVectors[(int) BodyPoints.RightHip].position +
+                                                                 bodyPartVectors[(int) BodyPoints.LeftHip].position) / 2;
+        Vector3 a = bodyPartVectors[(int) BodyPoints.LeftShoulder].position;
+        Vector3 b = jointPoints[(int) BodyPoints.Hips].Transform.position;
+        Vector3 c = bodyPartVectors[(int) BodyPoints.RightShoulder].position;
+        jointPoints[(int) BodyPoints.Hips].Transform.rotation = Quaternion.LookRotation(a.TriangleNormal(b, c)) *
+                                                                jointPoints[(int) BodyPoints.Hips].InverseRotation;
+
+        jointPoints[(int) BodyPoints.Spine].Transform.position = (bodyPartVectors[(int) BodyPoints.RightHip].position +
+                                                                 bodyPartVectors[(int) BodyPoints.LeftHip].position +
+                                                                 bodyPartVectors[(int) BodyPoints.LeftShoulder].position +
+                                                                 bodyPartVectors[(int) BodyPoints.RightShoulder].position) / 4;
+
+        var forward = jointPoints[(int) BodyPoints.Hips].Transform.forward;
+        for (int i = 0; i < jointPoints.Length && i < bodyPartVectors.Length; i++)
+        {
+            if(i == (int) BodyPoints.RightShoulder || i == (int) BodyPoints.LeftShoulder || 
+               i == (int) BodyPoints.LeftHip || i== (int) BodyPoints.RightHip)
+                continue;
+            if(jointPoints[i].Transform != null)
+                jointPoints[i].Transform.position = bodyPartVectors[i].position;
+        }
+        // rotate each of bones
+        foreach (var jointPoint in jointPoints)
+        {
+            if(jointPoint == null)
+                continue;
+            if (jointPoint.Parent != null)
+            {
+                Debug.Log("fuk :/");
+                var fv = jointPoint.Parent.Transform.position - jointPoint.Transform.position;
+                jointPoint.Transform.rotation = Quaternion.LookRotation(jointPoint.Transform.position- jointPoint.Child.Transform.position, fv) * jointPoint.InverseRotation;
+            }
+            else if (jointPoint.Child != null)
+            {
+                Debug.Log("fuk :/");
+                jointPoint.Transform.rotation = Quaternion.LookRotation(jointPoint.Transform.position- jointPoint.Child.Transform.position, forward) * jointPoint.InverseRotation;
+            }
+            continue;
+            if (jointPoint.Parent != null)
+            {
+                var fv = jointPoint.Parent.Transform.position - jointPoint.Transform.position;
+                jointPoint.Transform.rotation = Quaternion.LookRotation(jointPoint.Transform.position- jointPoint.Child.Transform.position, fv);
+            }
+            else if (jointPoint.Child != null)
+            {
+                jointPoint.Transform.rotation = Quaternion.LookRotation(jointPoint.Transform.position- jointPoint.Child.Transform.position, forward);
+            }
+        }
+    }
     private void Update()
     {
         PoseJsonVector poseJsonVector = FrameReader.poseJsonVector;
         BodyPartVector[] bodyPartVectors = poseJsonVector.predictions_world;
         if (debugMode)
         {
-            for (int i = 0; i < jointsDebug.Length; i++)
+            for (int i = 0; i < bodyPartVectors.Length; i++)
             {
                 jointsDebug[i].transform.position = bodyPartVectors[i].position;
             }
-            return;
         }
         try
         {
             if (normalMode)
             {
-            
-            Vector3 a = bodyPartVectors[(int) BodyPoints.LeftShoulder].position -
-                            bodyPartVectors[(int) BodyPoints.RightShoulder].position;
-            Vector3 b = bodyPartVectors[(int) BodyPoints.LeftShoulder].position -
-                        bodyPartVectors[(int) BodyPoints.LeftHip].position;
-            Debug.Log(Vector3.Cross(a,b));
-            character.transform.eulerAngles = new Vector3(0,-Vector3.Angle(Vector3.back,Vector3.Cross(a,b)),0);
-            hips.transform.position = (bodyPartVectors[(int) BodyPoints.RightHip].position +
-                                            bodyPartVectors[(int) BodyPoints.LeftHip].position) / 2;
-            
-
-                for (int i = 0; i < jointPoints.Length && i < bodyPartVectors.Length; i++)
-                {
-                    if(jointPoints[i].Transform != null)
-                        jointPoints[i].Transform.position = bodyPartVectors[i].position;
-                }
-
+                UpdateNormalMode(bodyPartVectors);
             }
             else if (IKEnable)
             {
