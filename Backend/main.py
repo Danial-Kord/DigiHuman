@@ -6,8 +6,31 @@ import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
+# For adding new landmarks based on default predicted landmarks
+def add_extra_points(landmark_list):
+    left_shoulder = landmark_list[11]
+    right_shoulder = landmark_list[12]
+    left_hip = landmark_list[23]
+    right_hip = landmark_list[24]
+    # Calculating hip position and visibility
+    hip = {
+          'x': (left_hip['x'] + right_hip['x']) / 2.0,
+          'y': (left_hip['y'] + right_hip['y']) / 2.0,
+          'z': (left_hip['z'] + right_hip['z']) / 2.0,
+          'visibility': (left_hip['visibility'] + right_hip['visibility']) / 2.0
+        }
+    landmark_list.append(hip)
 
-def landmarks_list_to_array(landmark_list, image_shape):
+    # Calculating spine position and visibility
+    spine = {
+          'x': (left_hip['x'] + right_hip['x'] + right_shoulder['x'] + left_shoulder['x']) / 4.0,
+          'y': (left_hip['y'] + right_hip['y'] + right_shoulder['y'] + left_shoulder['y']) / 4.0,
+          'z': (left_hip['z'] + right_hip['z'] + right_shoulder['z'] + left_shoulder['z']) / 4.0,
+          'visibility': (left_hip['visibility'] + right_hip['visibility'] + right_shoulder['visibility'] + left_shoulder['visibility']) / 4.0
+        }
+    landmark_list.append(spine)
+
+def world_landmarks_list_to_array(landmark_list, image_shape):
     rows, cols, _ = image_shape
     array = []
     for lmk in landmark_list.landmark:
@@ -23,7 +46,7 @@ def landmarks_list_to_array(landmark_list, image_shape):
                        for lmk in landmark_list.landmark])
 
 
-def world_landmarks_list_to_array(landmark_list):
+def landmarks_list_to_array(landmark_list):
 
     array = []
     for lmk in landmark_list.landmark:
@@ -45,7 +68,7 @@ mp_pose = mp.solutions.pose
 
 
 
-def Write_Json(path,index,new_pose,pose_landmarks):
+def Write_Json(path, index, world_pose_landmarks, pose_landmarks):
     # print(results.pose_landmarks)
     # print(pose_landmarks)
     # print(results.pose_landmarks)
@@ -54,7 +77,7 @@ def Write_Json(path,index,new_pose,pose_landmarks):
     with open(json_path, 'w') as fl:
         dump_data = {
             'predictions': pose_landmarks,
-            'predictions_world': new_pose
+            'predictions_world': world_pose_landmarks
         }
         # np.around(pose_landmarks, 4).tolist()
         fl.write(json.dumps(dump_data, indent=2, separators=(',', ': ')))
@@ -151,11 +174,13 @@ with mp_pose.Pose(
     #cv2.imshow('MediaPipe Pose', cv2.flip(image, 1))
 
     try:
-        pose_landmarks = landmarks_list_to_array(results.pose_landmarks,
-                                                 image.shape)
-        new_pose = world_landmarks_list_to_array(
-            results.pose_world_landmarks)
-        Write_Json(json_path,index,new_pose,pose_landmarks)
+        pose_landmarks = landmarks_list_to_array(results.pose_landmarks)
+        world_pose_landmarks = world_landmarks_list_to_array(results.pose_world_landmarks, image.shape)
+
+        add_extra_points(world_pose_landmarks)
+        add_extra_points(pose_landmarks)
+
+        Write_Json(json_path, index, world_pose_landmarks, pose_landmarks)
     except:
         print("hi")
 
