@@ -2,3 +2,6 @@
 /Library
 /Logs
 /.idea
+/Backend/.idea
+/Backend/json/*.json
+/Backend/Video
