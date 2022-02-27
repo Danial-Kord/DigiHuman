@@ -51,6 +51,7 @@ public class FrameReader : MonoBehaviour
     public float nextFrameTime = 0.1f;
     public PoseJson poseJson;
     public PoseJsonVector poseJsonVector;
+    public PoseJsonVector poseJsonVectorNew;
 
     private void Awake()
     {
@@ -70,7 +71,8 @@ public class FrameReader : MonoBehaviour
             try
             {
                 StreamReader reader = new StreamReader(path + "" + index + ".json");
-                poseJsonVector = GetBodyPartsVector(reader.ReadToEnd());
+                poseJsonVector = poseJsonVectorNew;
+                poseJsonVectorNew = GetBodyPartsVector(reader.ReadToEnd());
                 timer = 0;
                 videoPlayer.frame = index;
                 videoPlayer.Play();
@@ -82,6 +84,24 @@ public class FrameReader : MonoBehaviour
                 
             }
             index += 1;
+        }
+        else
+        {
+            try
+            {
+
+
+            for (int i = 0; i < poseJsonVector.predictions_world.Length; i++)
+            {
+                poseJsonVector.predictions_world[i].position = Vector3.Lerp(
+                    poseJsonVector.predictions_world[i].position, poseJsonVectorNew.predictions_world[i].position,
+                    timer / nextFrameTime);
+            }
+            }
+            catch (Exception e)
+            {
+
+            }
         }
     }
     private void Start() {
