@@ -2675,51 +2675,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0aae88e8f94751f42ae73ea94a2155cc, type: 3}
---- !u!1 &632285652 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1573323827370366, guid: 0aae88e8f94751f42ae73ea94a2155cc, type: 3}
-  m_PrefabInstance: {fileID: 632285649}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &632285653 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1761026210592514, guid: 0aae88e8f94751f42ae73ea94a2155cc, type: 3}
-  m_PrefabInstance: {fileID: 632285649}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &632285654 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1767647441261124, guid: 0aae88e8f94751f42ae73ea94a2155cc, type: 3}
-  m_PrefabInstance: {fileID: 632285649}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &632285655 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1837232694770912, guid: 0aae88e8f94751f42ae73ea94a2155cc, type: 3}
-  m_PrefabInstance: {fileID: 632285649}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &632285656 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1200401284156820, guid: 0aae88e8f94751f42ae73ea94a2155cc, type: 3}
-  m_PrefabInstance: {fileID: 632285649}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &632285657 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1847692173438844, guid: 0aae88e8f94751f42ae73ea94a2155cc, type: 3}
-  m_PrefabInstance: {fileID: 632285649}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &632285658 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1987317639459036, guid: 0aae88e8f94751f42ae73ea94a2155cc, type: 3}
-  m_PrefabInstance: {fileID: 632285649}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &632285659 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1147783545442292, guid: 0aae88e8f94751f42ae73ea94a2155cc, type: 3}
-  m_PrefabInstance: {fileID: 632285649}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &632285660 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1738612375029478, guid: 0aae88e8f94751f42ae73ea94a2155cc, type: 3}
-  m_PrefabInstance: {fileID: 632285649}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &632285661 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4488610463470112, guid: 0aae88e8f94751f42ae73ea94a2155cc, type: 3}
@@ -3399,7 +3354,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf5f050ec7d03644583aeeace65725d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterBody:
+  frameReader: {fileID: 0}
+  character: {fileID: 0}
+  characterBodyIK:
     nose: {fileID: 0}
     leftEyeInner: {fileID: 0}
     leftEye: {fileID: 0}
@@ -3411,27 +3368,25 @@ MonoBehaviour:
     rightEar: {fileID: 0}
     leftMouth: {fileID: 0}
     rightMouth: {fileID: 0}
-    hips: {fileID: 632285660}
-    leftShoulder: {fileID: 632285655}
-    rightShoulder: {fileID: 632285654}
-    leftElbow: {fileID: 632285653}
-    rightElbow: {fileID: 632285652}
-    leftWrist: {fileID: 1678929980}
-    rightWrist: {fileID: 1557863997}
-    leftHip: {fileID: 632285659}
-    rightHip: {fileID: 632285658}
-    leftKnee: {fileID: 2066660726}
-    rightKnee: {fileID: 1173882883}
-    leftAnkle: {fileID: 1806292846}
-    rightAnkle: {fileID: 1214130734}
-    leftHeel: {fileID: 1565497196}
-    rightHeel: {fileID: 356494381}
-  FrameReader: {fileID: 680940036}
-  IKEnable: 0
-  normalMode: 0
-  character: {fileID: 0}
+    hips: {fileID: 0}
+    leftShoulder: {fileID: 0}
+    rightShoulder: {fileID: 0}
+    leftElbow: {fileID: 0}
+    rightElbow: {fileID: 0}
+    leftWrist: {fileID: 0}
+    rightWrist: {fileID: 0}
+    leftHip: {fileID: 0}
+    rightHip: {fileID: 0}
+    leftKnee: {fileID: 0}
+    rightKnee: {fileID: 0}
+    leftAnkle: {fileID: 0}
+    rightAnkle: {fileID: 0}
+    leftHeel: {fileID: 0}
+    rightHeel: {fileID: 0}
   nose: {fileID: 0}
   hips: {fileID: 0}
+  IKEnable: 0
+  normalMode: 0
   debugMode: 0
   debugGameObject: {fileID: 0}
 --- !u!4 &693046806 stripped
@@ -3547,7 +3502,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf5f050ec7d03644583aeeace65725d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterBody:
+  frameReader: {fileID: 744271029}
+  character: {fileID: 352527581}
+  characterBodyIK:
     nose: {fileID: 0}
     leftEyeInner: {fileID: 0}
     leftEye: {fileID: 0}
@@ -3559,27 +3516,25 @@ MonoBehaviour:
     rightEar: {fileID: 0}
     leftMouth: {fileID: 0}
     rightMouth: {fileID: 0}
-    hips: {fileID: 352527581}
-    leftShoulder: {fileID: 632285657}
-    rightShoulder: {fileID: 632285656}
-    leftElbow: {fileID: 1879722689}
-    rightElbow: {fileID: 1950306070}
-    leftWrist: {fileID: 918029105}
-    rightWrist: {fileID: 955571238}
-    leftHip: {fileID: 595985304}
-    rightHip: {fileID: 1197443105}
-    leftKnee: {fileID: 1197443105}
-    rightKnee: {fileID: 1766322733}
-    leftAnkle: {fileID: 526352530}
-    rightAnkle: {fileID: 1167883128}
-    leftHeel: {fileID: 1129934218}
-    rightHeel: {fileID: 1100908225}
-  FrameReader: {fileID: 744271029}
-  IKEnable: 0
-  normalMode: 1
-  character: {fileID: 352527581}
+    hips: {fileID: 0}
+    leftShoulder: {fileID: 0}
+    rightShoulder: {fileID: 0}
+    leftElbow: {fileID: 0}
+    rightElbow: {fileID: 0}
+    leftWrist: {fileID: 0}
+    rightWrist: {fileID: 0}
+    leftHip: {fileID: 0}
+    rightHip: {fileID: 0}
+    leftKnee: {fileID: 0}
+    rightKnee: {fileID: 0}
+    leftAnkle: {fileID: 0}
+    rightAnkle: {fileID: 0}
+    leftHeel: {fileID: 0}
+    rightHeel: {fileID: 0}
   nose: {fileID: 0}
   hips: {fileID: 1882289625}
+  IKEnable: 0
+  normalMode: 1
   debugMode: 0
   debugGameObject: {fileID: 1193169156}
 --- !u!114 &744271029
@@ -3597,9 +3552,9 @@ MonoBehaviour:
   videoPlayer: {fileID: 1721838737}
   jsonTest: {fileID: 4900000, guid: e865bbd47cdbb2441aea684bdcaf656d, type: 3}
   fraction: 1
-  fractionX: 0.9
-  fractionY: 0.9
-  fractionZ: -0.9
+  fractionX: 1
+  fractionY: 1
+  fractionZ: -1
   nextFrameTime: 0.05
   poseJson:
     predictions: []
@@ -4602,7 +4557,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf5f050ec7d03644583aeeace65725d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterBody:
+  frameReader: {fileID: 0}
+  character: {fileID: 0}
+  characterBodyIK:
     nose: {fileID: 0}
     leftEyeInner: {fileID: 0}
     leftEye: {fileID: 0}
@@ -4614,27 +4571,25 @@ MonoBehaviour:
     rightEar: {fileID: 0}
     leftMouth: {fileID: 0}
     rightMouth: {fileID: 0}
-    hips: {fileID: 632285660}
-    leftShoulder: {fileID: 632285657}
-    rightShoulder: {fileID: 632285656}
-    leftElbow: {fileID: 356494381}
-    rightElbow: {fileID: 1282344182}
-    leftWrist: {fileID: 1503752463}
-    rightWrist: {fileID: 2014871485}
-    leftHip: {fileID: 595985304}
-    rightHip: {fileID: 1197443105}
-    leftKnee: {fileID: 165807298}
-    rightKnee: {fileID: 1766322733}
-    leftAnkle: {fileID: 892757244}
-    rightAnkle: {fileID: 939033497}
-    leftHeel: {fileID: 1129934218}
-    rightHeel: {fileID: 1100908225}
-  FrameReader: {fileID: 1077549481}
-  IKEnable: 0
-  normalMode: 0
-  character: {fileID: 0}
+    hips: {fileID: 0}
+    leftShoulder: {fileID: 0}
+    rightShoulder: {fileID: 0}
+    leftElbow: {fileID: 0}
+    rightElbow: {fileID: 0}
+    leftWrist: {fileID: 0}
+    rightWrist: {fileID: 0}
+    leftHip: {fileID: 0}
+    rightHip: {fileID: 0}
+    leftKnee: {fileID: 0}
+    rightKnee: {fileID: 0}
+    leftAnkle: {fileID: 0}
+    rightAnkle: {fileID: 0}
+    leftHeel: {fileID: 0}
+    rightHeel: {fileID: 0}
   nose: {fileID: 0}
   hips: {fileID: 0}
+  IKEnable: 0
+  normalMode: 0
   debugMode: 0
   debugGameObject: {fileID: 0}
 --- !u!114 &1077549481
@@ -5157,11 +5112,6 @@ Transform:
 Transform:
   m_CorrespondingSourceObject: {fileID: 4568058513830140, guid: 0aae88e8f94751f42ae73ea94a2155cc, type: 3}
   m_PrefabInstance: {fileID: 1047834075}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &1173882883 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1125390039882202, guid: 0aae88e8f94751f42ae73ea94a2155cc, type: 3}
-  m_PrefabInstance: {fileID: 632285649}
   m_PrefabAsset: {fileID: 0}
 --- !u!4 &1184030244 stripped
 Transform:
@@ -7121,11 +7071,6 @@ Transform:
 Transform:
   m_CorrespondingSourceObject: {fileID: 4888665887596566, guid: 0aae88e8f94751f42ae73ea94a2155cc, type: 3}
   m_PrefabInstance: {fileID: 1047834075}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &2066660726 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1696013014019630, guid: 0aae88e8f94751f42ae73ea94a2155cc, type: 3}
-  m_PrefabInstance: {fileID: 632285649}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &2068695756
 GameObject:

@@ -91,10 +91,10 @@ public class FrameReader : MonoBehaviour
             {
 
 
-            for (int i = 0; i < poseJsonVector.predictions_world.Length; i++)
+            for (int i = 0; i < poseJsonVector.predictions.Length; i++)
             {
-                poseJsonVector.predictions_world[i].position = Vector3.Lerp(
-                    poseJsonVector.predictions_world[i].position, poseJsonVectorNew.predictions_world[i].position,
+                poseJsonVector.predictions[i].position = Vector3.Lerp(
+                    poseJsonVector.predictions[i].position, poseJsonVectorNew.predictions[i].position,
                     timer / nextFrameTime);
             }
             }
@@ -125,8 +125,8 @@ public class FrameReader : MonoBehaviour
         
         for (int i = 0; i < len; i++)
         {
-            poseJsonVector.predictions[i].position = fraction * new Vector3(poseJson.predictions[i].x,
-                poseJson.predictions[i].y,poseJson.predictions[i].z);
+            poseJsonVector.predictions[i].position = fraction * new Vector3(-poseJson.predictions[i].x*fractionX,
+                -poseJson.predictions[i].y*fractionY,poseJson.predictions[i].z*fractionZ);
             poseJsonVector.predictions[i].visibility = poseJson.predictions[i].visibility;
             
             poseJsonVector.predictions_world[i].position = fraction * new Vector3(-poseJson.predictions_world[i].x*fractionX,
