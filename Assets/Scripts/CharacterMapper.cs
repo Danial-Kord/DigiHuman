@@ -101,31 +101,27 @@ public class JointPoint
     public Vector3 K = new Vector3();
 }
 
-public static partial class EnumExtend
-{
-    public static int Int(this BodyPoints i)
-    {
-        return (int)i;
-    }
-}
 public class CharacterMapper : MonoBehaviour
 {
 
     
-    [SerializeField] private CharacterBody characterBody;
-    public FrameReader FrameReader;
-    [SerializeField]private JointPoint[] jointPoints;
-    [SerializeField] private bool IKEnable;
-    [SerializeField] private bool normalMode;
+    [SerializeField] private FrameReader frameReader;
+    
+    
     [Header("Character")]
     [SerializeField] private GameObject character;
+    [Tooltip("optional")] [SerializeField] private CharacterBody characterBodyIK;
     [SerializeField] private GameObject nose;
     [SerializeField] private GameObject hips;
+    [SerializeField] private bool IKEnable;
+    [SerializeField] private bool normalMode;
+    private JointPoint[] jointPoints;
+    
     [Header("Debug")] 
     [SerializeField] private bool debugMode;
-    
     [SerializeField] private GameObject debugGameObject;
     private GameObject[] jointsDebug;
+    
     private Animator anim;
 
     private void InitializationHumanoidPose()
@@ -255,32 +251,29 @@ public class CharacterMapper : MonoBehaviour
 
     private void UpdateNormalMode(BodyPartVector[] bodyPartVectors)
     {
-
-
-        // jointPoints[(int) BodyPoints.Hips].Transform.eulerAngles = new Vector3(0,-Vector3.Angle(Vector3.back,a.TriangleNormal(b,c)),0);
-        jointPoints[(int) BodyPoints.Hips].Transform.position = (bodyPartVectors[(int) BodyPoints.RightHip].position +
-                                                                 bodyPartVectors[(int) BodyPoints.LeftHip].position) / 2;
-        Vector3 a = bodyPartVectors[(int) BodyPoints.LeftShoulder].position;
-        Vector3 b = jointPoints[(int) BodyPoints.Hips].Transform.position;
-        Vector3 c = bodyPartVectors[(int) BodyPoints.RightShoulder].position;
-        jointPoints[(int) BodyPoints.Hips].Transform.rotation = Quaternion.LookRotation(a.TriangleNormal(b, c)) *
-                                                                jointPoints[(int) BodyPoints.Hips].InverseRotation;
-
-        jointPoints[(int) BodyPoints.Spine].Transform.position = (bodyPartVectors[(int) BodyPoints.RightHip].position +
-                                                                 bodyPartVectors[(int) BodyPoints.LeftHip].position +
-                                                                 bodyPartVectors[(int) BodyPoints.LeftShoulder].position +
-                                                                 bodyPartVectors[(int) BodyPoints.RightShoulder].position) / 4;
-
-        var forward = jointPoints[(int) BodyPoints.Hips].Transform.forward;
+        //setting position of each bone
         for (int i = 0; i < jointPoints.Length && i < bodyPartVectors.Length; i++)
         {
             if(i == (int) BodyPoints.RightShoulder || i == (int) BodyPoints.LeftShoulder || 
                i == (int) BodyPoints.LeftHip || i== (int) BodyPoints.RightHip)
                 continue;
-            if(jointPoints[i].Transform != null)
-                jointPoints[i].Transform.position = bodyPartVectors[i].position;
+            if (jointPoints[i].Transform != null)
+            {
+                if(bodyPartVectors[i].visibility > 0.75f)
+                    jointPoints[i].Transform.position = bodyPartVectors[i].position;
+            }
         }
+        
+        //setting hip rotation
+        Vector3 a = bodyPartVectors[(int) BodyPoints.LeftShoulder].position;
+        Vector3 b = jointPoints[(int) BodyPoints.Hips].Transform.position;
+        Vector3 c = bodyPartVectors[(int) BodyPoints.RightShoulder].position;
+        jointPoints[(int) BodyPoints.Hips].Transform.rotation = Quaternion.LookRotation(a.TriangleNormal(b, c)) *
+                                                                jointPoints[(int) BodyPoints.Hips].InverseRotation;
+        
+        
         // rotate each of bones
+        Vector3 forward = jointPoints[(int) BodyPoints.Hips].Transform.forward;
         foreach (var jointPoint in jointPoints)
         {
             if(jointPoint == null)
@@ -288,7 +281,7 @@ public class CharacterMapper : MonoBehaviour
             if (jointPoint.Parent != null)
             {
                 Debug.Log("fuk :/");
-                var fv = jointPoint.Parent.Transform.position - jointPoint.Transform.position;
+                Vector3 fv = jointPoint.Parent.Transform.position - jointPoint.Transform.position;
                 jointPoint.Transform.rotation = Quaternion.LookRotation(jointPoint.Transform.position- jointPoint.Child.Transform.position, fv) * jointPoint.InverseRotation;
             }
             else if (jointPoint.Child != null)
@@ -308,10 +301,95 @@ public class CharacterMapper : MonoBehaviour
             }
         }
     }
+
+    //placing and rotating bones with the help of IK algorithm
+    private void UpdateModeIK(BodyPartVector[] bodyPartVectors)
+    {
+        
+        //setting hips position
+        characterBodyIK.hips.transform.position = bodyPartVectors[(int) BodyPoints.Hips].position;
+        
+        //setting hip rotation
+        Vector3 a = bodyPartVectors[(int) BodyPoints.LeftShoulder].position;
+        Vector3 b = jointPoints[(int) BodyPoints.Hips].Transform.position;
+        Vector3 c = bodyPartVectors[(int) BodyPoints.RightShoulder].position;
+        jointPoints[(int) BodyPoints.Hips].Transform.rotation = Quaternion.LookRotation(a.TriangleNormal(b, c)) *
+                                                                jointPoints[(int) BodyPoints.Hips].InverseRotation;
+
+        //IK
+        characterBodyIK.leftElbow.transform.position = bodyPartVectors[(int) BodyPoints.LeftElbow].position;
+        characterBodyIK.rightElbow.transform.position = bodyPartVectors[(int) BodyPoints.RightElbow].position;
+        characterBodyIK.leftAnkle.transform.position = bodyPartVectors[(int) BodyPoints.LeftAnkle].position;
+        characterBodyIK.rightAnkle.transform.position = bodyPartVectors[(int) BodyPoints.RightAnkle].position;
+        characterBodyIK.leftWrist.transform.position = bodyPartVectors[(int) BodyPoints.LeftWrist].position;
+        characterBodyIK.rightWrist.transform.position = bodyPartVectors[(int) BodyPoints.RightWrist].position;
+        return;
+
+        characterBodyIK.leftShoulder.transform.position = bodyPartVectors[(int) BodyPoints.LeftShoulder].position;
+        characterBodyIK.rightShoulder.transform.position = bodyPartVectors[(int) BodyPoints.RightShoulder].position;
+
+        characterBodyIK.leftHip.transform.position = bodyPartVectors[(int) BodyPoints.LeftHip].position;
+        characterBodyIK.rightHip.transform.position = bodyPartVectors[(int) BodyPoints.RightHip].position;
+        characterBodyIK.leftKnee.transform.position = bodyPartVectors[(int) BodyPoints.LeftKnee].position;
+        characterBodyIK.rightKnee.transform.position = bodyPartVectors[(int) BodyPoints.RightKnee].position;
+        characterBodyIK.leftHeel.transform.position = bodyPartVectors[(int) BodyPoints.LeftHeel].position;
+        characterBodyIK.rightHeel.transform.position = bodyPartVectors[(int) BodyPoints.RightHeel].position;
+
+        PoseJson poseJson = frameReader.poseJson;
+        BodyPart[] bodyParts = poseJson.predictions_world;
+        characterBodyIK.leftShoulder.transform.position = new Vector3(-bodyParts[11].x,
+            -bodyParts[11].y,bodyParts[11].z);
+        
+        characterBodyIK.rightShoulder.transform.position = new Vector3(-bodyParts[12].x,
+            -bodyParts[12].y,bodyParts[12].z);
+        
+        characterBodyIK.leftElbow.transform.position = new Vector3(-bodyParts[13].x,
+            -bodyParts[13].y,bodyParts[13].z);
+        
+        characterBodyIK.rightElbow.transform.position = new Vector3(-bodyParts[14].x,
+            -bodyParts[14].y,bodyParts[14].z);
+        
+        characterBodyIK.leftWrist.transform.position = new Vector3(-bodyParts[15].x,
+            -bodyParts[15].y,bodyParts[15].z);
+        
+        characterBodyIK.rightWrist.transform.position = new Vector3(-bodyParts[16].x,
+            -bodyParts[16].y,bodyParts[16].z);
+        
+        characterBodyIK.leftHip.transform.position = new Vector3(-bodyParts[23].x,
+            -bodyParts[23].y,bodyParts[23].z);
+        
+        characterBodyIK.rightHip.transform.position = new Vector3(-bodyParts[24].x,
+            -bodyParts[24].y,bodyParts[24].z);
+
+        characterBodyIK.hips.transform.position = (characterBodyIK.rightHip.transform.position +
+                                                 characterBodyIK.leftHip.transform.position +
+                                                 characterBodyIK.leftShoulder.transform.position +
+                                                 characterBodyIK.rightShoulder.transform.position) / 4;
+        
+        
+        characterBodyIK.leftKnee.transform.position = new Vector3(-bodyParts[25].x,
+            -bodyParts[25].y,bodyParts[25].z);
+        
+        characterBodyIK.rightKnee.transform.position = new Vector3(-bodyParts[26].x,
+            -bodyParts[26].y,bodyParts[26].z);
+        
+        characterBodyIK.leftHeel.transform.position = new Vector3(-bodyParts[27].x,
+            -bodyParts[27].y,bodyParts[27].z);
+        
+        characterBodyIK.rightHeel.transform.position = new Vector3(-bodyParts[28].x,
+            -bodyParts[28].y,bodyParts[28].z);
+        
+        characterBodyIK.leftAnkle.transform.position = new Vector3(-bodyParts[27].x,
+            -bodyParts[27].y,bodyParts[27].z);
+        
+        characterBodyIK.rightAnkle.transform.position = new Vector3(-bodyParts[28].x,
+            -bodyParts[28].y,bodyParts[28].z);
+        
+    }
     private void Update()
     {
-        PoseJsonVector poseJsonVector = FrameReader.poseJsonVector;
-        BodyPartVector[] bodyPartVectors = poseJsonVector.predictions_world;
+        PoseJsonVector poseJsonVector = frameReader.poseJsonVector;
+        BodyPartVector[] bodyPartVectors = poseJsonVector.predictions;
         if (debugMode)
         {
             for (int i = 0; i < bodyPartVectors.Length; i++)
@@ -327,92 +405,13 @@ public class CharacterMapper : MonoBehaviour
             }
             else if (IKEnable)
             {
-
-                characterBody.hips.transform.position = (bodyPartVectors[(int) BodyPoints.RightHip].position +
-                                                         bodyPartVectors[(int) BodyPoints.LeftHip].position +
-                                                         bodyPartVectors[(int) BodyPoints.LeftShoulder].position +
-                                                         bodyPartVectors[(int) BodyPoints.RightShoulder].position) / 4;
-                Vector3 a = bodyPartVectors[(int) BodyPoints.LeftShoulder].position -
-                            bodyPartVectors[(int) BodyPoints.RightShoulder].position;
-                Vector3 b = bodyPartVectors[(int) BodyPoints.LeftShoulder].position -
-                            bodyPartVectors[(int) BodyPoints.LeftHip].position;
-                Debug.Log(Vector3.Cross(a, b));
-                characterBody.hips.transform.eulerAngles =
-                    new Vector3(0, -Vector3.Angle(Vector3.back, Vector3.Cross(a, b)), 0);
-
-                characterBody.leftElbow.transform.position = bodyPartVectors[(int) BodyPoints.LeftElbow].position;
-                characterBody.rightElbow.transform.position = bodyPartVectors[(int) BodyPoints.RightElbow].position;
-                characterBody.leftAnkle.transform.position = bodyPartVectors[(int) BodyPoints.LeftAnkle].position;
-                characterBody.rightAnkle.transform.position = bodyPartVectors[(int) BodyPoints.RightAnkle].position;
-                characterBody.leftWrist.transform.position = bodyPartVectors[(int) BodyPoints.LeftWrist].position;
-                characterBody.rightWrist.transform.position = bodyPartVectors[(int) BodyPoints.RightWrist].position;
+                UpdateModeIK(bodyPartVectors);
             }
         }
         catch (Exception e)
         {
             Debug.Log("problem");
         }
-        return;
-
-        characterBody.leftShoulder.transform.position = bodyPartVectors[(int) BodyPoints.LeftShoulder].position;
-        characterBody.rightShoulder.transform.position = bodyPartVectors[(int) BodyPoints.RightShoulder].position;
-
-        characterBody.leftHip.transform.position = bodyPartVectors[(int) BodyPoints.LeftHip].position;
-        characterBody.rightHip.transform.position = bodyPartVectors[(int) BodyPoints.RightHip].position;
-        characterBody.leftKnee.transform.position = bodyPartVectors[(int) BodyPoints.LeftKnee].position;
-        characterBody.rightKnee.transform.position = bodyPartVectors[(int) BodyPoints.RightKnee].position;
-        characterBody.leftHeel.transform.position = bodyPartVectors[(int) BodyPoints.LeftHeel].position;
-        characterBody.rightHeel.transform.position = bodyPartVectors[(int) BodyPoints.RightHeel].position;
-
-        PoseJson poseJson = FrameReader.poseJson;
-        BodyPart[] bodyParts = poseJson.predictions_world;
-        characterBody.leftShoulder.transform.position = new Vector3(-bodyParts[11].x,
-            -bodyParts[11].y,bodyParts[11].z);
-        
-        characterBody.rightShoulder.transform.position = new Vector3(-bodyParts[12].x,
-            -bodyParts[12].y,bodyParts[12].z);
-        
-        characterBody.leftElbow.transform.position = new Vector3(-bodyParts[13].x,
-            -bodyParts[13].y,bodyParts[13].z);
-        
-        characterBody.rightElbow.transform.position = new Vector3(-bodyParts[14].x,
-            -bodyParts[14].y,bodyParts[14].z);
-        
-        characterBody.leftWrist.transform.position = new Vector3(-bodyParts[15].x,
-            -bodyParts[15].y,bodyParts[15].z);
-        
-        characterBody.rightWrist.transform.position = new Vector3(-bodyParts[16].x,
-            -bodyParts[16].y,bodyParts[16].z);
-        
-        characterBody.leftHip.transform.position = new Vector3(-bodyParts[23].x,
-            -bodyParts[23].y,bodyParts[23].z);
-        
-        characterBody.rightHip.transform.position = new Vector3(-bodyParts[24].x,
-            -bodyParts[24].y,bodyParts[24].z);
-
-        characterBody.hips.transform.position = (characterBody.rightHip.transform.position +
-                                                 characterBody.leftHip.transform.position +
-                                                 characterBody.leftShoulder.transform.position +
-                                                 characterBody.rightShoulder.transform.position) / 4;
-        
-        
-        characterBody.leftKnee.transform.position = new Vector3(-bodyParts[25].x,
-            -bodyParts[25].y,bodyParts[25].z);
-        
-        characterBody.rightKnee.transform.position = new Vector3(-bodyParts[26].x,
-            -bodyParts[26].y,bodyParts[26].z);
-        
-        characterBody.leftHeel.transform.position = new Vector3(-bodyParts[27].x,
-            -bodyParts[27].y,bodyParts[27].z);
-        
-        characterBody.rightHeel.transform.position = new Vector3(-bodyParts[28].x,
-            -bodyParts[28].y,bodyParts[28].z);
-        
-        characterBody.leftAnkle.transform.position = new Vector3(-bodyParts[27].x,
-            -bodyParts[27].y,bodyParts[27].z);
-        
-        characterBody.rightAnkle.transform.position = new Vector3(-bodyParts[28].x,
-            -bodyParts[28].y,bodyParts[28].z);
         
     }
 }
