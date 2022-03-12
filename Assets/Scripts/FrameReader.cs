@@ -21,7 +21,8 @@ public struct BodyPart
 public class PoseJson
 {
     public BodyPart[] predictions;
-    public BodyPart[] predictions_world;
+    public float width;
+    public float height;
 }
 
 [Serializable] 
@@ -35,7 +36,8 @@ public struct BodyPartVector
 public class PoseJsonVector
 {
     public BodyPartVector[] predictions;
-    public BodyPartVector[] predictions_world;
+    public float width;
+    public float height;
 }
 
 public class FrameReader : MonoBehaviour
@@ -57,7 +59,6 @@ public class FrameReader : MonoBehaviour
     {
         poseJson = GetBodyParts(jsonTest.text);
         poseJsonVector = GetBodyPartsVector(jsonTest.text);
-        Debug.Log(poseJson.predictions_world[1].x);
     }
 
     private string path = "C:\\Danial\\Projects\\Danial\\DigiHuman\\Backend\\json\\";
@@ -89,14 +90,12 @@ public class FrameReader : MonoBehaviour
         {
             try
             {
-
-
-            for (int i = 0; i < poseJsonVector.predictions.Length; i++)
-            {
-                poseJsonVector.predictions[i].position = Vector3.Lerp(
-                    poseJsonVector.predictions[i].position, poseJsonVectorNew.predictions[i].position,
-                    timer / nextFrameTime);
-            }
+                for (int i = 0; i < poseJsonVector.predictions.Length; i++)
+                {
+                    poseJsonVector.predictions[i].position = Vector3.Lerp(
+                        poseJsonVector.predictions[i].position, poseJsonVectorNew.predictions[i].position,
+                        timer / nextFrameTime);
+                }
             }
             catch (Exception e)
             {
@@ -111,27 +110,22 @@ public class FrameReader : MonoBehaviour
     
     public PoseJson GetBodyParts(string text)
     {
-        
         return JsonUtility.FromJson<PoseJson>(text);
     }
     public PoseJsonVector GetBodyPartsVector(string text)
     {
         
         PoseJson poseJson = JsonUtility.FromJson<PoseJson>(text);
-        int len = poseJson.predictions_world.Length;
+        int len = poseJson.predictions.Length;
         PoseJsonVector poseJsonVector = new PoseJsonVector();
         poseJsonVector.predictions = new BodyPartVector[len];
-        poseJsonVector.predictions_world = new BodyPartVector[len];
-        
+
         for (int i = 0; i < len; i++)
         {
             poseJsonVector.predictions[i].position = fraction * new Vector3(-poseJson.predictions[i].x*fractionX,
                 -poseJson.predictions[i].y*fractionY,poseJson.predictions[i].z*fractionZ);
             poseJsonVector.predictions[i].visibility = poseJson.predictions[i].visibility;
             
-            poseJsonVector.predictions_world[i].position = fraction * new Vector3(-poseJson.predictions_world[i].x*fractionX,
-                -poseJson.predictions_world[i].y*fractionY,poseJson.predictions_world[i].z*fractionZ);
-            poseJsonVector.predictions_world[i].visibility = poseJson.predictions_world[i].visibility;
         }
 
         return poseJsonVector;

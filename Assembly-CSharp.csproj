@@ -55,6 +55,7 @@
      <Compile Include="Assets\unity-chan!\Unity-chan! Model\Scripts\SpringCollider.cs" />
      <Compile Include="Assets\Scripts\FrameReader.cs" />
      <Compile Include="Assets\unity-chan!\Unity-chan! Model\Scripts\SpringManager.cs" />
+     <Compile Include="Assets\Scripts\NetworkManager.cs" />
      <Compile Include="Assets\unity-chan!\Unity-chan! Model\Scripts\ThirdPersonCamera.cs" />
      <Compile Include="Assets\Satomi 3d - Anime Style\Demo\Scripts\UIManager.cs" />
      <Compile Include="Assets\unity-chan!\Unity-chan! Model\Scripts\FaceUpdate.cs" />

@@ -12,6 +12,7 @@ def add_extra_points(landmark_list):
     right_shoulder = landmark_list[12]
     left_hip = landmark_list[23]
     right_hip = landmark_list[24]
+
     # Calculating hip position and visibility
     hip = {
           'x': (left_hip['x'] + right_hip['x']) / 2.0,
@@ -29,6 +30,30 @@ def add_extra_points(landmark_list):
           'visibility': (left_hip['visibility'] + right_hip['visibility'] + right_shoulder['visibility'] + left_shoulder['visibility']) / 4.0
         }
     landmark_list.append(spine)
+
+    left_mouth = landmark_list[9]
+    right_mouth = landmark_list[10]
+    nose = landmark_list[0]
+    left_ear = landmark_list[7]
+    right_ear = landmark_list[8]
+    # Calculating neck position and visibility
+    neck = {
+          'x': (left_mouth['x'] + right_mouth['x'] + right_shoulder['x'] + left_shoulder['x']) / 4.0,
+          'y': (left_mouth['y'] + right_mouth['y'] + right_shoulder['y'] + left_shoulder['y']) / 4.0,
+          'z': (left_mouth['z'] + right_mouth['z'] + right_shoulder['z'] + left_shoulder['z']) / 4.0,
+          'visibility': (left_mouth['visibility'] + right_mouth['visibility'] + right_shoulder['visibility'] + left_shoulder['visibility']) / 4.0
+        }
+    landmark_list.append(neck)
+
+    # Calculating head position and visibility
+    head = {
+          'x': (nose['x'] + left_ear['x'] + right_ear['x']) / 3.0,
+          'y': (nose['y'] + left_ear['y'] + right_ear['y']) / 3.0,
+          'z': (nose['z'] + left_ear['z'] + right_ear['z']) / 3.0,
+          'visibility': (nose['visibility'] + left_ear['visibility'] + right_ear['visibility']) / 3.0,
+        }
+    landmark_list.append(head)
+
 
 def world_landmarks_list_to_array(landmark_list, image_shape):
     rows, cols, _ = image_shape
@@ -68,7 +93,7 @@ mp_pose = mp.solutions.pose
 
 
 
-def Write_Json(path, index, world_pose_landmarks, pose_landmarks):
+def Write_Json(path, index, pose_landmarks,rows, cols):
     # print(results.pose_landmarks)
     # print(pose_landmarks)
     # print(results.pose_landmarks)
@@ -77,10 +102,11 @@ def Write_Json(path, index, world_pose_landmarks, pose_landmarks):
     with open(json_path, 'w') as fl:
         dump_data = {
             'predictions': pose_landmarks,
-            'predictions_world': world_pose_landmarks
+            'height': rows,
+            'width': cols
         }
         # np.around(pose_landmarks, 4).tolist()
-        fl.write(json.dumps(dump_data, indent=2, separators=(',', ': ')))
+        fl.write(json.dumps(dump_data, indent=3 , separators=(',', ': ')))
         fl.close()
 
 def Pose_Images():
@@ -174,13 +200,15 @@ with mp_pose.Pose(
     #cv2.imshow('MediaPipe Pose', cv2.flip(image, 1))
 
     try:
-        pose_landmarks = landmarks_list_to_array(results.pose_landmarks)
-        world_pose_landmarks = world_landmarks_list_to_array(results.pose_world_landmarks, image.shape)
 
-        add_extra_points(world_pose_landmarks)
+        pose_landmarks = landmarks_list_to_array(results.pose_world_landmarks) #also can use results.pose_landmarks
+       # world_pose_landmarks = world_landmarks_list_to_array(results.pose_world_landmarks, image.shape)
+
+        #add_extra_points(world_pose_landmarks)
+        rows, cols, _ = image.shape
         add_extra_points(pose_landmarks)
 
-        Write_Json(json_path, index, world_pose_landmarks, pose_landmarks)
+        Write_Json(json_path, index, pose_landmarks,rows,cols)
     except:
         print("hi")
 
