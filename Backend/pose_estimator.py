@@ -92,22 +92,27 @@ mp_drawing_styles = mp.solutions.drawing_styles
 mp_pose = mp.solutions.pose
 
 
+def Save_Json(path, index,dump_data):
+    json_path = path + "" + str(index) + ".json"
+    with open(json_path, 'w') as fl:
+        # np.around(pose_landmarks, 4).tolist()
+        fl.write(dump_data)
+        fl.close()
 
-def Write_Json(path, index, pose_landmarks,rows, cols):
+def Json_Generator(pose_landmarks, rows, cols,frame):
     # print(results.pose_landmarks)
     # print(pose_landmarks)
     # print(results.pose_landmarks)
     # Dump actual JSON.
-    json_path = path + "" + str(index) + ".json"
-    with open(json_path, 'w') as fl:
-        dump_data = {
-            'predictions': pose_landmarks,
-            'height': rows,
-            'width': cols
-        }
-        # np.around(pose_landmarks, 4).tolist()
-        fl.write(json.dumps(dump_data, indent=3 , separators=(',', ': ')))
-        fl.close()
+    dump_data = {
+        'predictions': pose_landmarks,
+        'frame': frame,
+        'height': rows,
+        'width': cols
+    }
+    # return json.dumps(dump_data, indent=4 , separators=(',', ': '))
+    return dump_data
+
 
 def Pose_Images():
     # For static images:
@@ -168,51 +173,60 @@ def Pose_Images():
           #np.around(pose_landmarks, 4).tolist()
           fl.write(json.dumps(dump_data, indent=2, separators=(',', ': ')))
 
-# For webcam input:
-json_path = "C:/Danial/Projects/Danial/DigiHuman/Backend/json/"
-cap = cv2.VideoCapture("C:/Danial/Projects/Danial/DigiHuman/Backend/Video/Action_with_wiper.mp4")
-index = 0
-with mp_pose.Pose(
-    min_detection_confidence=0.8,
-    min_tracking_confidence=0.8) as pose:
-  while cap.isOpened():
-    success, image = cap.read()
-    index += 1
-    if not success:
-      print("Some probelm with video!")
-      # If loading a video, use 'break' instead of 'continue'.
-      continue
 
-    # To improve performance, optionally mark the image as not writeable to
-    # pass by reference.
-    image.flags.writeable = False
-    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-    results = pose.process(image)
-    # Draw the pose annotation on the image.
-    image.flags.writeable = True
-    image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-    mp_drawing.draw_landmarks(
-        image,
-        results.pose_landmarks,
-        mp_pose.POSE_CONNECTIONS,
-        landmark_drawing_spec=mp_drawing_styles.get_default_pose_landmarks_style())
-    # Flip the image horizontally for a selfie-view display.
-    #cv2.imshow('MediaPipe Pose', cv2.flip(image, 1))
+# For video input:
+def Pose_Video(video_path):
+    json_path = "TestPath"
+    cap = cv2.VideoCapture(video_path)
+    frame = 0
+    out_put = []
+    with mp_pose.Pose(
+        min_detection_confidence=0.8,
+        min_tracking_confidence=0.8) as pose:
+      while cap.isOpened():
+        success, image = cap.read()
+        frame += 1
+        if not success or frame >= 200:
+          #print("Some probelm with video!")
+          # If loading a video, use 'break' instead of 'continue'.
+          break
 
-    try:
+        # To improve performance, optionally mark the image as not writeable to
+        # pass by reference.
+        image.flags.writeable = False
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        results = pose.process(image)
+        # Draw the pose annotation on the image.
+        image.flags.writeable = True
+        image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+        mp_drawing.draw_landmarks(
+            image,
+            results.pose_landmarks,
+            mp_pose.POSE_CONNECTIONS,
+            landmark_drawing_spec=mp_drawing_styles.get_default_pose_landmarks_style())
+        # Flip the image horizontally for a selfie-view display.
+        #cv2.imshow('MediaPipe Pose', cv2.flip(image, 1))
 
-        pose_landmarks = landmarks_list_to_array(results.pose_world_landmarks) #also can use results.pose_landmarks
-       # world_pose_landmarks = world_landmarks_list_to_array(results.pose_world_landmarks, image.shape)
+        try:
 
-        #add_extra_points(world_pose_landmarks)
-        rows, cols, _ = image.shape
-        add_extra_points(pose_landmarks)
+            pose_landmarks = landmarks_list_to_array(results.pose_world_landmarks) #also can use results.pose_landmarks
+           # world_pose_landmarks = world_landmarks_list_to_array(results.pose_world_landmarks, image.shape)
 
-        Write_Json(json_path, index, pose_landmarks,rows,cols)
-    except:
-        print("hi")
+            rows, cols, _ = image.shape
+            add_extra_points(pose_landmarks)
+            # add_extra_points(world_pose_landmarks)
+
+            json_data = Json_Generator(pose_landmarks, rows, cols,frame)
+            # out_put.append(json_data)
+            # print(json_data)
+            yield json_data
+        except:
+            print("wtf")
+            continue
 
 
-    if cv2.waitKey(5) & 0xFF == 27:
-      break
-cap.release()
+
+        if cv2.waitKey(5) & 0xFF == 27:
+          break
+    cap.release()
+    # return json.dumps(out_put)

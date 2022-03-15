@@ -6,3 +6,7 @@
 /Backend/json/*.json
 /Backend/Video
 /Backend/*.png
+/Backend/__pycache__
+/Assets/video.meta
+/Assets/video
+/obj
