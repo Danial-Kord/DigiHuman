@@ -23,6 +23,8 @@ public class PoseJson
     public BodyPart[] predictions;
     public float width;
     public float height;
+    public int frame;
+    
 }
 
 [Serializable] 
