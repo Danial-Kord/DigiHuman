@@ -1,4 +1,4 @@
-/My project.sln
+*.sln
 /Library
 /Logs
 /.idea
@@ -10,3 +10,5 @@
 /Assets/video.meta
 /Assets/video
 /obj
+/Assembly-CSharp.csproj
+/Assembly-CSharp-Editor.csproj
