@@ -381,7 +381,7 @@ public class CharacterMapper : MonoBehaviour
         characterBodyIK.leftHeel.transform.position = bodyPartVectors[(int) BodyPoints.LeftHeel].position;
         characterBodyIK.rightHeel.transform.position = bodyPartVectors[(int) BodyPoints.RightHeel].position;
 
-        PoseJson poseJson = frameReader.poseJson;
+        PoseJson poseJson = frameReader.currentPoseJson;
         BodyPart[] bodyParts = poseJson.predictions;
         characterBodyIK.leftShoulder.transform.position = new Vector3(-bodyParts[11].x,
             -bodyParts[11].y,bodyParts[11].z);
@@ -432,9 +432,9 @@ public class CharacterMapper : MonoBehaviour
             -bodyParts[28].y,bodyParts[28].z);
         
     }
-    private void Update()
+
+    public void Predict3DPose(PoseJsonVector poseJsonVector)
     {
-        PoseJsonVector poseJsonVector = frameReader.poseJsonVector;
         BodyPartVector[] bodyPartVectors = poseJsonVector.predictions;
         if (debugMode)
         {
@@ -459,6 +459,5 @@ public class CharacterMapper : MonoBehaviour
             throw e;
             Debug.Log("problem");
         }
-        
     }
 }

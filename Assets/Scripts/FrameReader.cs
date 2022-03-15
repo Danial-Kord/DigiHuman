@@ -40,88 +40,98 @@ public class PoseJsonVector
     public BodyPartVector[] predictions;
     public float width;
     public float height;
+    public int frame;
+
 }
 
 public class FrameReader : MonoBehaviour
 {
+    public CharacterMapper characterMapper;
     public VideoPlayer videoPlayer;
-    public TextAsset jsonTest;
 
+    [Header("Fractions to multiply by pose estimates")]
     public float fraction = 1.2f;
     public float fractionX = 1.2f;
     public float fractionY = 1.2f;
     public float fractionZ = 1.2f;
 
-    public float nextFrameTime = 0.1f;
-    public PoseJson poseJson;
-    public PoseJsonVector poseJsonVector;
-    public PoseJsonVector poseJsonVectorNew;
+    [Header("Frame rate")]
+    [SerializeField]private float nextFrameTime = 0.1f;
+
+    private Queue<PoseJsonVector> estimatedPoses;
+    [HideInInspector] public PoseJson currentPoseJson;
+    [HideInInspector] public PoseJsonVector currentPoseJsonVector;
+    [HideInInspector] public PoseJsonVector currentPoseJsonVectorNew;
+
+    [Header("Debug")] 
+    private bool debug;
+    [SerializeField] private TextAsset jsonTest;
 
     private void Awake()
     {
-        poseJson = GetBodyParts(jsonTest.text);
-        poseJsonVector = GetBodyPartsVector(jsonTest.text);
+        estimatedPoses = new Queue<PoseJsonVector>();
+        if (debug)
+        {
+            currentPoseJson = GetBodyParts(jsonTest.text);
+            currentPoseJsonVector = GetBodyPartsVector(currentPoseJson);
+            videoPlayer.Prepare();
+
+        }
+        
     }
 
-    private string path = "C:\\Danial\\Projects\\Danial\\DigiHuman\\Backend\\json\\";
-    private int index = 0;
     private float timer = 0;
     private void Update()
     {
         timer += Time.deltaTime;
+        if(estimatedPoses.Count.Equals(0))
+            return;
         if (timer > nextFrameTime)
         {
-            try
+
+            currentPoseJsonVector = currentPoseJsonVectorNew;
+            currentPoseJsonVectorNew = estimatedPoses.Dequeue();
+            timer = 0;
+            if (debug)
             {
-                StreamReader reader = new StreamReader(path + "" + index + ".json");
-                poseJsonVector = poseJsonVectorNew;
-                poseJsonVectorNew = GetBodyPartsVector(reader.ReadToEnd());
-                timer = 0;
-                videoPlayer.frame = index;
+                videoPlayer.frame = currentPoseJsonVectorNew.frame;
                 videoPlayer.Play();
                 videoPlayer.Pause();
-                reader.Close();
             }
-            catch (FileNotFoundException e)
-            {
-                
-            }
-            index += 1;
+            
         }
-        else
-        {
-            try
-            {
-                for (int i = 0; i < poseJsonVector.predictions.Length; i++)
-                {
-                    poseJsonVector.predictions[i].position = Vector3.Lerp(
-                        poseJsonVector.predictions[i].position, poseJsonVectorNew.predictions[i].position,
-                        timer / nextFrameTime);
-                }
-            }
-            catch (Exception e)
-            {
 
+        try
+        {
+            for (int i = 0; i < currentPoseJsonVector.predictions.Length; i++)
+            {
+                currentPoseJsonVector.predictions[i].position = Vector3.Lerp(
+                    currentPoseJsonVector.predictions[i].position, currentPoseJsonVectorNew.predictions[i].position,
+                    timer / nextFrameTime);
             }
+            characterMapper.Predict3DPose(currentPoseJsonVector);
         }
-    }
-    private void Start() {
-        videoPlayer.Prepare();
-    }
-    
-    
-    public PoseJson GetBodyParts(string text)
-    {
-        return JsonUtility.FromJson<PoseJson>(text);
-    }
-    public PoseJsonVector GetBodyPartsVector(string text)
-    {
+        catch (Exception e)
+        {
+
+        }
         
-        PoseJson poseJson = JsonUtility.FromJson<PoseJson>(text);
+    }
+
+    
+    
+    private PoseJson GetBodyParts(string jsonText)
+    {
+        return JsonUtility.FromJson<PoseJson>(jsonText);
+    }
+    private PoseJsonVector GetBodyPartsVector(PoseJson poseJson)
+    {
         int len = poseJson.predictions.Length;
         PoseJsonVector poseJsonVector = new PoseJsonVector();
         poseJsonVector.predictions = new BodyPartVector[len];
-
+        poseJsonVector.frame = poseJson.frame;
+        poseJsonVector.width = poseJson.width;
+        poseJsonVector.height = poseJson.height;
         for (int i = 0; i < len; i++)
         {
             poseJsonVector.predictions[i].position = fraction * new Vector3(-poseJson.predictions[i].x*fractionX,
@@ -131,5 +141,15 @@ public class FrameReader : MonoBehaviour
         }
 
         return poseJsonVector;
+    }
+
+    public void SetPosesQueue(List<PoseJson> estimated)
+    {
+        currentPoseJsonVectorNew = GetBodyPartsVector(estimated[0]);
+        foreach (PoseJson poseJson in estimated)
+        {
+            estimatedPoses.Enqueue(GetBodyPartsVector(poseJson));            
+        }
+        
     }
 }
