@@ -152,9 +152,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bcc2377473525844e865414c38cb164e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  serverURL: http://127.0.0.1:5000/uploader
+  serverUploadURL: http://127.0.0.1:5000/uploader
+  serverPoseEstimatorURL: http://127.0.0.1:5000/pose
   enableDebug: 1
-  filePath: C:/Danial/Projects/Danial/DigiHuman/Backend/output0.png
+  filePath: C:/Danial/Projects/Danial/DigiHuman/Assets/video/Action_with_wiper_Trim.mp4
 --- !u!4 &203192803
 Transform:
   m_ObjectHideFlags: 0
