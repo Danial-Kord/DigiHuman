@@ -64,7 +64,7 @@ public class FrameReader : MonoBehaviour
     [HideInInspector] public PoseJsonVector currentPoseJsonVectorNew;
 
     [Header("Debug")] 
-    private bool debug;
+    [SerializeField] private bool debug;
     [SerializeField] private TextAsset jsonTest;
 
     private void Awake()
@@ -72,10 +72,10 @@ public class FrameReader : MonoBehaviour
         estimatedPoses = new Queue<PoseJsonVector>();
         if (debug)
         {
-            currentPoseJson = GetBodyParts(jsonTest.text);
-            currentPoseJsonVector = GetBodyPartsVector(currentPoseJson);
             videoPlayer.Prepare();
 
+            //currentPoseJson = GetBodyParts(jsonTest.text);
+            //currentPoseJsonVector = GetBodyPartsVector(currentPoseJson);
         }
         
     }

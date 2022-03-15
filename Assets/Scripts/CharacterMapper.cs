@@ -300,7 +300,6 @@ public class CharacterMapper : MonoBehaviour
 
         head.Transform.rotation = Quaternion.LookRotation(gaze, normal) * head.InverseRotation;
         
-        return;
         // rotate each of bones
         Vector3 forward = jointPoints[(int) BodyPoints.Hips].Transform.forward;
         foreach (var jointPoint in jointPoints)
