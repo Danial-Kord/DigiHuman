@@ -11,7 +11,9 @@ public class NetworkManager : MonoBehaviour
     [Header("Server")]
     [SerializeField] private string serverUploadURL; //server URL
     [SerializeField] private string serverPoseEstimatorURL; //server URL
-    
+
+    [Header("Dependencies")] 
+    [SerializeField] private FrameReader frameReader;
     //for testing in engine only
 #if UNITY_EDITOR
     [Header("Debug")] 
@@ -25,7 +27,7 @@ public class NetworkManager : MonoBehaviour
 #if UNITY_EDITOR
         if (enableDebug)
         {
-            UploadFile(filePath);
+            UploadAndEstimatePose(filePath);
         } 
 #endif
     }
@@ -41,7 +43,7 @@ public class NetworkManager : MonoBehaviour
 
     
     //starting coroutine for sending ASync to server
-    public void UploadFile(string localFileName)
+    private void UploadAndEstimatePose(string localFileName)
     {
         
         StartCoroutine(Upload(localFileName));
@@ -60,9 +62,6 @@ public class NetworkManager : MonoBehaviour
             yield break; // stop the coroutine here
         }
         WWWForm postForm = new WWWForm();
-        // version 1
-        //postForm.AddBinaryData("theFile",localFile.bytes);
-        // version 2
         postForm.AddBinaryData("file",localFile.bytes,localFileName,"text/plain");
         WWW upload = new WWW(uploadURL,postForm);        
         yield return upload;
@@ -82,7 +81,7 @@ public class NetworkManager : MonoBehaviour
             Debug.Log("Error during upload: " + upload.error);
     }
 
-    
+    //Async file uploader method2
     IEnumerator Upload(string localFileName) {
 
         WWW localFile = new WWW("file:///" + localFileName);
@@ -113,16 +112,19 @@ public class NetworkManager : MonoBehaviour
             }
             
             Debug.Log(www.downloadHandler.text);
-            StartCoroutine(GetPoseEstimates(www.downloadHandler.text));
+            StartCoroutine(GetPoseEstimates(www.downloadHandler.text));//Get estimates
             Debug.Log("Upload complete!");
         }
     }
     
-    IEnumerator GetPoseEstimates(string poseVideoName) {
+    //getting estimates for video pose
+    IEnumerator GetPoseEstimates(string poseVideoName)
+    {
         PoseRequest poseRequest = new PoseRequest();
         poseRequest.index = 0;
         poseRequest.fileName = poseVideoName;
-        
+
+        List<PoseJson> poseJsons = new List<PoseJson>();
         while (true)
         {
             UnityWebRequest webRequest = new UnityWebRequest(serverPoseEstimatorURL, "POST");
@@ -131,21 +133,34 @@ public class NetworkManager : MonoBehaviour
             webRequest.downloadHandler = (DownloadHandler) new DownloadHandlerBuffer();
             webRequest.SetRequestHeader("Content-Type", "application/json");
             webRequest.SetRequestHeader("cache-control", "no-cache");
-        
+
             yield return webRequest.SendWebRequest();
-            
-            if (webRequest.result != UnityWebRequest.Result.Success) {
-                Debug.Log(webRequest.error);
+            try
+            {
+                if (webRequest.result != UnityWebRequest.Result.Success)
+                {
+                    Debug.Log(webRequest.error);
+                }
+                else
+                {
+                    if (webRequest.downloadHandler.text.Equals("Done"))
+                        break;
+                    PoseJson receivedJson = JsonUtility.FromJson<PoseJson>(webRequest.downloadHandler.text);
+                    poseJsons.Add(receivedJson);
+                    Debug.Log(JsonUtility.FromJson<PoseJson>(webRequest.downloadHandler.text).frame);
+                    poseRequest.index += 1;
+                }
             }
-            else {
-                if(webRequest.downloadHandler.text.Equals("Done"))
-                    break;
-                Debug.Log(webRequest.downloadHandler.text);
-                Debug.Log(JsonUtility.FromJson<PoseJson>(webRequest.downloadHandler.text).frame);
-                poseRequest.index += 1;
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
             }
 
+            yield return null;
         }
 
+        frameReader.SetPosesQueue(poseJsons);
+        yield break;
     }
 }
