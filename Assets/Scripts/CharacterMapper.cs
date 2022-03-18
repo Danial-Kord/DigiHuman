@@ -117,8 +117,10 @@ public class CharacterMapper : MonoBehaviour
     [SerializeField] private GameObject hips;
     [SerializeField] private bool IKEnable;
     [SerializeField] private bool normalMode;
+    [SerializeField] private Vector3 characterPlacement;
     private JointPoint[] jointPoints;
     private Vector3 headUpVector;
+    private Vector3 distanceOffset;
     
     [Header("Debug")] 
     [SerializeField] private bool debugMode;
@@ -242,11 +244,14 @@ public class CharacterMapper : MonoBehaviour
         // rHand.InitRotation = jointPoints[PositionIndex.rHand.Int()].Transform.rotation;
         // rHand.Inverse = Quaternion.Inverse(Quaternion.LookRotation(jointPoints[PositionIndex.rThumb2.Int()].Transform.position - jointPoints[PositionIndex.rMid1.Int()].Transform.position, rf));
         // rHand.InverseRotation = rHand.Inverse * rHand.InitRotation;
+        
+        // distanceOffset = character.transform.position
     }
     
     
     private void Start()
     {
+        
         if (debugMode)
         {
             jointsDebug = new GameObject[33];
@@ -275,12 +280,12 @@ public class CharacterMapper : MonoBehaviour
         }
         
         //setting hip rotation
-        // Vector3 a = bodyPartVectors[(int) BodyPoints.LeftShoulder].position;
-        // Vector3 b = jointPoints[(int) BodyPoints.Hips].Transform.position;
-        // Vector3 c = bodyPartVectors[(int) BodyPoints.RightShoulder].position;
-        // jointPoints[(int) BodyPoints.Hips].Transform.rotation = Quaternion.LookRotation(a.TriangleNormal(b, c)) *
-        //                                                         jointPoints[(int) BodyPoints.Hips].InverseRotation;
-        //
+        Vector3 a = bodyPartVectors[(int) BodyPoints.LeftShoulder].position;
+        Vector3 b = jointPoints[(int) BodyPoints.Hips].Transform.position;
+        Vector3 c = bodyPartVectors[(int) BodyPoints.RightShoulder].position;
+        jointPoints[(int) BodyPoints.Hips].Transform.rotation = Quaternion.LookRotation(a.TriangleNormal(b, c)) *
+                                                                jointPoints[(int) BodyPoints.Hips].InverseRotation;
+        
         // Head Rotation
         
         Vector3 mouth = (bodyPartVectors[(int) BodyPoints.LeftMouth].position + bodyPartVectors[(int) BodyPoints.RightMouth].position)/2.0f;
@@ -345,6 +350,7 @@ public class CharacterMapper : MonoBehaviour
         // Vector3 headAngle = head.Transform.eulerAngles;
         // headAngle.y = -yDegree;
         // head.Transform.eulerAngles = headAngle;
+        //jointPoints[(int) BodyPoints.Hips].Transform.position = characterPlacement;
     }
 
     //placing and rotating bones with the help of IK algorithm
