@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -49,6 +50,62 @@ namespace FreeDraw
 // BRUSH TYPES. Implement your own here
 
 
+        public void BrushClosedArea(Vector2 world_point)
+        {
+            Vector2 pixel_pos = WorldToPixelCoordinates(world_point);
+            Color32 targetColor = Pen_Colour;
+            cur_colors = drawable_texture.GetPixels32();
+            
+            Queue<Vector2> pixelsToBeColored = new Queue<Vector2>(); //our queue for coloring un colored pixels
+            HashSet<Vector2> coloredPixels = new HashSet<Vector2>(); //our colored hashset of pixels
+            pixelsToBeColored.Enqueue(pixel_pos);
+            coloredPixels.Add(pixel_pos);
+
+            
+            Color32 baseColor = cur_colors[(int)pixel_pos.y * (int)drawable_sprite.rect.width + (int)pixel_pos.x];
+            
+            if(baseColor.Equals(targetColor))
+                return;
+            while (pixelsToBeColored.Count != 0)
+            {
+                Vector2 currentPixel = pixelsToBeColored.Dequeue();
+                int x = (int) currentPixel.x;
+                int y = (int) currentPixel.y;
+
+                if(!cur_colors[y * (int)drawable_sprite.rect.width + x].Equals(baseColor))//color is not the same so skip
+                    continue;
+                MarkPixelToChange(x, y, targetColor);
+                
+                Vector2 up = new Vector2(x,y-1);
+                if (y - 1 >= 0)
+                {
+                    if(coloredPixels.Add(up))
+                        pixelsToBeColored.Enqueue(up);
+                }
+
+                Vector2 down = new Vector2(x,y+1);
+                if (y+1 < (int)drawable_sprite.rect.height)
+                {
+                    if(coloredPixels.Add(down))
+                        pixelsToBeColored.Enqueue(down);
+                }
+                
+                Vector2 right = new Vector2(x+1,y);
+                if (x+1 < (int)drawable_sprite.rect.width)
+                {
+                    if(coloredPixels.Add(right))
+                        pixelsToBeColored.Enqueue(right);
+                }
+                Vector2 left = new Vector2(x-1,y);
+                if (x-1 >= 0)
+                {
+                    if(coloredPixels.Add(left))
+                        pixelsToBeColored.Enqueue(left);
+                }
+
+            }
+            ApplyMarkedPixelChanges();
+        }
 
 
         // When you want to make your own type of brush effects,
@@ -290,6 +347,10 @@ namespace FreeDraw
         }
 
 
+        public void SetBrushModeArea()
+        {
+            current_brush = BrushClosedArea;
+        }
         
         void Awake()
         {
