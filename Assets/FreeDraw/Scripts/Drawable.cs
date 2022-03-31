@@ -2,10 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 namespace FreeDraw
 {
-    [RequireComponent(typeof(SpriteRenderer))]
+    // [RequireComponent(typeof(SpriteRenderer))]
     [RequireComponent(typeof(Collider2D))]  // REQUIRES A COLLIDER2D to function
     // 1. Attach this to a read/write enabled sprite image
     // 2. Set the drawing_layers  to use in the raycast
@@ -34,7 +35,7 @@ namespace FreeDraw
         // Used to reference THIS specific file without making all methods static
         public static Drawable drawable;
         // MUST HAVE READ/WRITE enabled set in the file editor of Unity
-        Sprite drawable_sprite;
+        public Sprite drawable_sprite;
         Texture2D drawable_texture;
 
         Vector2 previous_drag_position;
@@ -193,28 +194,44 @@ namespace FreeDraw
 
 
 
+        public Vector3 imagePos;
+
+        public float imageWidth;
+        public float imageHeight;
+
+        public Image testImage;
         // This is where the magic happens.
         // Detects when user is left clicking, which then call the appropriate function
         void Update()
         {
-            // Is the user holding down the left mouse button?
+            Vector2 mouse_world_position1 = Input.mousePosition;
+            Vector3 local_pos1 = transform.InverseTransformPoint(mouse_world_position1);
+            Debug.Log(local_pos1);
+            
             bool mouse_held_down = Input.GetMouseButton(0);
             if (mouse_held_down && !no_drawing_on_current_drag)
             {
+                print("fuk");
+            
+            
                 // Convert mouse coordinates to world coordinates
-                Vector2 mouse_world_position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                Vector2 mouse_world_position = Input.mousePosition;
 
-                // Check if the current mouse position overlaps our image
-                Collider2D hit = Physics2D.OverlapPoint(mouse_world_position, Drawing_Layers.value);
-                if (hit != null && hit.transform != null)
+                // testImage.transform.position = mouse_world_position;
+                var posInImage = (Input.mousePosition - imagePos);
+            
+                if (posInImage.x >= 0 && posInImage.x < imageWidth &&
+                    posInImage.y <=0  && -posInImage.y < imageHeight)
                 {
-                    // We're over the texture we're drawing on!
-                    // Use whatever function the current brush is
+                    print("fuk2");
+            
                     current_brush(mouse_world_position);
+            
                 }
-
                 else
                 {
+                    print("fuk3");
+            
                     // We're not over our destination texture
                     previous_drag_position = Vector2.zero;
                     if (!mouse_was_previously_held_down)
@@ -224,6 +241,27 @@ namespace FreeDraw
                         no_drawing_on_current_drag = true;
                     }
                 }
+                
+                // Check if the current mouse position overlaps our image
+                Collider2D hit = Physics2D.OverlapPoint(mouse_world_position, Drawing_Layers.value);
+                if (hit != null && hit.transform != null)
+                {
+                    // We're over the texture we're drawing on!
+                    // Use whatever function the current brush is
+                    //current_brush(mouse_world_position);
+                }
+            
+                else
+                {
+                    // We're not over our destination texture
+                    // previous_drag_position = Vector2.zero;
+                    // if (!mouse_was_previously_held_down)
+                    // {
+                    //     // This is a new drag where the user is left clicking off the canvas
+                    //     // Ensure no drawing happens until a new drag is started
+                    //     no_drawing_on_current_drag = true;
+                    // }
+                }
             }
             // Mouse is released
             else if (!mouse_held_down)
@@ -232,6 +270,45 @@ namespace FreeDraw
                 no_drawing_on_current_drag = false;
             }
             mouse_was_previously_held_down = mouse_held_down;
+            
+            
+
+            // Is the user holding down the left mouse button?
+            // bool mouse_held_down = Input.GetMouseButton(0);
+            // if (mouse_held_down && !no_drawing_on_current_drag)
+            // {
+            //     // Convert mouse coordinates to world coordinates
+            //     Vector2 mouse_world_position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            //
+            //     // Check if the current mouse position overlaps our image
+            //     Collider2D hit = Physics2D.OverlapPoint(mouse_world_position, Drawing_Layers.value);
+            //     if (hit != null && hit.transform != null)
+            //     {
+            //         // We're over the texture we're drawing on!
+            //         // Use whatever function the current brush is
+            //         current_brush(mouse_world_position);
+            //     }
+            //
+            //     else
+            //     {
+            //         // We're not over our destination texture
+            //         previous_drag_position = Vector2.zero;
+            //         if (!mouse_was_previously_held_down)
+            //         {
+            //             // This is a new drag where the user is left clicking off the canvas
+            //             // Ensure no drawing happens until a new drag is started
+            //             no_drawing_on_current_drag = true;
+            //         }
+            //     }
+            // }
+            // // Mouse is released
+            // else if (!mouse_held_down)
+            // {
+            //     previous_drag_position = Vector2.zero;
+            //     no_drawing_on_current_drag = false;
+            // }
+            // mouse_was_previously_held_down = mouse_held_down;
+            //
         }
 
 
@@ -317,28 +394,67 @@ namespace FreeDraw
             drawable_texture.Apply();
         }
 
+        
+        public Vector2 WorldToPixelCoordinates(Vector2 world_position, int method=1)
+        {
+            //method 1 default --> use canvas image sprite
+            if (method == 1)
+            {
+                return WorldToPixelCoordinatesCanvas(world_position);
+            }
 
-        public Vector2 WorldToPixelCoordinates(Vector2 world_position)
+            if (method == 2)
+            {
+                return WorldToPixelCoordinatesSprite(world_position);
+            }
+
+            return Vector2.zero;
+        }
+        
+
+        //for sprite renderer setup
+        public Vector2 WorldToPixelCoordinatesSprite(Vector2 world_position)
         {
             // Change coordinates to local coordinates of this image
             Vector3 local_pos = transform.InverseTransformPoint(world_position);
-
             // Change these to coordinates of pixels
             float pixelWidth = drawable_sprite.rect.width;
             float pixelHeight = drawable_sprite.rect.height;
-            float unitsToPixels = pixelWidth / drawable_sprite.bounds.size.x * transform.localScale.x;
+
+            float unitsToPixelsX = pixelWidth / drawable_sprite.bounds.size.x;
+            float unitsToPixelsH = pixelHeight / drawable_sprite.bounds.size.y;
 
             // Need to center our coordinates
-            float centered_x = local_pos.x * unitsToPixels + pixelWidth / 2;
-            float centered_y = local_pos.y * unitsToPixels + pixelHeight / 2;
+            float centered_x = local_pos.x * unitsToPixelsX + pixelWidth / 2;
+            float centered_y = local_pos.y * unitsToPixelsH + pixelHeight / 2;
 
             // Round current mouse position to nearest pixel
             Vector2 pixel_pos = new Vector2(Mathf.RoundToInt(centered_x), Mathf.RoundToInt(centered_y));
 
+            print(world_position +" " + local_pos + " " + pixel_pos);
+
             return pixel_pos;
         }
 
+        //for canvas image setup
+        public Vector2 WorldToPixelCoordinatesCanvas(Vector2 world_position)
+        {
+            // Change coordinates to local coordinates of this image
+            Vector3 local_pos = transform.InverseTransformPoint(world_position);
+            local_pos.y += imageHeight;
 
+            float y_normalize = local_pos.y / imageHeight;
+            float x_normalize = local_pos.x / imageWidth;
+            
+            // Change these to coordinates of pixels
+            float pixelWidth = drawable_sprite.rect.width;
+            float pixelHeight = drawable_sprite.rect.height;
+            
+            return new Vector2(x_normalize *pixelWidth , y_normalize*pixelHeight);
+        }
+
+        
+        
         // Changes every pixel to be the reset colour
         public void ResetCanvas()
         {
@@ -357,8 +473,9 @@ namespace FreeDraw
             drawable = this;
             // DEFAULT BRUSH SET HERE
             current_brush = PenBrush;
-
-            drawable_sprite = this.GetComponent<SpriteRenderer>().sprite;
+            
+            drawable_sprite = GetComponent<Image>().sprite;
+            // drawable_sprite = GetComponent<SpriteRenderer>().sprite;
             drawable_texture = drawable_sprite.texture;
 
             // Initialize clean pixels to use
