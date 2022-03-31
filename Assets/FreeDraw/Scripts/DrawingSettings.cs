@@ -1,15 +1,36 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 namespace FreeDraw
 {
+    public struct ColorBrush
+    {
+        public Button colorButton;
+        public string colorID;
+        public Color color;
+    }
     // Helper methods used to set drawing settings
     public class DrawingSettings : MonoBehaviour
     {
         public static bool isCursorOverUI = false;
         public float Transparency = 1f;
+        [SerializeField] private ColorBrush[] colorBrushes;
+
+
+        private void Start()
+        {
+            //setting Buttons name and actions
+            for (int i = 0; i < colorBrushes.Length; i++)
+            {
+                var i1 = i;
+                colorBrushes[i].colorButton.onClick.AddListener(delegate { SetMarkerColour(colorBrushes[i1].color); });
+                colorBrushes[i].colorButton.GetComponentInChildren<Text>().text = colorBrushes[i].colorID;
+            }
+        }
 
         // Changing pen settings is easy as changing the static properties Drawable.Pen_Colour and Drawable.Pen_Width
         public void SetMarkerColour(Color new_color)
@@ -56,6 +77,11 @@ namespace FreeDraw
             c.a = Transparency;
             SetMarkerColour(c);
             Drawable.drawable.SetPenBrush();
+        }
+
+        //color ID should be defined ni colorID array
+        public void SetColorByColorID(Color newColor)
+        {
         }
         public void SetEraser()
         {
