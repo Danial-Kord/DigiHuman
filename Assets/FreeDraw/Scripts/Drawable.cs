@@ -20,6 +20,8 @@ namespace FreeDraw
         public static int Pen_Width = 3;
 
 
+        [Tooltip("1 --> image canvas as paint plane,\n2--> sprite renderer as paint plane")]
+        public int paintMethod = 1;
         public delegate void Brush_Function(Vector2 world_position);
         // This is the function called when a left click happens
         // Pass in your own custom one to change the brush type
@@ -34,8 +36,17 @@ namespace FreeDraw
 
         // Used to reference THIS specific file without making all methods static
         public static Drawable drawable;
+        
         // MUST HAVE READ/WRITE enabled set in the file editor of Unity
         public Sprite drawable_sprite;
+        
+        
+        [Header("For method 1 only")]
+        public Transform imagePivotPos;
+
+        private float imageWidth;
+        private float imageHeight;
+        
         Texture2D drawable_texture;
 
         Vector2 previous_drag_position;
@@ -193,20 +204,12 @@ namespace FreeDraw
 
 
 
-
-        public Vector3 imagePos;
-
-        public float imageWidth;
-        public float imageHeight;
-
-        public Image testImage;
+        
         // This is where the magic happens.
         // Detects when user is left clicking, which then call the appropriate function
         void Update()
         {
-            Vector2 mouse_world_position1 = Input.mousePosition;
-            Vector3 local_pos1 = transform.InverseTransformPoint(mouse_world_position1);
-            Debug.Log(local_pos1);
+
             
             bool mouse_held_down = Input.GetMouseButton(0);
             if (mouse_held_down && !no_drawing_on_current_drag)
@@ -218,7 +221,7 @@ namespace FreeDraw
                 Vector2 mouse_world_position = Input.mousePosition;
 
                 // testImage.transform.position = mouse_world_position;
-                var posInImage = (Input.mousePosition - imagePos);
+                var posInImage = (Input.mousePosition - imagePivotPos.position);
             
                 if (posInImage.x >= 0 && posInImage.x < imageWidth &&
                     posInImage.y <=0  && -posInImage.y < imageHeight)
@@ -395,15 +398,15 @@ namespace FreeDraw
         }
 
         
-        public Vector2 WorldToPixelCoordinates(Vector2 world_position, int method=1)
+        public Vector2 WorldToPixelCoordinates(Vector2 world_position)
         {
             //method 1 default --> use canvas image sprite
-            if (method == 1)
+            if (paintMethod == 1)
             {
                 return WorldToPixelCoordinatesCanvas(world_position);
             }
 
-            if (method == 2)
+            if (paintMethod == 2)
             {
                 return WorldToPixelCoordinatesSprite(world_position);
             }
@@ -473,9 +476,18 @@ namespace FreeDraw
             drawable = this;
             // DEFAULT BRUSH SET HERE
             current_brush = PenBrush;
-            
-            drawable_sprite = GetComponent<Image>().sprite;
-            // drawable_sprite = GetComponent<SpriteRenderer>().sprite;
+
+            if (paintMethod == 1)
+            {
+                drawable_sprite = GetComponent<Image>().sprite;
+                imageHeight = GetComponent<RectTransform>().rect.height;
+                imageWidth = GetComponent<RectTransform>().rect.width;
+            }
+            else
+            {
+                drawable_sprite = GetComponent<SpriteRenderer>().sprite;
+
+            }
             drawable_texture = drawable_sprite.texture;
 
             // Initialize clean pixels to use

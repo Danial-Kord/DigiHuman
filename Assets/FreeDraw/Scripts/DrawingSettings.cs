@@ -1,12 +1,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace FreeDraw
 {
+    [Serializable]
     public struct ColorBrush
     {
         public Button colorButton;
@@ -23,18 +25,24 @@ namespace FreeDraw
 
         private void Start()
         {
+            SetTransparency(1);
+
             //setting Buttons name and actions
             for (int i = 0; i < colorBrushes.Length; i++)
             {
-                var i1 = i;
-                colorBrushes[i].colorButton.onClick.AddListener(delegate { SetMarkerColour(colorBrushes[i1].color); });
-                colorBrushes[i].colorButton.GetComponentInChildren<Text>().text = colorBrushes[i].colorID;
+                Int64 i1 = i;
+                colorBrushes[i].colorButton.onClick.AddListener(delegate
+                {
+                    SetMarkerColour(colorBrushes[i1].color);
+                });
+                colorBrushes[i].colorButton.GetComponentInChildren<TextMeshProUGUI>().text = colorBrushes[i].colorID;
             }
         }
 
         // Changing pen settings is easy as changing the static properties Drawable.Pen_Colour and Drawable.Pen_Width
         public void SetMarkerColour(Color new_color)
         {
+            new_color.a = Transparency;
             Drawable.Pen_Colour = new_color;
         }
         // new_width is radius in pixels
@@ -79,10 +87,6 @@ namespace FreeDraw
             Drawable.drawable.SetPenBrush();
         }
 
-        //color ID should be defined ni colorID array
-        public void SetColorByColorID(Color newColor)
-        {
-        }
         public void SetEraser()
         {
             SetMarkerColour(new Color(255f, 255f, 255f, 0f));
