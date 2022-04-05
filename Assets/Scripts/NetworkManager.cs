@@ -42,11 +42,21 @@ public class NetworkManager : MonoBehaviour
     }
 
     
+    
+    //starting coroutine for sending ASync to server
+    private void UploadImageGauGan(string localFileName)
+    {
+
+        StartCoroutine(Upload(localFileName, serverUploadURL,(responce) => { StartCoroutine(GetGauGanImage(responce)); })); //Get estimates }));
+    }
+    
+    
+    
     //starting coroutine for sending ASync to server
     private void UploadAndEstimatePose(string localFileName)
     {
-        
-        StartCoroutine(Upload(localFileName));
+
+        StartCoroutine(Upload(localFileName, serverUploadURL,(responce) => { StartCoroutine(GetPoseEstimates(responce)); })); //Get estimates }));
     }
     
     //Async file uploader
@@ -82,7 +92,7 @@ public class NetworkManager : MonoBehaviour
     }
 
     //Async file uploader method2
-    IEnumerator Upload(string localFileName) {
+    IEnumerator Upload(string localFileName, string url, Action<string> onFinishedUpload) {
 
         WWW localFile = new WWW("file:///" + localFileName);
         yield return localFile;
@@ -97,7 +107,7 @@ public class NetworkManager : MonoBehaviour
 
         postForm.AddBinaryData("file",localFile.bytes,localFileName,"text/plain");
 
-        UnityWebRequest www = UnityWebRequest.Post(serverUploadURL, postForm);
+        UnityWebRequest www = UnityWebRequest.Post(url, postForm);
         yield return www.SendWebRequest();
         
         if (www.result != UnityWebRequest.Result.Success) {
@@ -112,7 +122,8 @@ public class NetworkManager : MonoBehaviour
             }
             
             Debug.Log(www.downloadHandler.text);
-            StartCoroutine(GetPoseEstimates(www.downloadHandler.text));//Get estimates
+            //sending response to the action method
+            onFinishedUpload(www.downloadHandler.text);
             Debug.Log("Upload complete!");
         }
     }
@@ -161,6 +172,13 @@ public class NetworkManager : MonoBehaviour
         }
 
         frameReader.SetPosesQueue(poseJsons);
+        yield break;
+    }
+    
+    //getting GauGan image from the server
+    IEnumerator GetGauGanImage(string serverResponse)
+    {
+        Debug.Log(serverResponse);
         yield break;
     }
 }
