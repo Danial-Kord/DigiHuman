@@ -1,0 +1,183 @@
+0 unlabeled
+1 person
+2 bicycle
+3 car
+4 motorcycle
+5 airplane 124,252,0
+6 bus
+7 train
+8 truck
+9 boat 210,210,210
+10 traffic
+11 fire 255,50,50
+12 street
+13 stop
+14 parking
+15 bench
+16 bird
+17 cat
+18 dog
+19 horse
+20 sheep
+21 cow
+22 elephant
+23 bear
+24 zebra
+25 giraffe
+26 hat
+27 backpack
+28 umbrella
+29 shoe
+30 eye
+31 handbag
+32 tie
+33 suitcase
+34 frisbee
+35 skis
+36 snowboard
+37 sports
+38 kite
+39 baseball
+40 baseball
+41 skateboard
+42 surfboard
+43 tennis
+44 bottle
+45 plate
+46 wine
+47 cup
+48 fork
+49 knife
+50 spoon
+51 bowl
+52 banana
+53 apple
+54 sandwich
+55 orange
+56 broccoli
+57 carrot
+58 hot
+59 pizza
+60 donut
+61 cake
+62 chair
+63 couch
+64 potted
+65 bed
+66 mirror
+67 dining
+68 window
+69 desk
+70 toilet
+71 door
+72 tv
+73 laptop
+74 mouse
+75 remote
+76 keyboard
+77 cell
+78 microwave
+79 oven
+80 toaster
+81 sink
+82 refrigerator
+83 blender
+84 book
+85 clock
+86 vase
+87 scissors
+88 teddy
+89 hair
+90 toothbrush
+91 hair
+92 banner
+93 blanket
+94 branch 139,69,19
+95 bridge 210,105,30
+96 building-other
+97 bush 93,110,50
+98 cabinet
+99 cage
+100 cardboard
+101 carpet
+102 ceiling-other
+103 ceiling-tile
+104 cloth
+105 clothes
+106 clouds 239,239,239
+107 counter
+108 cupboard
+109 curtain
+110 desk-stuff
+111 dirt 44,30,22
+112 door-stuff
+113 fence
+114 floor-marble
+115 floor-other
+116 floor-stone
+117 floor-tile
+118 floor-wood
+119 flower 230,112,182
+120 fog 193,195,201
+121 food-other
+122 fruit
+123 furniture-other
+124 grass 183,210,78
+125 gravel
+126 ground-other
+127 hill 119,108,45
+128 house 222,184,135
+129 leaves 191,96,44
+130 light
+131 mat
+132 metal
+133 mirror-stuff
+134 moss
+135 mountain 60,59,75
+136 mud
+137 napkin
+138 net
+139 paper
+140 pavement 99,99,99
+141 pillow
+142 plant-other
+143 plastic
+144 platform
+145 playingfield
+146 railing
+147 railroad
+148 river 50,96,77
+149 road 152,126,106
+150 rock
+151 roof 139,0,0
+152 rug
+153 salad
+154 sand
+155 sea 56,79,131
+156 shelf 
+157 sky-other 117,158,223
+158 skyscraper
+159 snow 250,250,250
+160 solid-other
+161 stairs
+162 stone
+163 straw
+164 structural-other
+165 table
+166 tent
+167 textile-other
+168 towel
+169 tree 53,38,19
+170 vegetable
+171 wall-brick 178,34,34
+172 wall-concrete 
+173 wall-other
+174 wall-panel
+175 wall-stone
+176 wall-tile
+177 wall-wood
+178 water-other
+179 waterdrops
+180 window-blind
+181 window-other 0,206,209
+182 wood

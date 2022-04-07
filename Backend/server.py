@@ -85,6 +85,7 @@ def GauGanRunner(output_color_file):
     static_image_location = parse_static_filepath(export_image_location)
     if verbose:
         print(static_image_location)
+    
 
 
 
@@ -183,6 +184,7 @@ def upload_file():
                 # return Response(stream_with_context(calculate_video_pose_estimation(file_name)),mimetype="text/json")
             elif mimestart in ['image']:
                 print("image type")
+                GauGanRunner(file_name)
             else:
                 print("Wrong input!")
                 return "Oops!"
@@ -218,7 +220,6 @@ def exit_handler():
 
 
 if __name__ == '__main__':
-    print(run_model(""))
     atexit.register(exit_handler)
     run_server()
     # app.run(debug=True)
