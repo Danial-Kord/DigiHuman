@@ -12,3 +12,6 @@
 /obj
 /Assembly-CSharp.csproj
 /Assembly-CSharp-Editor.csproj
+__pycache__
+/Assets/RenderOutput
+/Backend/img

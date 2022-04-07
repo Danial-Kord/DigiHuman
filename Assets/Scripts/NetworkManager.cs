@@ -8,6 +8,7 @@ using UnityEngine.Networking;
 public class NetworkManager : MonoBehaviour
 {
 
+    public static NetworkManager instance;
     [Header("Server")]
     [SerializeField] private string serverUploadURL; //server URL
     [SerializeField] private string serverPoseEstimatorURL; //server URL
@@ -23,6 +24,7 @@ public class NetworkManager : MonoBehaviour
 
     private void Start()
     {
+        instance = this;
         //for testing in engine only
 #if UNITY_EDITOR
         if (enableDebug)
@@ -44,9 +46,8 @@ public class NetworkManager : MonoBehaviour
     
     
     //starting coroutine for sending ASync to server
-    private void UploadImageGauGan(string localFileName)
+    public void UploadImageGauGan(string localFileName )
     {
-
         StartCoroutine(Upload(localFileName, serverUploadURL,(responce) => { StartCoroutine(GetGauGanImage(responce)); })); //Get estimates }));
     }
     
