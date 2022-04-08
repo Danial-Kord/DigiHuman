@@ -417,6 +417,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Transparency: 1
+  colorBrushes: []
 --- !u!4 &198275829
 Transform:
   m_ObjectHideFlags: 0
@@ -1515,16 +1516,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 571045d48cec88d48848f53bf379f673, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  paintMethod: 1
   Drawing_Layers:
     serializedVersion: 2
     m_Bits: 256
   Reset_Canvas_On_Play: 1
   Reset_Colour: {r: 1, g: 1, b: 1, a: 1}
   drawable_sprite: {fileID: 0}
-  imagePos: {x: 0, y: 0, z: 0}
-  imageWidth: 0
-  imageHeight: 0
-  testImage: {fileID: 0}
+  imagePivotPos: {fileID: 0}
 --- !u!212 &975978399
 SpriteRenderer:
   m_ObjectHideFlags: 0
