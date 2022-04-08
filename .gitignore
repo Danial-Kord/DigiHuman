@@ -15,3 +15,4 @@
 __pycache__
 /Assets/RenderOutput
 /Backend/img
+/Backend/checkpoints/coco_pretrained/latest_net_G.pth

@@ -17,10 +17,13 @@ public class GauGanClient : MonoBehaviour
 
     
     [Header("Image")]
+    [SerializeField] private GameObject resultImageCanvas;
     [SerializeField] private Image imageSource;
-    
-    
-    
+    private Sprite chosenGauGanSprite;
+    private string lastImageGeneratedPath;
+
+    [Header("Camera Background")] 
+    [SerializeField] private Image backgroundImage;
 
     public void SendAndReceiveSketch()
     {
@@ -42,7 +45,8 @@ public class GauGanClient : MonoBehaviour
 #if UNITY_EDITOR
             UnityEditor.AssetDatabase.Refresh();
 #endif
-        imageSource.sprite = LoadNewSprite(dirPath);
+        lastImageGeneratedPath = dirPath;
+        ShowChoiceMenuCanvas();
     }
     
     private Sprite LoadNewSprite(string FilePath, float PixelsPerUnit = 100.0f) {
@@ -53,7 +57,22 @@ public class GauGanClient : MonoBehaviour
  
         return NewSprite;
     }
- 
+
+    
+    public void SetGauGanView(bool show)
+    {
+        if (show)
+        {
+            backgroundImage.sprite = chosenGauGanSprite;
+        }
+        backgroundImage.gameObject.SetActive(show);
+    }
+    
+    public void ShowChoiceMenuCanvas()
+    {
+        imageSource.sprite = LoadNewSprite(lastImageGeneratedPath);
+        resultImageCanvas.SetActive(true);
+    }
     private Texture2D LoadTexture(string FilePath) {
  
         // Load a PNG or JPG file from disk to a Texture2D
@@ -69,6 +88,17 @@ public class GauGanClient : MonoBehaviour
                 return Tex2D;                 // If data = readable -> return texture
         }  
         return null;                     // Return null if load failed
+    }
+
+    public void OnSaveImage()
+    {
+        chosenGauGanSprite = imageSource.sprite;
+        SetGauGanView(true);
+    }
+
+    public void OnRemoveImage()
+    {
+        resultImageCanvas.SetActive(false);
     }
     
 }
