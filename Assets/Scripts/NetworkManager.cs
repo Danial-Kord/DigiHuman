@@ -4,10 +4,16 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using UnityEngine.Networking;
+using Random = UnityEngine.Random;
 
 public class NetworkManager : MonoBehaviour
 {
 
+    public enum WaitingModeUI
+    {
+        None, ProgressBar, Loading
+    }
+    
     public static NetworkManager instance;
     [Header("Server")]
     [SerializeField] private string serverUploadURL; //server URL
@@ -15,6 +21,12 @@ public class NetworkManager : MonoBehaviour
 
     [Header("Dependencies")] 
     [SerializeField] private FrameReader frameReader;
+
+    [Header("Waiting UI")] 
+    [SerializeField] private GameObject waitingUI;
+    [SerializeField] private GameObject loading;
+    [SerializeField] private GameObject progressBar;
+    
     //for testing in engine only
 #if UNITY_EDITOR
     [Header("Debug")] 
@@ -22,13 +34,14 @@ public class NetworkManager : MonoBehaviour
     [SerializeField] private string filePath; //for testing system
 #endif
 
-    private void Start()
+    private void Awake()
     {
         instance = this;
         //for testing in engine only
 #if UNITY_EDITOR
         if (enableDebug)
         {
+            //UploadImageGauGan(filePath);
             UploadAndEstimatePose(filePath);
         } 
 #endif
@@ -46,9 +59,9 @@ public class NetworkManager : MonoBehaviour
     
     
     //starting coroutine for sending ASync to server
-    public void UploadImageGauGan(string localFileName )
+    public void UploadImageGauGan(string localFileName,Action<string,byte[]> onFinished)
     {
-        StartCoroutine(Upload(localFileName, serverUploadURL,(responce) => { StartCoroutine(GetGauGanImage(responce)); })); //Get estimates }));
+        StartCoroutine(Upload(localFileName, serverUploadURL,onFinished)); //Get estimates }));
     }
     
     
@@ -57,7 +70,7 @@ public class NetworkManager : MonoBehaviour
     private void UploadAndEstimatePose(string localFileName)
     {
 
-        StartCoroutine(Upload(localFileName, serverUploadURL,(responce) => { StartCoroutine(GetPoseEstimates(responce)); })); //Get estimates }));
+        StartCoroutine(Upload(localFileName, serverUploadURL,(responce,bytes) => { StartCoroutine(GetPoseEstimates(responce,bytes)); })); //Get estimates }));
     }
     
     //Async file uploader
@@ -93,7 +106,7 @@ public class NetworkManager : MonoBehaviour
     }
 
     //Async file uploader method2
-    IEnumerator Upload(string localFileName, string url, Action<string> onFinishedUpload) {
+    IEnumerator Upload(string localFileName, string url, Action<string,byte[]> onFinishedUpload) {
 
         WWW localFile = new WWW("file:///" + localFileName);
         yield return localFile;
@@ -109,7 +122,10 @@ public class NetworkManager : MonoBehaviour
         postForm.AddBinaryData("file",localFile.bytes,localFileName,"text/plain");
 
         UnityWebRequest www = UnityWebRequest.Post(url, postForm);
+        
+        CheckAndEnableWaitingModeUI(WaitingModeUI.Loading,true);
         yield return www.SendWebRequest();
+        CheckAndEnableWaitingModeUI(WaitingModeUI.Loading,false);
         
         if (www.result != UnityWebRequest.Result.Success) {
             Debug.Log(www.error);
@@ -124,19 +140,50 @@ public class NetworkManager : MonoBehaviour
             
             Debug.Log(www.downloadHandler.text);
             //sending response to the action method
-            onFinishedUpload(www.downloadHandler.text);
+            onFinishedUpload(www.downloadHandler.text,results);
             Debug.Log("Upload complete!");
         }
     }
+
+
+    private void CheckAndEnableWaitingModeUI(WaitingModeUI waitingModeUI,bool enable)
+    {
+        if (enable)
+        {
+            if (!waitingModeUI.Equals(WaitingModeUI.None))
+            {
+                waitingUI.SetActive(true);
+                if (waitingModeUI.Equals(WaitingModeUI.Loading))
+                {
+                    loading.SetActive(true);
+                    progressBar.SetActive(false);
+                }
+                else if (waitingModeUI.Equals(WaitingModeUI.ProgressBar))
+                {
+                    loading.SetActive(false);
+                    progressBar.SetActive(true);
+                }
+            }
+        }
+        else
+        {
+            waitingUI.SetActive(false);
+        }
+    }
+
+
+
     
     //getting estimates for video pose
-    IEnumerator GetPoseEstimates(string poseVideoName)
+    IEnumerator GetPoseEstimates(string poseVideoName, byte[] bytes)
     {
         PoseRequest poseRequest = new PoseRequest();
         poseRequest.index = 0;
         poseRequest.fileName = poseVideoName;
 
         List<PoseJson> poseJsons = new List<PoseJson>();
+        CheckAndEnableWaitingModeUI(WaitingModeUI.ProgressBar,true);
+
         while (true)
         {
             UnityWebRequest webRequest = new UnityWebRequest(serverPoseEstimatorURL, "POST");
@@ -162,6 +209,7 @@ public class NetworkManager : MonoBehaviour
                     Debug.Log(JsonUtility.FromJson<PoseJson>(webRequest.downloadHandler.text).frame);
                     poseRequest.index += 1;
                 }
+                UIManager.Instancce.UpdateProgressBar(1);
             }
             catch (Exception e)
             {
@@ -173,6 +221,8 @@ public class NetworkManager : MonoBehaviour
         }
 
         frameReader.SetPosesQueue(poseJsons);
+        CheckAndEnableWaitingModeUI(WaitingModeUI.ProgressBar,false);
+
         yield break;
     }
     

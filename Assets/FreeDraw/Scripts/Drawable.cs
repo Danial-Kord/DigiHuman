@@ -465,7 +465,7 @@ namespace FreeDraw
             drawable_texture.Apply();
         }
 
-        public void SaveTextureAndUpload()
+        public string SaveTexturePng()
         {
             
             byte[] bytes = drawable_texture.EncodeToPNG();
@@ -481,7 +481,7 @@ namespace FreeDraw
 #if UNITY_EDITOR
             UnityEditor.AssetDatabase.Refresh();
 #endif
-            NetworkManager.instance.UploadImageGauGan(dirPath);
+            return dirPath;
         }
         
 
