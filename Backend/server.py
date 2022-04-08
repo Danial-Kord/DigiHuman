@@ -16,6 +16,8 @@ from threading import Thread
 import subprocess
 from color_grey_conversion import color_to_grey
 from test import run
+from flask import send_file
+
 
 mimetypes.init()
 
@@ -85,7 +87,7 @@ def GauGanRunner(output_color_file):
     static_image_location = parse_static_filepath(export_image_location)
     if verbose:
         print(static_image_location)
-    
+    return  static_image_location
 
 
 
@@ -184,7 +186,8 @@ def upload_file():
                 # return Response(stream_with_context(calculate_video_pose_estimation(file_name)),mimetype="text/json")
             elif mimestart in ['image']:
                 print("image type")
-                GauGanRunner(file_name)
+                GuGanImage = GauGanRunner(file_name)
+                return send_file(GuGanImage, mimetype='image/png')
             else:
                 print("Wrong input!")
                 return "Oops!"
