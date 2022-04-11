@@ -16,3 +16,6 @@ __pycache__
 /Assets/RenderOutput
 /Backend/img
 /Backend/checkpoints/coco_pretrained/latest_net_G.pth
+/Backend/dataset/val_label/greyscale.png
+/Backend/dataset/val_inst/greyscale.png
+/Backend/dataset/val_img/greyscale.png
