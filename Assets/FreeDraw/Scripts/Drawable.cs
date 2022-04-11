@@ -465,6 +465,25 @@ namespace FreeDraw
             drawable_texture.Apply();
         }
 
+        public string SaveTexturePng()
+        {
+            
+            byte[] bytes = drawable_texture.EncodeToPNG();
+            var dirPath = Application.dataPath + "/RenderOutput";
+            if (!System.IO.Directory.Exists(dirPath))
+            {
+                System.IO.Directory.CreateDirectory(dirPath);
+            }
+
+            dirPath = dirPath + "/R_" + Random.Range(0, 100000) + ".png";
+            System.IO.File.WriteAllBytes(dirPath, bytes);
+            Debug.Log(bytes.Length / 1024 + "Kb was saved as: " + dirPath);
+#if UNITY_EDITOR
+            UnityEditor.AssetDatabase.Refresh();
+#endif
+            return dirPath;
+        }
+        
 
         public void SetBrushModeArea()
         {

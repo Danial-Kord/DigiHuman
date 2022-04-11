@@ -4,16 +4,22 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using UnityEngine.Networking;
+using Random = UnityEngine.Random;
 
 public class NetworkManager : MonoBehaviour
 {
 
+
+    public static NetworkManager instance;
     [Header("Server")]
     [SerializeField] private string serverUploadURL; //server URL
     [SerializeField] private string serverPoseEstimatorURL; //server URL
 
     [Header("Dependencies")] 
     [SerializeField] private FrameReader frameReader;
+
+
+    
     //for testing in engine only
 #if UNITY_EDITOR
     [Header("Debug")] 
@@ -21,13 +27,15 @@ public class NetworkManager : MonoBehaviour
     [SerializeField] private string filePath; //for testing system
 #endif
 
-    private void Start()
+    private void Awake()
     {
+        instance = this;
         //for testing in engine only
 #if UNITY_EDITOR
         if (enableDebug)
         {
-            UploadAndEstimatePose(filePath);
+            //UploadImageGauGan(filePath);
+            //UploadAndEstimatePose(filePath);
         } 
 #endif
     }
@@ -42,11 +50,20 @@ public class NetworkManager : MonoBehaviour
     }
 
     
+    
     //starting coroutine for sending ASync to server
-    private void UploadAndEstimatePose(string localFileName)
+    public void UploadImageGauGan(string localFileName,Action<string,byte[]> onFinished)
     {
-        
-        StartCoroutine(Upload(localFileName));
+        StartCoroutine(Upload(localFileName, serverUploadURL,onFinished)); //Get estimates }));
+    }
+    
+    
+    
+    //starting coroutine for sending ASync to server
+    public void UploadAndEstimatePose(string localFileName)
+    {
+
+        StartCoroutine(Upload(localFileName, serverUploadURL,(responce,bytes) => { StartCoroutine(GetPoseEstimates(responce,bytes)); })); //Get estimates }));
     }
     
     //Async file uploader
@@ -82,7 +99,7 @@ public class NetworkManager : MonoBehaviour
     }
 
     //Async file uploader method2
-    IEnumerator Upload(string localFileName) {
+    IEnumerator Upload(string localFileName, string url, Action<string,byte[]> onFinishedUpload) {
 
         WWW localFile = new WWW("file:///" + localFileName);
         yield return localFile;
@@ -97,8 +114,11 @@ public class NetworkManager : MonoBehaviour
 
         postForm.AddBinaryData("file",localFile.bytes,localFileName,"text/plain");
 
-        UnityWebRequest www = UnityWebRequest.Post(serverUploadURL, postForm);
+        UnityWebRequest www = UnityWebRequest.Post(url, postForm);
+        
+        UIManager.Instancce.CheckAndEnableWaitingModeUI(WaitingModeUI.Loading,true);
         yield return www.SendWebRequest();
+        UIManager.Instancce.CheckAndEnableWaitingModeUI(WaitingModeUI.Loading,false);
         
         if (www.result != UnityWebRequest.Result.Success) {
             Debug.Log(www.error);
@@ -112,19 +132,27 @@ public class NetworkManager : MonoBehaviour
             }
             
             Debug.Log(www.downloadHandler.text);
-            StartCoroutine(GetPoseEstimates(www.downloadHandler.text));//Get estimates
+            //sending response to the action method
+            onFinishedUpload(www.downloadHandler.text,results);
             Debug.Log("Upload complete!");
         }
     }
+
+
+
+
+
     
     //getting estimates for video pose
-    IEnumerator GetPoseEstimates(string poseVideoName)
+    IEnumerator GetPoseEstimates(string poseVideoName, byte[] bytes)
     {
         PoseRequest poseRequest = new PoseRequest();
         poseRequest.index = 0;
         poseRequest.fileName = poseVideoName;
 
         List<PoseJson> poseJsons = new List<PoseJson>();
+        UIManager.Instancce.CheckAndEnableWaitingModeUI(WaitingModeUI.ProgressBar,true);
+
         while (true)
         {
             UnityWebRequest webRequest = new UnityWebRequest(serverPoseEstimatorURL, "POST");
@@ -150,6 +178,7 @@ public class NetworkManager : MonoBehaviour
                     Debug.Log(JsonUtility.FromJson<PoseJson>(webRequest.downloadHandler.text).frame);
                     poseRequest.index += 1;
                 }
+                UIManager.Instancce.UpdateProgressBar(1);
             }
             catch (Exception e)
             {
@@ -161,6 +190,15 @@ public class NetworkManager : MonoBehaviour
         }
 
         frameReader.SetPosesQueue(poseJsons);
+        UIManager.Instancce.CheckAndEnableWaitingModeUI(WaitingModeUI.ProgressBar,false);
+
+        yield break;
+    }
+    
+    //getting GauGan image from the server
+    IEnumerator GetGauGanImage(string serverResponse)
+    {
+        Debug.Log(serverResponse);
         yield break;
     }
 }

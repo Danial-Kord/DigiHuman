@@ -13,15 +13,84 @@ import pose_estimator
 from flask import jsonify , stream_with_context
 from flask import Response
 from threading import Thread
+import subprocess
+from color_grey_conversion import color_to_grey
+from test import run
+from flask import send_file
+
 
 mimetypes.init()
 
 TEMP_FILE_FOLDER = "temp/"
-
+STATIC_IMG_FOLDER = "results"
 
 pose_video_data = {} # name of file to array of json
 pose_video_data_statues = {} # name of file to array of json
 process_reqs = []
+
+# GAU gan values
+IMG_FOLDER = os.path.join(os.path.dirname(__file__), "dataset/val_img")
+INST_FOLDER = os.path.join(os.path.dirname(__file__), "dataset/val_inst")
+LABEL_FOLDER = os.path.join(os.path.dirname(__file__), "dataset/val_label")
+verbose = True
+
+def copy_file(old, new):
+    command_string = "cp " + old + " " + new
+    subprocess.check_output(command_string.split(" "))
+
+def make_processable(greyscale_fname, output_color_file):
+    # Inst folder
+    ouptut_greyscale_file = INST_FOLDER + "/" + greyscale_fname
+
+    # Converts the file to greyscale and saves it to the inst folder?
+    if verbose:
+        print(output_color_file, ouptut_greyscale_file)
+    color_to_grey.convert_rgb_image_to_greyscale(
+        output_color_file,
+        ouptut_greyscale_file
+    )
+
+    ouptut_greyscale_file_labels = LABEL_FOLDER + "/" + greyscale_fname
+
+    copy_file(ouptut_greyscale_file, ouptut_greyscale_file_labels)
+
+    ouptut_greyscale_file_img = IMG_FOLDER + "/" + greyscale_fname
+    copy_file(ouptut_greyscale_file, ouptut_greyscale_file_img)
+
+def parse_static_filepath(filepath):
+    split_filepath = filepath.split('/')
+    while len(split_filepath) > 2:
+        split_filepath.pop(0)
+
+    return '/'.join(split_filepath)
+
+def run_model(filename):
+    """Runs the pretrained COCO model"""
+    # TODO check to see if this goes any faster with GPUS enabled...
+    # TODO make is it so that concurrent users won't mess with eachother :P aka have hashed or something dataset routes...
+    # that will also take a lot of cleaning up...
+    # TODO figure out how to not do this from the command line...
+    return run(verbose=verbose)
+
+def GauGanRunner(output_color_file):
+
+
+
+    greyscale_fname = "greyscale.png"
+
+    make_processable(greyscale_fname, output_color_file)
+
+    # We shouldnt need to pass it a string anymore
+    export_image_location = run_model(greyscale_fname)
+    if verbose:
+        print(export_image_location)
+    static_image_location = parse_static_filepath(export_image_location)
+    if verbose:
+        print(static_image_location)
+    return  static_image_location
+
+
+
 
 #for round robin process
 def process_queue():
@@ -117,6 +186,8 @@ def upload_file():
                 # return Response(stream_with_context(calculate_video_pose_estimation(file_name)),mimetype="text/json")
             elif mimestart in ['image']:
                 print("image type")
+                GuGanImage = GauGanRunner(file_name)
+                return send_file(GuGanImage, mimetype='image/png')
             else:
                 print("Wrong input!")
                 return "Oops!"
