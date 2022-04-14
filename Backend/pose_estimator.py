@@ -3,8 +3,9 @@ import json
 import cv2
 import mediapipe as mp
 import numpy as np
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
+
+
+
 
 # For adding new landmarks based on default predicted landmarks
 def add_extra_points(landmark_list):
@@ -87,16 +88,14 @@ def landmarks_list_to_array(landmark_list):
                        for lmk in landmark_list.landmark])
 
 
-mp_drawing = mp.solutions.drawing_utils
-mp_drawing_styles = mp.solutions.drawing_styles
-mp_pose = mp.solutions.pose
+
 
 
 def Save_Json(path, index,dump_data):
     json_path = path + "" + str(index) + ".json"
     with open(json_path, 'w') as fl:
         # np.around(pose_landmarks, 4).tolist()
-        fl.write(dump_data)
+        fl.write(json.dumps(dump_data, indent=2, separators=(',', ': ')))
         fl.close()
 
 def Json_Generator(pose_landmarks, rows, cols,frame):
@@ -115,6 +114,9 @@ def Json_Generator(pose_landmarks, rows, cols,frame):
 
 
 def Pose_Images():
+    mp_drawing = mp.solutions.drawing_utils
+    mp_drawing_styles = mp.solutions.drawing_styles
+    mp_pose = mp.solutions.pose
     # For static images:
     IMAGE_FILES = ["C:\\Danial\\Projects\\Clone\\3DModelGeneratorTest\\pifuhd\\sample_images\\5.jpg"]
     BG_COLOR = (192, 192, 192) # gray
@@ -176,6 +178,9 @@ def Pose_Images():
 
 # For video input:
 def Pose_Video(video_path):
+    mp_drawing = mp.solutions.drawing_utils
+    mp_drawing_styles = mp.solutions.drawing_styles
+    mp_pose = mp.solutions.pose
     json_path = "TestPath"
     cap = cv2.VideoCapture(video_path)
     frame = 0
@@ -230,3 +235,114 @@ def Pose_Video(video_path):
           break
     cap.release()
     # return json.dumps(out_put)
+
+
+
+
+
+def Complete_pose_Video(video_path):
+
+    mp_drawing = mp.solutions.drawing_utils
+    mp_drawing_styles = mp.solutions.drawing_styles
+    mp_holistic = mp.solutions.holistic
+    json_path = "TestPath"
+    cap = cv2.VideoCapture(video_path)
+    #cap = cv2.VideoCapture(0)
+    with mp_holistic.Holistic(
+        min_detection_confidence=0.5,
+        min_tracking_confidence=0.5,
+        model_complexity=2) as holistic:
+      while cap.isOpened():
+        success, image = cap.read()
+        if not success:
+          print("Ignoring empty camera frame.")
+          # If loading a video, use 'break' instead of 'continue'.
+          continue
+
+        # To improve performance, optionally mark the image as not writeable to
+        # pass by reference.
+        image.flags.writeable = False
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        results = holistic.process(image)
+
+        # Draw landmark annotation on the image.
+        image.flags.writeable = True
+        image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+        mp_drawing.draw_landmarks(
+            image,
+            results.face_landmarks,
+            mp_holistic.FACEMESH_CONTOURS,
+            landmark_drawing_spec=None,
+            connection_drawing_spec=mp_drawing_styles
+            .get_default_face_mesh_contours_style())
+        mp_drawing.draw_landmarks(
+            image,
+            results.pose_landmarks,
+            mp_holistic.POSE_CONNECTIONS,
+            landmark_drawing_spec=mp_drawing_styles
+            .get_default_pose_landmarks_style())
+        # Flip the image horizontally for a selfie-view display.
+        cv2.imshow('MediaPipe Holistic', cv2.flip(image, 1))
+        if cv2.waitKey(5) & 0xFF == 27:
+          break
+    cap.release()
+
+
+#add_extra_points([])
+
+def Hand_pose_video(video_path, debug=False):
+    mp_drawing = mp.solutions.drawing_utils
+    mp_drawing_styles = mp.solutions.drawing_styles
+    mp_hands = mp.solutions.hands
+    # cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture(video_path)
+    frame = 0
+    with mp_hands.Hands(
+            model_complexity=0,
+            min_detection_confidence=0.5,
+            min_tracking_confidence=0.5) as hands:
+        while cap.isOpened():
+            frame += 1
+            success, image = cap.read()
+            if not success:
+                # print("Ignoring empty camera frame.")
+                # If loading a video, use 'break' instead of 'continue'.
+                break
+                # continue
+
+            # To improve performance, optionally mark the image as not writeable to
+            # pass by reference.
+            image.flags.writeable = False
+            image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+            results = hands.process(image)
+
+            # Draw the hand annotations on the image.
+            image.flags.writeable = True
+            image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+            hands_array = []
+            if results.multi_hand_landmarks:
+                for hand_landmarks in results.multi_hand_landmarks:
+                    mp_drawing.draw_landmarks(
+                        image,
+                        hand_landmarks,
+                        mp_hands.HAND_CONNECTIONS,
+                        mp_drawing_styles.get_default_hand_landmarks_style(),
+                        mp_drawing_styles.get_default_hand_connections_style())
+                    dump_data = {
+                        'predictions': landmarks_list_to_array(hand_landmarks),
+                        'frame': frame
+                    }
+                    hands_array.append(dump_data)
+
+            yield hands_array
+            if debug:
+                json_path = "C:/Danial/Projects/Danial/DigiHuman/Backend/hand_json/"
+                Save_Json(json_path,frame,hands_array)
+            # Flip the image horizontally for a selfie-view display.
+            cv2.imshow('MediaPipe Hands', cv2.flip(image, 1))
+            if cv2.waitKey(5) & 0xFF == 27:
+                break
+    cap.release()
+
+for i in Hand_pose_video(video_path="C:\Danial\Projects\Danial\DigiHuman\Backend\Video\WIN_20220414_23_51_39_Pro.mp4", debug=True):
+    continue

@@ -26,6 +26,10 @@ STATIC_IMG_FOLDER = "results"
 
 pose_video_data = {} # name of file to array of json
 pose_video_data_statues = {} # name of file to array of json
+
+hand_pose_video_data = {} # name of file to array of json
+hand_pose_video_data_statues = {} # name of file to array of json
+
 process_reqs = []
 
 # GAU gan values
@@ -127,6 +131,18 @@ def calculate_video_pose_estimation(file_name):
     pose_video_data_statues[file_name] = True #means process is finished
     # return pose_estimator.Pose_Video(file_name)
 
+# filename = path to video, json_array_len= how many frames data should be sent per request
+def calculate_video_hand_pose_estimation(file_name):
+    print()
+    global hand_pose_video_data
+    global hand_pose_video_data_statues
+
+    json_data = []
+    # print("wtf")
+    for i in pose_estimator.Hand_pose_video(file_name):
+        hand_pose_video_data[file_name].append(i)
+    hand_pose_video_data_statues[file_name] = True #means process is finished
+    # return pose_estimator.Pose_Video(file_name)
 
 
 @app.route("/pose", methods=["POST"])  # Hard-coded login route
@@ -174,11 +190,11 @@ def upload_file():
                 # global process_reqs
                 # process_reqs.append(file_name)
                 print(":(")
-                global pose_video_data
-                global pose_video_data_statues
-                pose_video_data[file_name] = []
-                pose_video_data_statues[file_name] = False
-                thread2 = Thread(target=calculate_video_pose_estimation,args=(file_name,))
+                global hand_pose_video_data
+                global hand_pose_video_data_statues
+                hand_pose_video_data[file_name] = []
+                hand_pose_video_data_statues[file_name] = False
+                thread2 = Thread(target=calculate_video_hand_pose_estimation,args=(file_name,))
                 thread2.start()
                 print("video type")
                 return Response(file_name)
