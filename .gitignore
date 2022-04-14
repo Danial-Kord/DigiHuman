@@ -19,3 +19,5 @@ __pycache__
 /Backend/dataset/val_label/greyscale.png
 /Backend/dataset/val_inst/greyscale.png
 /Backend/dataset/val_img/greyscale.png
+/Assets/StreamingAssets
+/Backend/hand_json
