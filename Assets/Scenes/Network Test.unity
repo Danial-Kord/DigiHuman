@@ -1088,7 +1088,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &203192802
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1598,8 +1598,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf5f050ec7d03644583aeeace65725d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  frameReader: {fileID: 0}
   character: {fileID: 0}
+  debugMode: 0
+  debugGameObject: {fileID: 0}
+  frameReader: {fileID: 0}
   characterBodyIK:
     nose: {fileID: 0}
     leftEyeInner: {fileID: 0}
@@ -1631,8 +1633,7 @@ MonoBehaviour:
   hips: {fileID: 0}
   IKEnable: 0
   normalMode: 0
-  debugMode: 0
-  debugGameObject: {fileID: 0}
+  characterPlacement: {x: 0, y: 0, z: 0}
 --- !u!114 &547913705
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1645,7 +1646,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6fdc792877873a040970dded4b1a1e84, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterMapper: {fileID: 0}
+  pose3DMapper: {fileID: 0}
+  handPose: {fileID: 0}
   videoPlayer: {fileID: 0}
   fraction: 0.9
   fractionX: 1.2
@@ -1668,6 +1670,7 @@ MonoBehaviour:
     height: 0
     frame: 0
   debug: 0
+  readFromFileHand: 0
   jsonTest: {fileID: 4900000, guid: e865bbd47cdbb2441aea684bdcaf656d, type: 3}
 --- !u!4 &547913706
 Transform:
@@ -1908,8 +1911,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf5f050ec7d03644583aeeace65725d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  frameReader: {fileID: 620901066}
   character: {fileID: 1231570487}
+  debugMode: 0
+  debugGameObject: {fileID: 749412365}
+  frameReader: {fileID: 620901066}
   characterBodyIK:
     nose: {fileID: 0}
     leftEyeInner: {fileID: 0}
@@ -1941,8 +1946,7 @@ MonoBehaviour:
   hips: {fileID: 1231570338}
   IKEnable: 0
   normalMode: 1
-  debugMode: 0
-  debugGameObject: {fileID: 749412365}
+  characterPlacement: {x: 0, y: 0, z: 0}
 --- !u!114 &620901066
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1955,7 +1959,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6fdc792877873a040970dded4b1a1e84, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterMapper: {fileID: 620901065}
+  pose3DMapper: {fileID: 0}
+  handPose: {fileID: 0}
   videoPlayer: {fileID: 670222376}
   fraction: 1
   fractionX: 1
@@ -1978,6 +1983,7 @@ MonoBehaviour:
     height: 0
     frame: 0
   debug: 1
+  readFromFileHand: 0
   jsonTest: {fileID: 10900000, guid: c3d0f1648f39e1a408ca5a56b25e96bf, type: 3}
 --- !u!4 &620901067
 Transform:
@@ -3407,8 +3413,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf5f050ec7d03644583aeeace65725d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  frameReader: {fileID: 0}
   character: {fileID: 0}
+  debugMode: 0
+  debugGameObject: {fileID: 0}
+  frameReader: {fileID: 0}
   characterBodyIK:
     nose: {fileID: 0}
     leftEyeInner: {fileID: 0}
@@ -3440,8 +3448,7 @@ MonoBehaviour:
   hips: {fileID: 0}
   IKEnable: 0
   normalMode: 0
-  debugMode: 0
-  debugGameObject: {fileID: 0}
+  characterPlacement: {x: 0, y: 0, z: 0}
 --- !u!114 &1135277942
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3454,7 +3461,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6fdc792877873a040970dded4b1a1e84, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterMapper: {fileID: 0}
+  pose3DMapper: {fileID: 0}
+  handPose: {fileID: 0}
   videoPlayer: {fileID: 0}
   fraction: 1.2
   fractionX: 1.2
@@ -3477,6 +3485,7 @@ MonoBehaviour:
     height: 0
     frame: 0
   debug: 0
+  readFromFileHand: 0
   jsonTest: {fileID: 4900000, guid: e865bbd47cdbb2441aea684bdcaf656d, type: 3}
 --- !u!4 &1135277943
 Transform:

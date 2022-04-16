@@ -27,6 +27,24 @@ public class PoseJson
     
 }
 
+
+
+[Serializable]
+public class HandJson
+{
+    public BodyPart[] handsR;
+    public BodyPart[] handsL;
+    public int frame;
+}
+
+[Serializable]
+public class HandJsonVector
+{
+    public BodyPartVector[] handsR;
+    public BodyPartVector[] handsL;
+    public int frame;
+}
+
 [Serializable] 
 public struct BodyPartVector
 {
@@ -46,7 +64,8 @@ public class PoseJsonVector
 
 public class FrameReader : MonoBehaviour
 {
-    public CharacterMapper characterMapper;
+    public Pose3DMapper pose3DMapper;
+    public HandsPreprocessor handPose;
     public VideoPlayer videoPlayer;
 
     [Header("Fractions to multiply by pose estimates")]
@@ -65,17 +84,23 @@ public class FrameReader : MonoBehaviour
 
     [Header("Debug")] 
     [SerializeField] private bool debug;
-    [SerializeField] private TextAsset jsonTest;
 
-    private void Awake()
+    [SerializeField] private bool readFromFileHand;
+    [SerializeField] private TextAsset jsonTest;
+    
+
+    private void Start()
     {
         estimatedPoses = new Queue<PoseJsonVector>();
         if (debug)
         {
             videoPlayer.Prepare();
-
-            //currentPoseJson = GetBodyParts(jsonTest.text);
-            //currentPoseJsonVector = GetBodyPartsVector(currentPoseJson);
+            if (readFromFileHand)
+            {
+                HandJson handJson = GetBodyParts<HandJson>(jsonTest.text);
+                HandJsonVector handsVector = GetHandsVector(handJson);
+                handPose.Predict3DPose(handsVector);
+            }
         }
         
     }
@@ -109,7 +134,7 @@ public class FrameReader : MonoBehaviour
                     currentPoseJsonVector.predictions[i].position, currentPoseJsonVectorNew.predictions[i].position,
                     timer / nextFrameTime);
             }
-            characterMapper.Predict3DPose(currentPoseJsonVector);
+            pose3DMapper.Predict3DPose(currentPoseJsonVector);
         }
         catch (Exception e)
         {
@@ -120,9 +145,9 @@ public class FrameReader : MonoBehaviour
 
     
     
-    private PoseJson GetBodyParts(string jsonText)
+    private T GetBodyParts<T>(string jsonText)
     {
-        return JsonUtility.FromJson<PoseJson>(jsonText);
+        return JsonUtility.FromJson<T>(jsonText);
     }
     private PoseJsonVector GetBodyPartsVector(PoseJson poseJson)
     {
@@ -142,6 +167,32 @@ public class FrameReader : MonoBehaviour
 
         return poseJsonVector;
     }
+    
+    
+    private HandJsonVector GetHandsVector(HandJson handJson)
+    {
+        int len = handJson.handsR.Length;
+        int len2 = handJson.handsL.Length;
+        HandJsonVector handJsonVector = new HandJsonVector();
+        handJsonVector.handsR = new BodyPartVector[len];
+        handJsonVector.handsL = new BodyPartVector[len2];
+        handJsonVector.frame = handJson.frame;
+        for (int i = 0; i < len; i++)
+        {
+            BodyPart data = handJson.handsR[i];
+            handJsonVector.handsR[i].position = new Vector3(-data.x,-data.y,-data.z);
+            handJsonVector.handsR[i].visibility = data.visibility;
+        }
+
+        for (int i = 0; i < len2; i++)
+        {
+            BodyPart data = handJson.handsL[i];
+            handJsonVector.handsL[i].position = new Vector3(data.x,data.y,data.z);
+            handJsonVector.handsL[i].visibility = data.visibility;
+        }
+        return handJsonVector;
+    }
+    
 
     public void SetPosesQueue(List<PoseJson> estimated)
     {
