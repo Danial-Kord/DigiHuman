@@ -321,23 +321,27 @@ def Hand_pose_video(video_path, debug=False):
             image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
             hands_array = []
             if results.multi_hand_landmarks:
+                index = 0
                 for hand_landmarks in results.multi_hand_landmarks:
+                    index += 1
                     mp_drawing.draw_landmarks(
                         image,
                         hand_landmarks,
                         mp_hands.HAND_CONNECTIONS,
                         mp_drawing_styles.get_default_hand_landmarks_style(),
                         mp_drawing_styles.get_default_hand_connections_style())
-                    dump_data = {
-                        'predictions': landmarks_list_to_array(hand_landmarks),
-                        'frame': frame
-                    }
-                    hands_array.append(dump_data)
-
-            yield hands_array
+                    hands_array.append(landmarks_list_to_array(hand_landmarks))
+            for i in range(2 - len(hands_array)):
+                hands_array.append([])
+            json_data = {
+                'handsR': hands_array[0],
+                'handsL': hands_array[1],
+                'frame': frame
+            }
+            yield json_data
             if debug:
                 json_path = "C:/Danial/Projects/Danial/DigiHuman/Backend/hand_json/"
-                Save_Json(json_path,frame,hands_array)
+                Save_Json(json_path,frame,json_data)
             # Flip the image horizontally for a selfie-view display.
             cv2.imshow('MediaPipe Hands', cv2.flip(image, 1))
             if cv2.waitKey(5) & 0xFF == 27:
