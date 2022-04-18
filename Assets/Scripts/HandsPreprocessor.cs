@@ -61,6 +61,32 @@ public class HandsPreprocessor : CharacterMapper
             rightHand[i].LandmarkPose = handR[i].position;
         }
         
+
+        
+        
+        Vector3 finger1 = handR[(int) HandPoints.ThumbSecond].position;
+        Vector3 finger2 = handR[(int) HandPoints.Wrist].position;
+        Vector3 finger3 = handR[(int) HandPoints.PinkyFirst].position;
+        Vector3 finger4 = handR[(int) HandPoints.PinkyFirst].position;
+        
+
+        
+        
+        Vector3 a = handR[(int) HandPoints.ThumbSecond].position;
+        Vector3 wrist = handR[(int) HandPoints.Wrist].position;
+        Vector3 c = handR[(int) HandPoints.PinkyFirst].position;
+        Vector3 forward = c.TriangleNormal(a,wrist);
+        
+        Vector3 upward = (finger1 + finger2 + finger3 + finger4) / 4.0f - wrist;
+        upward.Normalize();
+        
+        ExtensionMethods.DrawNormal(rightHand[(int) HandPoints.Wrist].Transform.position,forward);
+        
+        Vector3 normalR = wrist.TriangleNormal(handR[(int) HandPoints.ThumbSecond].position,handR[(int) HandPoints.MiddleFingerFirst].position);
+        rightHand[(int) HandPoints.Wrist].Transform.rotation = Quaternion.LookRotation(handR[(int) HandPoints.ThumbSecond].position - handR[(int) HandPoints.MiddleFingerFirst].position, normalR) * rightHand[(int) HandPoints.Wrist].InverseRotation;
+        
+        
+        return;
         //setting bone positions
         for (int i = 0; i < rightHand.Length; i++)
         {
@@ -77,8 +103,6 @@ public class HandsPreprocessor : CharacterMapper
 
         }
         
-        Vector3 forward = -rightHand[(int) HandPoints.Wrist].Transform.forward;
-
         //rotation
         
         for (int i = 0; i < rightHand.Length; i++)
@@ -90,8 +114,9 @@ public class HandsPreprocessor : CharacterMapper
                 bone.Transform.rotation = Quaternion.LookRotation(bone.Transform.position- bone.Child.Transform.position, fv) * bone.InverseRotation;
             }
             
-            else if (bone.Child != null)
+            else if (bone.Child != null && false)
             {
+                //forward = rightHand[(int) HandPoints.Wrist].Transform.position - bone.Transform.position;
                 bone.Transform.rotation = Quaternion.LookRotation(bone.Transform.position- bone.Child.Transform.position, forward) * bone.InverseRotation;
             }
             /*
@@ -122,10 +147,10 @@ public class HandsPreprocessor : CharacterMapper
             }
         }
         // Set Inverse
-        Vector3 a = jointPoints[(int) HandPoints.PinkyFirst].Transform.position;
+        Vector3 a = jointPoints[(int) HandPoints.ThumbSecond].Transform.position;
         Vector3 b = jointPoints[(int) HandPoints.Wrist].Transform.position;
-        Vector3 c = jointPoints[(int) HandPoints.ThumbFirst].Transform.position;
-        var forward = b.TriangleNormal(a,c);
+        Vector3 c = jointPoints[(int) HandPoints.PinkyFirst].Transform.position;
+        var forward = c.TriangleNormal(a,b);
         foreach (var jointPoint in jointPoints)
         {
             if (jointPoint.Transform != null)
@@ -139,7 +164,26 @@ public class HandsPreprocessor : CharacterMapper
                 jointPoint.InverseRotation = jointPoint.Inverse * jointPoint.InitRotation;
             }
         }
+        
+        //set inverse rotation wrist
+        var wrist = jointPoints[(int)HandPoints.Wrist];
+        wrist.InitRotation = wrist.Transform.rotation;
+        var rf = wrist.Transform.position.TriangleNormal(jointPoints[(int) HandPoints.ThumbSecond].Transform.position,
+            jointPoints[(int) HandPoints.MiddleFingerFirst].Transform.position);
+        origin = wrist.Transform.position;
+        Forward = rf;
+        wrist.Inverse = Quaternion.Inverse(Quaternion.LookRotation(jointPoints[(int)HandPoints.ThumbSecond].Transform.position - jointPoints[(int)HandPoints.MiddleFingerFirst].Transform.position, rf));
+        wrist.InverseRotation = wrist.Inverse * wrist.InitRotation;
+        
     }
+
+    private Vector3 origin = Vector3.forward;
+    private Vector3 Forward = Vector3.forward;
+    private void OnDrawGizmos()
+    {
+        Gizmos.DrawRay(origin,Forward);
+    }
+
     private void InitializeRightHand()
     {
         // Right Hand

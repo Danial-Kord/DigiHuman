@@ -173,6 +173,7 @@ public class Pose3DMapper : CharacterMapper
         Vector3 b = jointPoints[(int) BodyPoints.Hips].Transform.position;
         Vector3 c = jointPoints[(int) BodyPoints.RightHip].Transform.position;
         var forward = b.TriangleNormal(a,c);
+        
         foreach (var jointPoint in jointPoints)
         {
             if (jointPoint.Transform != null)
@@ -214,6 +215,7 @@ public class Pose3DMapper : CharacterMapper
         // rHand.InverseRotation = rHand.Inverse * rHand.InitRotation;
         
         // distanceOffset = character.transform.position
+        Debug.Log("wtf");
     }
     
     
@@ -222,6 +224,7 @@ public class Pose3DMapper : CharacterMapper
     private void UpdateNormalMode(BodyPartVector[] bodyPartVectors)
     {
         //setting position of each bone
+        jointPoints[(int) BodyPoints.Hips].Transform.position = bodyPartVectors[(int) BodyPoints.Hips].position;
         for (int i = 0; i < jointPoints.Length && i < bodyPartVectors.Length; i++)
         {
             if(i == (int) BodyPoints.RightShoulder || i == (int) BodyPoints.LeftShoulder || 
@@ -233,14 +236,14 @@ public class Pose3DMapper : CharacterMapper
                     jointPoints[i].Transform.position = bodyPartVectors[i].position;
             }
         }
-        
+
         //setting hip rotation
         Vector3 a = bodyPartVectors[(int) BodyPoints.LeftShoulder].position;
         Vector3 b = jointPoints[(int) BodyPoints.Hips].Transform.position;
         Vector3 c = bodyPartVectors[(int) BodyPoints.RightShoulder].position;
         jointPoints[(int) BodyPoints.Hips].Transform.rotation = Quaternion.LookRotation(a.TriangleNormal(b, c)) *
                                                                 jointPoints[(int) BodyPoints.Hips].InverseRotation;
-        
+
         // Head Rotation
         
         Vector3 mouth = (bodyPartVectors[(int) BodyPoints.LeftMouth].position + bodyPartVectors[(int) BodyPoints.RightMouth].position)/2.0f;
@@ -259,6 +262,7 @@ public class Pose3DMapper : CharacterMapper
         Debug.DrawLine(head.Transform.position,head.Transform.position+60*normal,Color.blue);
 
         head.Transform.rotation = Quaternion.LookRotation(gaze, normal) * head.InverseRotation;
+        
         
         // rotate each of bones
         Vector3 forward = jointPoints[(int) BodyPoints.Hips].Transform.forward;
@@ -416,8 +420,8 @@ public class Pose3DMapper : CharacterMapper
         }
         catch (Exception e)
         {
-            throw e;
             Debug.Log("problem");
+            throw e;
         }
     }
 }
