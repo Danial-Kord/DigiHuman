@@ -86,8 +86,11 @@ public class FrameReader : MonoBehaviour
     [SerializeField] private bool debug;
 
     [SerializeField] private bool readFromFileHand;
-    [SerializeField] private TextAsset jsonTest;
+    [SerializeField] private TextAsset jsonTestHand;
     
+    [SerializeField] private bool readFromFilePose;
+    [SerializeField] private TextAsset jsonTestPose;
+
 
     private void Start()
     {
@@ -95,19 +98,27 @@ public class FrameReader : MonoBehaviour
         if (debug)
         {
             videoPlayer.Prepare();
-            if (readFromFileHand)
-            {
-                HandJson handJson = GetBodyParts<HandJson>(jsonTest.text);
-                HandJsonVector handsVector = GetHandsVector(handJson);
-                handPose.Predict3DPose(handsVector);
-            }
         }
-        
     }
 
     private float timer = 0;
     private void Update()
     {
+        if (debug)
+        {
+            if (readFromFilePose)
+            {
+                currentPoseJson = GetBodyParts<PoseJson>(jsonTestPose.text);
+                currentPoseJsonVector = GetBodyPartsVector(currentPoseJson);
+                pose3DMapper.Predict3DPose(currentPoseJsonVector);
+            }
+            if (readFromFileHand)
+            {
+                HandJson handJson = GetBodyParts<HandJson>(jsonTestHand.text);
+                HandJsonVector handsVector = GetHandsVector(handJson);
+                handPose.Predict3DPose(handsVector);
+            }
+        }
         timer += Time.deltaTime;
         if(estimatedPoses.Count.Equals(0))
             return;

@@ -98,19 +98,6 @@ def Save_Json(path, index,dump_data):
         fl.write(json.dumps(dump_data, indent=2, separators=(',', ': ')))
         fl.close()
 
-def Json_Generator(pose_landmarks, rows, cols,frame):
-    # print(results.pose_landmarks)
-    # print(pose_landmarks)
-    # print(results.pose_landmarks)
-    # Dump actual JSON.
-    dump_data = {
-        'predictions': pose_landmarks,
-        'frame': frame,
-        'height': rows,
-        'width': cols
-    }
-    # return json.dumps(dump_data, indent=4 , separators=(',', ': '))
-    return dump_data
 
 
 def Pose_Images():
@@ -177,11 +164,11 @@ def Pose_Images():
 
 
 # For video input:
-def Pose_Video(video_path):
+def Pose_Video(video_path,debug = False):
+    print("pose estimator started...")
     mp_drawing = mp.solutions.drawing_utils
     mp_drawing_styles = mp.solutions.drawing_styles
     mp_pose = mp.solutions.pose
-    json_path = "TestPath"
     cap = cv2.VideoCapture(video_path)
     frame = 0
     out_put = []
@@ -221,10 +208,18 @@ def Pose_Video(video_path):
             add_extra_points(pose_landmarks)
             # add_extra_points(world_pose_landmarks)
 
-            json_data = Json_Generator(pose_landmarks, rows, cols,frame)
+            json_data = {
+                'predictions': pose_landmarks,
+                'frame': frame,
+                'height': rows,
+                'width': cols
+                }
             # out_put.append(json_data)
             # print(json_data)
             yield json_data
+            if debug:
+                json_path = "C:/Danial/Projects/Danial/DigiHuman/Backend/json/"
+                Save_Json(json_path,frame,json_data)
         except:
             print("wtf")
             continue
@@ -241,7 +236,6 @@ def Pose_Video(video_path):
 
 
 def Complete_pose_Video(video_path):
-
     mp_drawing = mp.solutions.drawing_utils
     mp_drawing_styles = mp.solutions.drawing_styles
     mp_holistic = mp.solutions.holistic
@@ -298,9 +292,9 @@ def Hand_pose_video(video_path, debug=False):
     cap = cv2.VideoCapture(video_path)
     frame = 0
     with mp_hands.Hands(
-            model_complexity=0,
-            min_detection_confidence=0.5,
-            min_tracking_confidence=0.5) as hands:
+            model_complexity=1,
+            min_detection_confidence=0.8,
+            min_tracking_confidence=0.8) as hands:
         while cap.isOpened():
             frame += 1
             success, image = cap.read()
@@ -348,5 +342,9 @@ def Hand_pose_video(video_path, debug=False):
                 break
     cap.release()
 
-for i in Hand_pose_video(video_path="C:\Danial\Projects\Danial\DigiHuman\Backend\Video\WIN_20220414_23_51_39_Pro.mp4", debug=True):
+
+# for i in Hand_pose_video(video_path="C:\Danial\Projects\Danial\DigiHuman\Backend\Video\WIN_20220414_23_51_39_Pro.mp4", debug=True):
+#     continue
+
+for i in Pose_Video(video_path="C:\Danial\Projects\Danial\DigiHuman\Backend\Video\Action_with_wiper_Trim.mp4", debug=True):
     continue
