@@ -2942,7 +2942,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a413d704b86669643ae27a8024f2c80a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  character: {fileID: 1534601135}
+  character: {fileID: 801841298}
   debugMode: 1
   debugGameObject: {fileID: 888376049}
 --- !u!1 &637350357
@@ -3495,6 +3495,11 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 792443251}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &801841298 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 100096, guid: 412b92d4feeb9c548bfa98f62c4d1022, type: 3}
+  m_PrefabInstance: {fileID: 1879415107}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &818713892
 GameObject:
   m_ObjectHideFlags: 0

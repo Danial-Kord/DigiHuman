@@ -33,6 +33,8 @@ public class HandsPreprocessor : CharacterMapper
 {
     private JointPoint[] leftHand;
     private JointPoint[] rightHand;
+    private JointPoint[] rightRootFingers;
+    private JointPoint[] leftRootFingers;
 
     protected override void InitializationHumanoidPose()
     {
@@ -86,7 +88,6 @@ public class HandsPreprocessor : CharacterMapper
         rightHand[(int) HandPoints.Wrist].Transform.rotation = Quaternion.LookRotation(handR[(int) HandPoints.ThumbSecond].position - handR[(int) HandPoints.MiddleFingerFirst].position, normalR) * rightHand[(int) HandPoints.Wrist].InverseRotation;
         
         
-        return;
         //setting bone positions
         for (int i = 0; i < rightHand.Length; i++)
         {
@@ -114,10 +115,10 @@ public class HandsPreprocessor : CharacterMapper
                 bone.Transform.rotation = Quaternion.LookRotation(bone.Transform.position- bone.Child.Transform.position, fv) * bone.InverseRotation;
             }
             
-            else if (bone.Child != null && false)
+            else if (bone.Child != null)
             {
                 //forward = rightHand[(int) HandPoints.Wrist].Transform.position - bone.Transform.position;
-                bone.Transform.rotation = Quaternion.LookRotation(bone.Transform.position- bone.Child.Transform.position, forward) * bone.InverseRotation;
+                bone.Transform.rotation = Quaternion.LookRotation(bone.Transform.position- bone.Child.Transform.position, -rightHand[(int) HandPoints.Wrist].Transform.forward) * bone.InverseRotation;
             }
             /*
             if (bone.Parent != null)
@@ -135,6 +136,8 @@ public class HandsPreprocessor : CharacterMapper
         
         
     }
+
+
 
     private void SetupInverseAndDistance(JointPoint[] jointPoints)
     {
