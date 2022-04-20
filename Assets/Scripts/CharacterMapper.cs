@@ -10,11 +10,13 @@ public class JointPoint
     public Quaternion InitRotation;
     public Quaternion Inverse;
     public Quaternion InverseRotation;
-
+    public Vector3 InitialRotation;
+    
     public JointPoint Child = null;
     public JointPoint Parent = null;
 
     public float DistanceFromChild;
+    public float DistanceFromDad;
     
     
     // For Kalman filter
