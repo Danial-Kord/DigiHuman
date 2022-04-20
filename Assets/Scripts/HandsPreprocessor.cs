@@ -35,13 +35,26 @@ public class HandsPreprocessor : CharacterMapper
     private JointPoint[] rightHand;
     private JointPoint[] rightRootFingers;
     private JointPoint[] leftRootFingers;
-
+    private HandPoints[] rootHandPoints;
     protected override void InitializationHumanoidPose()
     {
         InitializeRightHand();
         InitializeLeftHand();
+        rightRootFingers = new JointPoint[5];
+        leftRootFingers = new JointPoint[5];
+        rootHandPoints = new[]
+        {
+            HandPoints.ThumbFirst,
+            HandPoints.PinkyFirst,
+            HandPoints.IndexFingerFirst,
+            HandPoints.MiddleFingerFirst,
+            HandPoints.RingFingerFirst,
+        };
+        InitializeRootFingers(rightHand,rightRootFingers);
+        InitializeRootFingers(leftHand,leftRootFingers);
         SetupInverseAndDistance(rightHand);
         SetupInverseAndDistance(leftHand);
+
     }
 
     public override void Predict3DPose(PoseJsonVector poseJsonVector)
@@ -66,9 +79,9 @@ public class HandsPreprocessor : CharacterMapper
 
         
         
-        Vector3 finger1 = handR[(int) HandPoints.ThumbSecond].position;
-        Vector3 finger2 = handR[(int) HandPoints.Wrist].position;
-        Vector3 finger3 = handR[(int) HandPoints.PinkyFirst].position;
+        Vector3 finger1 = handR[(int) HandPoints.MiddleFingerFirst].position;
+        Vector3 finger2 = handR[(int) HandPoints.IndexFingerFirst].position;
+        Vector3 finger3 = handR[(int) HandPoints.RingFingerFirst].position;
         Vector3 finger4 = handR[(int) HandPoints.PinkyFirst].position;
         
 
@@ -87,6 +100,20 @@ public class HandsPreprocessor : CharacterMapper
         Vector3 normalR = wrist.TriangleNormal(handR[(int) HandPoints.ThumbSecond].position,handR[(int) HandPoints.MiddleFingerFirst].position);
         rightHand[(int) HandPoints.Wrist].Transform.rotation = Quaternion.LookRotation(handR[(int) HandPoints.ThumbSecond].position - handR[(int) HandPoints.MiddleFingerFirst].position, normalR) * rightHand[(int) HandPoints.Wrist].InverseRotation;
         
+        /*
+        
+        for (int i = 0; i < rootHandPoints.Length; i++)
+        {
+
+            JointPoint bone = rightHand[(int)rootHandPoints[i]];
+            Debug.Log((int)rootHandPoints[i]);
+            JointPoint parent = rightHand[(int)HandPoints.Wrist];
+            float distance = bone.DistanceFromDad;
+            Vector3 direction = (-parent.LandmarkPose + bone.LandmarkPose) / (bone.LandmarkPose - parent.LandmarkPose).magnitude;
+
+            bone.Transform.position = parent.Transform.position + direction * distance;
+
+        }
         
         //setting bone positions
         for (int i = 0; i < rightHand.Length; i++)
@@ -94,31 +121,58 @@ public class HandsPreprocessor : CharacterMapper
             JointPoint bone = rightHand[i];
             if (bone.Child != null)
             {
-                JointPoint child = bone.Child;
-                float distance = bone.DistanceFromChild;
-                Vector3 direction = (-bone.LandmarkPose + child.LandmarkPose) / (-bone.LandmarkPose + child.LandmarkPose).magnitude;
-                Debug.Log(direction);
-                child.Transform.position = bone.Transform.position + direction * distance;
-                Debug.Log(distance + "  " + Vector3.Distance(child.Transform.position,bone.Transform.position));
+                if (bone.Child.Transform != null)
+                {
+                    JointPoint child = bone.Child;
+                    float distance = bone.DistanceFromChild;
+                    Vector3 direction = (-bone.LandmarkPose + child.LandmarkPose) / (-bone.LandmarkPose + child.LandmarkPose).magnitude;
+                    child.Transform.position = bone.Transform.position + direction * distance;
+                    Debug.Log(distance + "  " + Vector3.Distance(child.Transform.position,bone.Transform.position));
+                }
             }
-
         }
+        
+*/
         
         //rotation
         
         for (int i = 0; i < rightHand.Length; i++)
         {
+            // if(i == (int) HandPoints.PinkyThird || i == (int) HandPoints.ThumbThird || 
+            //    i == (int) HandPoints.IndexFingerThird || i == (int) HandPoints.RingFingerThird
+            //    || i == (int) HandPoints.MiddleFingerThird)
+            //     continue;
             JointPoint bone = rightHand[i];
+            
+            // if (bone.Parent != null)
+            // {
+            //     print(bone.Parent.Transform.name);
+            //     Vector3 fv = bone.Parent.LandmarkPose - bone.LandmarkPose;
+            //     Vector3 forward1 = -bone.LandmarkPose + bone.Child.LandmarkPose;
+            //     Vector3 eulur = bone.InitialRotation;
+            //     eulur.x += Vector3.Angle(fv, forward1);
+            //     bone.Transform.eulerAngles = eulur;
+            // }
+            // else if (bone.Child != null)
+            // {
+            //     //forward = rightHand[(int) HandPoints.Wrist].Transform.position - bone.Transform.position;
+            //     //bone.Transform.rotation = Quaternion.LookRotation(bone.LandmarkPose- bone.Child.LandmarkPose, (rightHand[(int) HandPoints.Wrist].LandmarkPose - bone.LandmarkPose)) * bone.InverseRotation;
+            //     // bone.Transform.rotation = Quaternion.LookRotation(bone.LandmarkPose- bone.Child.LandmarkPose, (rightHand[(int) HandPoints.Wrist].LandmarkPose - bone.LandmarkPose)) * bone.InverseRotation;
+            //     //bone.Transform.rotation = Quaternion.LookRotation(bone.LandmarkPose- bone.Child.LandmarkPose, upward) * bone.InverseRotation;
+            // }
+            
             if (bone.Parent != null)
             {
-                Vector3 fv = bone.Parent.Transform.position - bone.Transform.position;
-                bone.Transform.rotation = Quaternion.LookRotation(bone.Transform.position- bone.Child.Transform.position, fv) * bone.InverseRotation;
+                print(bone.Parent.Transform.name);
+                Vector3 fv = bone.Parent.LandmarkPose - bone.LandmarkPose;
+                bone.Transform.rotation = Quaternion.LookRotation(bone.LandmarkPose- bone.Child.LandmarkPose, fv) * bone.InverseRotation;
             }
-            
             else if (bone.Child != null)
             {
                 //forward = rightHand[(int) HandPoints.Wrist].Transform.position - bone.Transform.position;
-                bone.Transform.rotation = Quaternion.LookRotation(bone.Transform.position- bone.Child.Transform.position, -rightHand[(int) HandPoints.Wrist].Transform.forward) * bone.InverseRotation;
+                bone.Transform.rotation = Quaternion.LookRotation(bone.LandmarkPose- bone.Child.LandmarkPose, (rightHand[(int) HandPoints.Wrist].LandmarkPose - bone.LandmarkPose)) * bone.InverseRotation;
+                // bone.Transform.rotation = Quaternion.LookRotation(bone.LandmarkPose- bone.Child.LandmarkPose, (rightHand[(int) HandPoints.Wrist].LandmarkPose - bone.LandmarkPose)) * bone.InverseRotation;
+                //bone.Transform.rotation = Quaternion.LookRotation(bone.LandmarkPose- bone.Child.LandmarkPose, upward) * bone.InverseRotation;
             }
             /*
             if (bone.Parent != null)
@@ -145,10 +199,28 @@ public class HandsPreprocessor : CharacterMapper
         {
             if (jointPoints[i].Child != null)
             {
-                jointPoints[i].DistanceFromChild = Vector3.Distance(jointPoints[i].Child.Transform.position,
-                    jointPoints[i].Transform.position);
+                if(jointPoints[i].Child.Transform != null)            
+                {
+                    jointPoints[i].DistanceFromChild = Vector3.Distance(jointPoints[i].Child.Transform.position,
+                        jointPoints[i].Transform.position);
+                }
+            }
+
+            if (jointPoints[i].Transform != null)
+            {
+                jointPoints[i].InitialRotation = jointPoints[i].Transform.eulerAngles;
             }
         }
+        
+        
+        
+        
+        for (int i = 0; i < rootHandPoints.Length; i++)
+        {
+            jointPoints[(int)rootHandPoints[i]].DistanceFromDad = Vector3.Distance(jointPoints[(int)HandPoints.Wrist].Transform.position,
+                    jointPoints[(int)rootHandPoints[i]].Transform.position);
+        }
+        
         // Set Inverse
         Vector3 a = jointPoints[(int) HandPoints.ThumbSecond].Transform.position;
         Vector3 b = jointPoints[(int) HandPoints.Wrist].Transform.position;
@@ -163,8 +235,11 @@ public class HandsPreprocessor : CharacterMapper
 
             if (jointPoint.Child != null)
             {
-                jointPoint.Inverse = Quaternion.Inverse(Quaternion.LookRotation(jointPoint.Transform.position - jointPoint.Child.Transform.position, forward));
-                jointPoint.InverseRotation = jointPoint.Inverse * jointPoint.InitRotation;
+                if (jointPoint.Child.Transform != null)
+                {
+                    jointPoint.Inverse = Quaternion.Inverse(Quaternion.LookRotation(jointPoint.Transform.position - jointPoint.Child.Transform.position, forward));
+                    jointPoint.InverseRotation = jointPoint.Inverse * jointPoint.InitRotation;
+                }
             }
         }
         
@@ -187,6 +262,29 @@ public class HandsPreprocessor : CharacterMapper
         Gizmos.DrawRay(origin,Forward);
     }
 
+    private void InitializeRootFingers(JointPoint[] bones,JointPoint[] rootFingers)
+    {
+        rootFingers[0] = new JointPoint(){
+        Transform = bones[(int) HandPoints.ThumbFirst].Transform
+        }; 
+        rootFingers[1] = new JointPoint(){
+        Transform = bones[(int) HandPoints.PinkyFirst].Transform
+        }; 
+        rootFingers[2] = new JointPoint(){
+        Transform = bones[(int) HandPoints.MiddleFingerFirst].Transform
+        }; 
+        rootFingers[3] = new JointPoint(){
+        Transform = bones[(int) HandPoints.RingFingerFirst].Transform
+        }; 
+        rootFingers[4] = new JointPoint(){
+        Transform = bones[(int) HandPoints.IndexFingerFirst].Transform
+        }; 
+        for (int i = 0; i < rootFingers.Length; i++)
+        {
+            rootFingers[i].Parent = bones[(int) HandPoints.Wrist];
+        }
+    }
+
     private void InitializeRightHand()
     {
         // Right Hand
@@ -203,7 +301,9 @@ public class HandsPreprocessor : CharacterMapper
         //child and parent
         rightHand[(int) HandPoints.ThumbFirst].Child = rightHand[(int) HandPoints.ThumbSecond];
         rightHand[(int) HandPoints.ThumbSecond].Child = rightHand[(int) HandPoints.ThumbThird];
+        rightHand[(int) HandPoints.ThumbThird].Child = rightHand[(int) HandPoints.ThumbFourth];
         rightHand[(int) HandPoints.ThumbSecond].Parent = rightHand[(int) HandPoints.ThumbFirst];
+        rightHand[(int) HandPoints.ThumbThird].Parent = rightHand[(int) HandPoints.ThumbSecond];
         
         //index
         rightHand[(int) HandPoints.IndexFingerFirst].Transform = anim.GetBoneTransform(HumanBodyBones.RightIndexProximal);
@@ -212,8 +312,9 @@ public class HandsPreprocessor : CharacterMapper
         //child and parent
         rightHand[(int) HandPoints.IndexFingerFirst].Child = rightHand[(int) HandPoints.IndexFingerSecond];
         rightHand[(int) HandPoints.IndexFingerSecond].Child = rightHand[(int) HandPoints.IndexFingerThird];
+        rightHand[(int) HandPoints.IndexFingerThird].Child = rightHand[(int) HandPoints.IndexFingerFourth];
         rightHand[(int) HandPoints.IndexFingerSecond].Parent = rightHand[(int) HandPoints.IndexFingerFirst];
-        //rightHand[(int) HandPoints.IndexFingerSecond].Parent = rightHand[(int) HandPoints.IndexFingerFirst];
+        rightHand[(int) HandPoints.IndexFingerThird].Parent = rightHand[(int) HandPoints.IndexFingerSecond];
         
         //middle
         rightHand[(int) HandPoints.MiddleFingerFirst].Transform = anim.GetBoneTransform(HumanBodyBones.RightMiddleProximal);
@@ -222,7 +323,9 @@ public class HandsPreprocessor : CharacterMapper
         //child and parent
         rightHand[(int) HandPoints.MiddleFingerFirst].Child = rightHand[(int) HandPoints.MiddleFingerSecond];
         rightHand[(int) HandPoints.MiddleFingerSecond].Child = rightHand[(int) HandPoints.MiddleFingerThird];
+        rightHand[(int) HandPoints.MiddleFingerThird].Child = rightHand[(int) HandPoints.MiddleFingerFourth];
         rightHand[(int) HandPoints.MiddleFingerSecond].Parent = rightHand[(int) HandPoints.MiddleFingerFirst];
+        rightHand[(int) HandPoints.MiddleFingerThird].Parent = rightHand[(int) HandPoints.MiddleFingerSecond];
         
         //ring
         rightHand[(int) HandPoints.RingFingerFirst].Transform = anim.GetBoneTransform(HumanBodyBones.RightRingProximal);
@@ -231,7 +334,9 @@ public class HandsPreprocessor : CharacterMapper
         //child and parent
         rightHand[(int) HandPoints.RingFingerFirst].Child = rightHand[(int) HandPoints.RingFingerSecond];
         rightHand[(int) HandPoints.RingFingerSecond].Child = rightHand[(int) HandPoints.RingFingerThird];
+        rightHand[(int) HandPoints.RingFingerThird].Child = rightHand[(int) HandPoints.RingFingerFourth];
         rightHand[(int) HandPoints.RingFingerSecond].Parent = rightHand[(int) HandPoints.RingFingerFirst];
+        rightHand[(int) HandPoints.RingFingerThird].Parent = rightHand[(int) HandPoints.RingFingerSecond];
         
         //pinky
         rightHand[(int) HandPoints.PinkyFirst].Transform = anim.GetBoneTransform(HumanBodyBones.RightLittleProximal);
@@ -240,7 +345,9 @@ public class HandsPreprocessor : CharacterMapper
         //child and parent
         rightHand[(int) HandPoints.PinkyFirst].Child = rightHand[(int) HandPoints.PinkySecond];
         rightHand[(int) HandPoints.PinkySecond].Child = rightHand[(int) HandPoints.PinkyThird];
+        rightHand[(int) HandPoints.PinkyThird].Child = rightHand[(int) HandPoints.PinkyFourth];
         rightHand[(int) HandPoints.PinkySecond].Parent = rightHand[(int) HandPoints.PinkyFirst];
+        rightHand[(int) HandPoints.PinkyThird].Parent = rightHand[(int) HandPoints.PinkySecond];
 
     }
 
