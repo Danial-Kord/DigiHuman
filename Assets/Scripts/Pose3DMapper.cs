@@ -113,7 +113,6 @@ public class Pose3DMapper : CharacterMapper
         jointPoints[(int) BodyPoints.LeftElbow].Transform = anim.GetBoneTransform(HumanBodyBones.LeftLowerArm);
         jointPoints[(int) BodyPoints.LeftWrist].Transform = anim.GetBoneTransform(HumanBodyBones.LeftHand);
         
-
         // Right Leg
         jointPoints[(int) BodyPoints.RightHip].Transform = anim.GetBoneTransform(HumanBodyBones.RightUpperLeg);
         jointPoints[(int) BodyPoints.RightKnee].Transform = anim.GetBoneTransform(HumanBodyBones.RightLowerLeg);
@@ -223,6 +222,12 @@ public class Pose3DMapper : CharacterMapper
 
     private void UpdateNormalMode(BodyPartVector[] bodyPartVectors)
     {
+
+        for (int i = 0; i < bodyPartVectors.Length; i++)
+        {
+            jointPoints[i].LandmarkPose = bodyPartVectors[i].position;
+        }
+        
         //setting position of each bone
         jointPoints[(int) BodyPoints.Hips].Transform.position = bodyPartVectors[(int) BodyPoints.Hips].position;
         for (int i = 0; i < jointPoints.Length && i < bodyPartVectors.Length; i++)
