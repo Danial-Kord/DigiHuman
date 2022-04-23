@@ -102,7 +102,7 @@ public class FrameReader : MonoBehaviour
     }
 
     private float timer = 0;
-    private void Update()
+    private void LateUpdate()
     {
         if (debug)
         {
@@ -154,8 +154,59 @@ public class FrameReader : MonoBehaviour
         
     }
 
-    
-    
+    private void Update()
+    {
+        if (debug)
+        {
+            if (readFromFilePose)
+            {
+                currentPoseJson = GetBodyParts<PoseJson>(jsonTestPose.text);
+                currentPoseJsonVector = GetBodyPartsVector(currentPoseJson);
+                pose3DMapper.Predict3DPose(currentPoseJsonVector);
+            }
+            if (readFromFileHand)
+            {
+                HandJson handJson = GetBodyParts<HandJson>(jsonTestHand.text);
+                HandJsonVector handsVector = GetHandsVector(handJson);
+                handPose.Predict3DPose(handsVector);
+            }
+        }
+        timer += Time.deltaTime;
+        if(estimatedPoses.Count.Equals(0))
+            return;
+        if (timer > nextFrameTime)
+        {
+
+            currentPoseJsonVector = currentPoseJsonVectorNew;
+            currentPoseJsonVectorNew = estimatedPoses.Dequeue();
+            timer = 0;
+            if (debug)
+            {
+                videoPlayer.frame = currentPoseJsonVectorNew.frame;
+                videoPlayer.Play();
+                videoPlayer.Pause();
+            }
+            
+        }
+
+        try
+        {
+            for (int i = 0; i < currentPoseJsonVector.predictions.Length; i++)
+            {
+                currentPoseJsonVector.predictions[i].position = Vector3.Lerp(
+                    currentPoseJsonVector.predictions[i].position, currentPoseJsonVectorNew.predictions[i].position,
+                    timer / nextFrameTime);
+            }
+            pose3DMapper.Predict3DPose(currentPoseJsonVector);
+        }
+        catch (Exception e)
+        {
+
+        }
+
+    }
+
+
     private T GetBodyParts<T>(string jsonText)
     {
         return JsonUtility.FromJson<T>(jsonText);

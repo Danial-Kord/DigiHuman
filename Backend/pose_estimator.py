@@ -290,6 +290,9 @@ def Hand_pose_video(video_path, debug=False):
     mp_hands = mp.solutions.hands
     # cap = cv2.VideoCapture(0)
     cap = cv2.VideoCapture(video_path)
+    cframe = cap.get(cv2.CV_CAP_PROP_POS_FRAMES)  # retrieves the current frame number
+    tframe = cap.get(CV_CAP_PROP_FRAME_COUNT)  # get total frame count
+    fps = cap.get(CV_CAP_PROP_FPS)  # get the FPS of the videos
     frame = 0
     with mp_hands.Hands(
             model_complexity=1,
@@ -343,8 +346,8 @@ def Hand_pose_video(video_path, debug=False):
     cap.release()
 
 
-# for i in Hand_pose_video(video_path="C:\Danial\Projects\Danial\DigiHuman\Backend\Video\WIN_20220414_23_51_39_Pro.mp4", debug=True):
-#     continue
-
-for i in Pose_Video(video_path="C:\Danial\Projects\Danial\DigiHuman\Backend\Video\Action_with_wiper_Trim.mp4", debug=True):
+for i in Hand_pose_video(video_path="C:\Danial\Projects\Danial\DigiHuman\Backend\Video\WIN_20220414_23_51_39_Pro.mp4", debug=True):
     continue
+
+# for i in Pose_Video(video_path="C:\Danial\Projects\Danial\DigiHuman\Backend\Video\Action_with_wiper_Trim.mp4", debug=True):
+#     continue
