@@ -91,7 +91,10 @@ public class FrameReader : MonoBehaviour
     [SerializeField] private bool readFromFilePose;
     [SerializeField] private TextAsset jsonTestPose;
 
-
+    [SerializeField] private bool enableFileSeriesReader;
+    [SerializeField] private string path = "C:\\Danial\\Projects\\Danial\\DigiHuman\\Backend\\hand_json\\";
+    [SerializeField] private bool onlyCurrentIndex;
+    
     private void Start()
     {
         estimatedPoses = new Queue<PoseJsonVector>();
@@ -102,24 +105,58 @@ public class FrameReader : MonoBehaviour
     }
 
     private float timer = 0;
+    private string jsonTest;
+    [SerializeField] private int fileIndex = 1;
+
+    private void TestFromFile()
+    {
+        if (enableFileSeriesReader)
+        {
+            StreamReader reader = new StreamReader(path + "" + fileIndex + ".json");
+            jsonTest = reader.ReadToEnd();
+        }
+        else
+        {
+            jsonTest = jsonTestPose.text;
+        }
+        if (readFromFilePose)
+        {
+            currentPoseJson = GetBodyParts<PoseJson>(jsonTest);
+            currentPoseJsonVector = GetBodyPartsVector(currentPoseJson);
+            pose3DMapper.Predict3DPose(currentPoseJsonVector);
+        }
+        if (readFromFileHand)
+        {
+            HandJson handJson = GetBodyParts<HandJson>(jsonTest);
+            HandJsonVector handsVector = GetHandsVector(handJson);
+            handPose.Predict3DPose(handsVector);
+        }
+    }
     private void LateUpdate()
     {
+        timer += Time.deltaTime;
         if (debug)
         {
-            if (readFromFilePose)
+            try
             {
-                currentPoseJson = GetBodyParts<PoseJson>(jsonTestPose.text);
-                currentPoseJsonVector = GetBodyPartsVector(currentPoseJson);
-                pose3DMapper.Predict3DPose(currentPoseJsonVector);
+                TestFromFile();
             }
-            if (readFromFileHand)
+            catch (Exception e)
             {
-                HandJson handJson = GetBodyParts<HandJson>(jsonTestHand.text);
-                HandJsonVector handsVector = GetHandsVector(handJson);
-                handPose.Predict3DPose(handsVector);
+                print("File problem or empty array!");
             }
+            videoPlayer.frame = fileIndex;
+            videoPlayer.Play();
+            videoPlayer.Pause();
+            if (timer > nextFrameTime)
+            {
+                timer = 0;
+                if(!onlyCurrentIndex)
+                    fileIndex += 1;
+            }
+            return;
         }
-        timer += Time.deltaTime;
+        
         if(estimatedPoses.Count.Equals(0))
             return;
         if (timer > nextFrameTime)
@@ -242,14 +279,14 @@ public class FrameReader : MonoBehaviour
         for (int i = 0; i < len; i++)
         {
             BodyPart data = handJson.handsR[i];
-            handJsonVector.handsR[i].position = new Vector3(-data.x,-data.y,-data.z);
+            handJsonVector.handsR[i].position = new Vector3(-data.x * fractionX,-data.y * fractionY,-data.z * fractionZ);
             handJsonVector.handsR[i].visibility = data.visibility;
         }
 
         for (int i = 0; i < len2; i++)
         {
             BodyPart data = handJson.handsL[i];
-            handJsonVector.handsL[i].position = new Vector3(data.x,data.y,data.z);
+            handJsonVector.handsL[i].position = new Vector3(data.x * fractionX,data.y * fractionY,data.z * fractionZ);
             handJsonVector.handsL[i].visibility = data.visibility;
         }
         return handJsonVector;
