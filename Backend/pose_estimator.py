@@ -178,7 +178,7 @@ def Pose_Video(video_path,debug = False):
       while cap.isOpened():
         success, image = cap.read()
         frame += 1
-        if not success or frame >= 200:
+        if not success:
           #print("Some probelm with video!")
           # If loading a video, use 'break' instead of 'continue'.
           break
@@ -197,7 +197,7 @@ def Pose_Video(video_path,debug = False):
             mp_pose.POSE_CONNECTIONS,
             landmark_drawing_spec=mp_drawing_styles.get_default_pose_landmarks_style())
         # Flip the image horizontally for a selfie-view display.
-        #cv2.imshow('MediaPipe Pose', cv2.flip(image, 1))
+        cv2.imshow('MediaPipe Pose', cv2.flip(image, 1))
 
         try:
 
@@ -290,9 +290,9 @@ def Hand_pose_video(video_path, debug=False):
     mp_hands = mp.solutions.hands
     # cap = cv2.VideoCapture(0)
     cap = cv2.VideoCapture(video_path)
-    cframe = cap.get(cv2.CV_CAP_PROP_POS_FRAMES)  # retrieves the current frame number
-    tframe = cap.get(CV_CAP_PROP_FRAME_COUNT)  # get total frame count
-    fps = cap.get(CV_CAP_PROP_FPS)  # get the FPS of the videos
+    # cframe = cap.get(cv2.CV_CAP_PROP_POS_FRAMES)  # retrieves the current frame number
+    # tframe = cap.get(CV_CAP_PROP_FRAME_COUNT)  # get total frame count
+    # fps = cap.get(CV_CAP_PROP_FPS)  # get the FPS of the videos
     frame = 0
     with mp_hands.Hands(
             model_complexity=1,
@@ -346,8 +346,11 @@ def Hand_pose_video(video_path, debug=False):
     cap.release()
 
 
-for i in Hand_pose_video(video_path="C:\Danial\Projects\Danial\DigiHuman\Backend\Video\WIN_20220414_23_51_39_Pro.mp4", debug=True):
-    continue
+if __name__ == '__main__':
+    for i in Hand_pose_video(video_path="C:\Danial\Projects\Danial\DigiHuman\Backend\Video\WIN_20220414_23_51_39_Pro.mp4", debug=True):
+        continue
 
-# for i in Pose_Video(video_path="C:\Danial\Projects\Danial\DigiHuman\Backend\Video\Action_with_wiper_Trim.mp4", debug=True):
-#     continue
+    for i in Pose_Video(video_path="C:\Danial\Projects\Danial\DigiHuman\Backend\Video\WIN_20220414_23_51_39_Pro.mp4", debug=True):
+        continue
+
+    print("finished")

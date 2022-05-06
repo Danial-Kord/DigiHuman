@@ -79,25 +79,25 @@ public class HandsPreprocessor : CharacterMapper
 
         
         
-        Vector3 finger1 = handR[(int) HandPoints.MiddleFingerFirst].position;
-        Vector3 finger2 = handR[(int) HandPoints.IndexFingerFirst].position;
-        Vector3 finger3 = handR[(int) HandPoints.RingFingerFirst].position;
-        Vector3 finger4 = handR[(int) HandPoints.PinkyFirst].position;
+        // Vector3 finger1 = handR[(int) HandPoints.MiddleFingerFirst].position;
+        // Vector3 finger2 = handR[(int) HandPoints.IndexFingerFirst].position;
+        // Vector3 finger3 = handR[(int) HandPoints.RingFingerFirst].position;
+        // Vector3 finger4 = handR[(int) HandPoints.PinkyFirst].position;
         
 
         
         
-        Vector3 a = handR[(int) HandPoints.IndexFingerFirst].position;
+        Vector3 indexFingerFirst = handR[(int) HandPoints.IndexFingerFirst].position;
         Vector3 wrist = handR[(int) HandPoints.Wrist].position;
-        Vector3 c = handR[(int) HandPoints.PinkyFirst].position;
+        Vector3 pinkyFirstLandmark = handR[(int) HandPoints.PinkyFirst].position;
         //Vector3 forward = c.TriangleNormal(a,wrist);
         
-        Vector3 upward = (finger1 + finger2 + finger3 + finger4) / 4.0f - wrist;
-        upward.Normalize();
+        // Vector3 upward = (finger1 + finger2 + finger3 + finger4) / 4.0f - wrist;
+        // upward.Normalize();
         
 
-        Vector3 normalR = wrist.TriangleNormal(handR[(int) HandPoints.IndexFingerFirst].position,handR[(int) HandPoints.PinkyFirst].position);
-        rightHand[(int) HandPoints.Wrist].Transform.rotation = Quaternion.LookRotation(handR[(int) HandPoints.IndexFingerFirst].position - handR[(int) HandPoints.PinkyFirst].position, normalR) * rightHand[(int) HandPoints.Wrist].InverseRotation;
+        Vector3 normalR = wrist.TriangleNormal(indexFingerFirst,pinkyFirstLandmark);
+        rightHand[(int) HandPoints.Wrist].Transform.rotation = Quaternion.LookRotation(indexFingerFirst - pinkyFirstLandmark, normalR) * rightHand[(int) HandPoints.Wrist].InverseRotation;
         
         /*
         
@@ -266,7 +266,11 @@ public class HandsPreprocessor : CharacterMapper
                     // jointPoint.Inverse = Quaternion.Inverse(Quaternion.LookRotation(jointPoint.Transform.position - jointPoint.Child.Transform.position, forward));
                     
                     //Method2
-                    jointPoint.Inverse = Quaternion.Inverse(Quaternion.LookRotation(jointPoint.Transform.position - jointPoint.Child.Transform.position, b-jointPoint.Transform.position));
+                    // jointPoint.Inverse = Quaternion.Inverse(Quaternion.LookRotation(jointPoint.Transform.position - jointPoint.Child.Transform.position, b-jointPoint.Transform.position));
+                    
+                    //Method3
+                    jointPoint.Inverse = Quaternion.Inverse(Quaternion.LookRotation(jointPoint.Transform.position - jointPoint.Child.Transform.position, forward));
+
                     jointPoint.InverseRotation = jointPoint.Inverse * jointPoint.InitRotation;
                     
                     //Method3
