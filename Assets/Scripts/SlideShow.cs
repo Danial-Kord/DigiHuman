@@ -8,6 +8,7 @@ public class SlideShow : MonoBehaviour
 {
     [SerializeField] private UnityEvent onMoveNext;
     [SerializeField] private UnityEvent onMoveLast;
+    public Action<int> onSelection; //add your actions to this function
     [Header("Nodes and properties")]
     [SerializeField] private float scrollDuration;
     [SerializeField] private float speed;
@@ -26,7 +27,7 @@ public class SlideShow : MonoBehaviour
 
     private bool playingCoroutine;
 
-    public void InitialSlideShowPanel()
+    private void InitialSlideShowPanel()
     {
         if(nodes.Count == 0)
             return;
@@ -41,6 +42,7 @@ public class SlideShow : MonoBehaviour
 
     public void AddNode(GameObject node)
     {
+        node.transform.parent = parent.transform;
         if (nodes.Count != 0)
         {
             Vector3 targetPos = nodes[nodes.Count - 1].transform.position + Vector3.right * distanceBetweenNodes;
@@ -95,5 +97,10 @@ public class SlideShow : MonoBehaviour
         }
         playingCoroutine = false;
         yield break;
+    }
+
+    public void OnSelectItem()
+    {
+        onSelection(index);
     }
 }

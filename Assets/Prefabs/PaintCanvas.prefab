@@ -6599,7 +6599,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 779607029275719007}
         m_TargetAssemblyTypeName: GauGanClient, Assembly-CSharp
-        m_MethodName: OnSaveImage
+        m_MethodName: OnSetImage
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
