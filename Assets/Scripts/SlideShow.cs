@@ -8,7 +8,7 @@ public class SlideShow : MonoBehaviour
 {
     [SerializeField] private UnityEvent onMoveNext;
     [SerializeField] private UnityEvent onMoveLast;
-    public Action<int> onSelection; //add your actions to this function
+    public Action<int,GameObject> onSelection; //add your actions to this function
     [Header("Nodes and properties")]
     [SerializeField] private float scrollDuration;
     [SerializeField] private float speed;
@@ -101,6 +101,6 @@ public class SlideShow : MonoBehaviour
 
     public void OnSelectItem()
     {
-        onSelection(index);
+        onSelection(index,nodes[index]);
     }
 }

@@ -25,6 +25,7 @@ public class BackgroundImageManager : MonoBehaviour
 
     private void Start()
     {
+        slideShow.onSelection += SelectImage;
         dirPath = Application.dataPath + "/RenderOutput";
         if (!System.IO.Directory.Exists(dirPath))
         {
@@ -39,6 +40,11 @@ public class BackgroundImageManager : MonoBehaviour
     }
 
 
+    private void SelectImage(int index,GameObject node)
+    {
+        SetBackgroundView(true,node.GetComponentInChildren<Image>().sprite);
+    }
+    
     private Sprite LoadNewSprite(string FilePath, float PixelsPerUnit = 100.0f) {
    
         // Load a PNG or JPG image from disk to a Texture2D, assign this texture to a new sprite and return its reference
