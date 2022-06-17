@@ -117,7 +117,10 @@ public class FrameReader : MonoBehaviour
         }
         else
         {
-            jsonTest = jsonTestPose.text;
+            if(readFromFilePose)
+                jsonTest = jsonTestPose.text;
+            if(readFromFileHand)
+                jsonTest = jsonTestHand.text;
         }
         if (readFromFilePose)
         {
@@ -137,15 +140,8 @@ public class FrameReader : MonoBehaviour
         timer += Time.deltaTime;
         if (debug)
         {
-            try
-            {
-                TestFromFile();
-            }
-            catch (Exception e)
-            {
-                print("File problem or empty array!");
-            }
-            videoPlayer.frame = fileIndex;
+            
+            videoPlayer.frame = fileIndex-1;
             videoPlayer.Play();
             videoPlayer.Pause();
             if (timer > nextFrameTime)
@@ -154,6 +150,19 @@ public class FrameReader : MonoBehaviour
                 if(!onlyCurrentIndex)
                     fileIndex += 1;
             }
+            try
+            {
+                TestFromFile();
+            }
+            catch (Exception e)
+            {
+                print("File problem or empty array!" + "\n" + e.StackTrace);
+                throw;
+                Console.Write(e);
+            }
+            
+            
+
             return;
         }
         

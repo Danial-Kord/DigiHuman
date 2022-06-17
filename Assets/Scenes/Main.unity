@@ -2702,7 +2702,7 @@ MonoBehaviour:
   fractionX: 1
   fractionY: 1
   fractionZ: 1
-  nextFrameTime: 0.05
+  nextFrameTime: 0.15
   currentPoseJson:
     predictions: []
     width: 0
@@ -2726,7 +2726,7 @@ MonoBehaviour:
   enableFileSeriesReader: 0
   path: C:\Danial\Projects\Danial\DigiHuman\Backend\hand_json\
   onlyCurrentIndex: 0
-  fileIndex: 20
+  fileIndex: 96
 --- !u!4 &620901067
 Transform:
   m_ObjectHideFlags: 0
