@@ -10,6 +10,7 @@ import cv2
 import uuid
 import mimetypes
 import pose_estimator
+import mocap
 from flask import jsonify , stream_with_context
 from flask import Response
 from threading import Thread
@@ -30,6 +31,9 @@ pose_video_data_statues = {} # name of file to array of json
 hand_pose_video_data = {} # name of file to array of json
 hand_pose_video_data_statues = {} # name of file to array of json
 
+face_pose_video_data = {} # name of file to array of json
+face_pose_video_data_statues = {} # name of file to array of json
+
 process_reqs = []
 
 # GAU gan values
@@ -45,7 +49,6 @@ def copy_file(old, new):
 def make_processable(greyscale_fname, output_color_file):
     # Inst folder
     ouptut_greyscale_file = INST_FOLDER + "/" + greyscale_fname
-
     # Converts the file to greyscale and saves it to the inst folder?
     if verbose:
         print(output_color_file, ouptut_greyscale_file)
@@ -77,9 +80,6 @@ def run_model(filename):
     return run(verbose=verbose)
 
 def GauGanRunner(output_color_file):
-
-
-
     greyscale_fname = "greyscale.png"
 
     make_processable(greyscale_fname, output_color_file)
@@ -143,6 +143,15 @@ def calculate_video_hand_pose_estimation(file_name):
         hand_pose_video_data[file_name].append(i)
     hand_pose_video_data_statues[file_name] = True #means process is finished
     # return pose_estimator.Pose_Video(file_name)
+
+
+def calculate_video_mocap_estimation(file_name):
+    global face_pose_video_data
+    global face_pose_video_data_statues
+
+    for i in mocap.face_mocap_video(file_name):
+        face_pose_video_data[file_name].append(i)
+    face_pose_video_data_statues[file_name] = True #means process is finished
 
 
 @app.route("/pose", methods=["POST"])  # Hard-coded login route
@@ -216,6 +225,40 @@ def upload_file():
         #     cv2.imshow("Display window", img)
         #     cv2.waitKey(0)
         return 'file uploaded successfully'
+
+
+@app.route('/faceUploader', methods=['GET', 'POST'])
+def upload_face_video():
+
+    if request.method == 'POST':
+        f = request.files['file']
+        postfix = f.filename.split(".")[-1]
+        file_name = TEMP_FILE_FOLDER + str(uuid.uuid4()) + "." + postfix
+        f.save(file_name)
+
+        # checking file type
+        mimestart = mimetypes.guess_type(file_name)[0]
+        if mimestart != None:
+            mimestart = mimestart.split('/')[0]
+            if mimestart in ['video']:
+                # global process_reqs
+                # process_reqs.append(file_name)
+                global face_pose_video_data
+                global face_pose_video_data_statues
+                face_pose_video_data[file_name] = []
+                face_pose_video_data_statues[file_name] = False
+                thread = Thread(target=calculate_video_mocap_estimation,args=(file_name,))
+                thread.start()
+                print("video type")
+                return Response(file_name)
+                # return jsonify(calculate_video_pose_estimation(file_name))
+                # return Response(stream_with_context(calculate_video_pose_estimation(file_name)),mimetype="text/json")
+            else:
+                print("Wrong input!")
+                return "Oops!"
+        return 'file uploaded successfully'
+
+
 
 
 def run_server():
