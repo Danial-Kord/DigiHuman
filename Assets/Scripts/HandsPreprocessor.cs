@@ -172,7 +172,11 @@ public class HandsPreprocessor : CharacterMapper
                     //1
                     // Vector3 fv = bone.Parent.Transform.position - bone.Transform.position;
                     // bone.Transform.rotation = Quaternion.LookRotation(bone.Transform.position- bone.Child.Transform.position, fv) * bone.InverseRotation;
-                    bone.Transform.rotation = Quaternion.LookRotation(bone.Transform.position- bone.Child.Transform.position, (forwardFinger + bone.Parent.Transform.right)/2.0f) * bone.InverseRotation;
+                    
+                    // 1'
+                    // bone.Transform.rotation = Quaternion.LookRotation(bone.Transform.position- bone.Child.Transform.position, (forwardFinger + bone.Parent.Transform.right)/2.0f) * bone.InverseRotation;
+                    
+                    bone.Transform.rotation = Quaternion.LookRotation(bone.Transform.position- bone.Child.Transform.position, forwardFinger) * bone.InverseRotation;
                     
                     //2
                     // bone.Transform.rotation = Quaternion.LookRotation(bone.Transform.position- bone.Child.Transform.position, forwardFinger) 
