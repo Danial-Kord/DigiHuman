@@ -21,3 +21,5 @@ __pycache__
 /Backend/dataset/val_img/greyscale.png
 /Assets/StreamingAssets
 /Backend/hand_json
+/Backend/json
+/Backend/data/shape_predictor_68_face_landmarks.dat
