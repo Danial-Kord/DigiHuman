@@ -14,6 +14,7 @@ public class NetworkManager : MonoBehaviour
     [Header("Server")]
     [SerializeField] private string serverUploadURL; //server URL
     [SerializeField] private string serverPoseEstimatorURL; //server URL
+    [SerializeField] private string serverFaceMocapURL; //server URL
 
     [Header("Dependencies")] 
     [SerializeField] private FrameReader frameReader;
@@ -57,6 +58,12 @@ public class NetworkManager : MonoBehaviour
         StartCoroutine(Upload(localFileName, serverUploadURL,onFinished)); //Get estimates }));
     }
     
+    
+    //starting coroutine for sending ASync to server
+    public void UploadFaceMoacap(string localFileName)
+    {
+        StartCoroutine(Upload(localFileName, serverFaceMocapURL,(responce,bytes) => { StartCoroutine(GetFaceMocap(responce,bytes)); })); //Get estimates }));
+    }
     
     
     //starting coroutine for sending ASync to server
@@ -140,7 +147,59 @@ public class NetworkManager : MonoBehaviour
 
 
 
+    //getting estimates for video facial mocap
+    IEnumerator GetFaceMocap(string poseVideoName, byte[] bytes)
+    {
+        PoseRequest poseRequest = new PoseRequest();
+        poseRequest.index = 0;
+        poseRequest.fileName = poseVideoName;
 
+        List<FaceJson> faceJsons = new List<FaceJson>();
+        UIManager.Instancce.CheckAndEnableWaitingModeUI(WaitingModeUI.ProgressBar,true);
+
+        while (true)
+        {
+            UnityWebRequest webRequest = new UnityWebRequest(serverFaceMocapURL, "POST");
+            byte[] encodedPayload = new System.Text.UTF8Encoding().GetBytes(JsonUtility.ToJson(poseRequest));
+            webRequest.uploadHandler = (UploadHandler) new UploadHandlerRaw(encodedPayload);
+            webRequest.downloadHandler = (DownloadHandler) new DownloadHandlerBuffer();
+            webRequest.SetRequestHeader("Content-Type", "application/json");
+            webRequest.SetRequestHeader("cache-control", "no-cache");
+
+            yield return webRequest.SendWebRequest();
+            try
+            {
+                if (webRequest.result != UnityWebRequest.Result.Success)
+                {
+                    Debug.Log(webRequest.error);
+                }
+                else
+                {
+                    if (webRequest.downloadHandler.text.Equals("Done"))
+                        break;
+                    FaceJson receivedJson = JsonUtility.FromJson<FaceJson>(webRequest.downloadHandler.text);
+                    faceJsons.Add(receivedJson);
+                    Debug.Log(JsonUtility.FromJson<PoseJson>(webRequest.downloadHandler.text).frame);
+                    poseRequest.index += 1;
+                }
+                UIManager.Instancce.UpdateProgressBar(1);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+
+            yield return null;
+        }
+
+        frameReader.SetFaceMocapList(faceJsons);
+        UIManager.Instancce.CheckAndEnableWaitingModeUI(WaitingModeUI.ProgressBar,false);
+
+        yield break;
+    }
+    
+    
 
     
     //getting estimates for video pose
@@ -189,7 +248,7 @@ public class NetworkManager : MonoBehaviour
             yield return null;
         }
 
-        frameReader.SetPosesQueue(poseJsons);
+        frameReader.SetPoseList(poseJsons);
         UIManager.Instancce.CheckAndEnableWaitingModeUI(WaitingModeUI.ProgressBar,false);
 
         yield break;

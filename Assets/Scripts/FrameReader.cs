@@ -73,6 +73,13 @@ public class PoseJsonVector
 
 }
 
+public class FrameData
+{
+    public PoseJsonVector poseData;
+    public FaceJson faceData;
+    public HandJson handData;
+}
+
 public class FrameReader : MonoBehaviour
 {
     public Pose3DMapper pose3DMapper;
@@ -88,12 +95,21 @@ public class FrameReader : MonoBehaviour
     [Header("Frame rate")]
     [SerializeField]private float nextFrameTime = 0.1f;
 
+    //Body pose
     private List<PoseJsonVector> estimatedPoses;
     [HideInInspector] public PoseJson currentPoseJson;
     [HideInInspector] public PoseJsonVector currentPoseJsonVector;
     [HideInInspector] public PoseJsonVector currentPoseJsonVectorNew;
     [HideInInspector] public int poseIndex;
 
+    //facial mocap
+    private List<FaceJson> estimatedFacialMocap;
+    [HideInInspector] public FaceJson currentFaceJson;
+    [HideInInspector] public FaceJson currentFaceJsonNew;
+    [HideInInspector] public int faceIndex;
+    
+    
+    
     [Header("Debug")] 
     [SerializeField] private bool debug;
 
@@ -139,12 +155,18 @@ public class FrameReader : MonoBehaviour
             currentPoseJson = GetBodyParts<PoseJson>(jsonTest);
             currentPoseJsonVector = GetBodyPartsVector(currentPoseJson);
             pose3DMapper.Predict3DPose(currentPoseJsonVector);
+            videoPlayer.frame = currentPoseJson.frame;
+            videoPlayer.Play();
+            videoPlayer.Pause();
         }
         if (readFromFileHand)
         {
             HandJson handJson = GetBodyParts<HandJson>(jsonTest);
             HandJsonVector handsVector = GetHandsVector(handJson);
             handPose.Predict3DPose(handsVector);
+            videoPlayer.frame = handJson.frame;
+            videoPlayer.Play();
+            videoPlayer.Pause();
         }
     }
     private void LateUpdate()
@@ -153,9 +175,9 @@ public class FrameReader : MonoBehaviour
         if (debug)
         {
             
-            videoPlayer.frame = fileIndex-1;
-            videoPlayer.Play();
-            videoPlayer.Pause();
+            // videoPlayer.frame = fileIndex-1;
+            // videoPlayer.Play();
+            // videoPlayer.Pause();
             if (timer > nextFrameTime)
             {
                 timer = 0;
@@ -178,33 +200,59 @@ public class FrameReader : MonoBehaviour
             return;
         }
         
-        if(estimatedPoses.Count.Equals(0))
-            return;
+
         if (timer > nextFrameTime)
         {
 
             //body pose
-            currentPoseJsonVector = currentPoseJsonVectorNew;
-            currentPoseJsonVectorNew = estimatedPoses[poseIndex];
-            timer = 0;
+            if (!estimatedPoses.Count.Equals(0))
+            {
+                currentPoseJsonVector = currentPoseJsonVectorNew;
+                currentPoseJsonVectorNew = estimatedPoses[poseIndex];
+            }
+
+            //Face
+            if (!estimatedFacialMocap.Count.Equals(0))
+            {
+                currentFaceJson = currentFaceJsonNew;
+                currentFaceJsonNew = estimatedFacialMocap[faceIndex];
+            }
+
             if (debug)
             {
-                videoPlayer.frame = currentPoseJsonVectorNew.frame;
+                videoPlayer.frame = currentPoseJsonVectorNew.frame -1;
                 videoPlayer.Play();
                 videoPlayer.Pause();
             }
+            timer = 0;
             
+            //TODO Sync
+            poseIndex++;
+            faceIndex++;
         }
 
         try
         {
-            for (int i = 0; i < currentPoseJsonVector.predictions.Length; i++)
+            //-------- Body Pose ------
+            if (!estimatedPoses.Count.Equals(0))
             {
-                currentPoseJsonVector.predictions[i].position = Vector3.Lerp(
-                    currentPoseJsonVector.predictions[i].position, currentPoseJsonVectorNew.predictions[i].position,
-                    timer / nextFrameTime);
+                //for each bone position in the current frame
+                for (int i = 0; i < currentPoseJsonVector.predictions.Length; i++)
+                {
+                    currentPoseJsonVector.predictions[i].position = Vector3.Lerp(
+                        currentPoseJsonVector.predictions[i].position, currentPoseJsonVectorNew.predictions[i].position,
+                        timer / nextFrameTime);
+                }
+
+                pose3DMapper.Predict3DPose(currentPoseJsonVector);
             }
-            pose3DMapper.Predict3DPose(currentPoseJsonVector);
+
+            //----- Hands -----
+            //TODO lerp hand data
+            
+            //----- Facial Mocap -------
+            
+            
         }
         catch (Exception e)
         {
@@ -316,13 +364,23 @@ public class FrameReader : MonoBehaviour
     }
     
 
-    public void SetPosesQueue(List<PoseJson> estimated)
+    public void SetPoseList(List<PoseJson> estimated)
     {
         currentPoseJsonVectorNew = GetBodyPartsVector(estimated[0]);
         foreach (PoseJson poseJson in estimated)
         {
             estimatedPoses.Add(GetBodyPartsVector(poseJson));            
         }
+    }
+    
+    public void SetFaceMocapList(List<FaceJson> estimated)
+    {
+        currentFaceJsonNew = estimated[0];
+        estimatedFacialMocap = estimated;
+    }
+
+    public void ArrangeDataFrames()
+    {
         
     }
 }
