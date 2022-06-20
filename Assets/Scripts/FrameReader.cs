@@ -82,8 +82,10 @@ public class FrameData
 
 public class FrameReader : MonoBehaviour
 {
+    [Header("Requirements")]
     public Pose3DMapper pose3DMapper;
     public HandsPreprocessor handPose;
+    public FacialExpressionHandler facialExpressionHandler;
     public VideoPlayer videoPlayer;
 
     [Header("Fractions to multiply by pose estimates")]
@@ -116,6 +118,9 @@ public class FrameReader : MonoBehaviour
     [SerializeField] private bool readFromFileHand;
     [SerializeField] private TextAsset jsonTestHand;
     
+    [SerializeField] private bool readFromFace;
+    [SerializeField] private TextAsset jsonTestFace;
+    
     [SerializeField] private bool readFromFilePose;
     [SerializeField] private TextAsset jsonTestPose;
 
@@ -126,6 +131,7 @@ public class FrameReader : MonoBehaviour
     private void Start()
     {
         estimatedPoses = new List<PoseJsonVector>();
+        estimatedFacialMocap = new List<FaceJson>();
         if (debug)
         {
             videoPlayer.Prepare();
@@ -149,6 +155,8 @@ public class FrameReader : MonoBehaviour
                 jsonTest = jsonTestPose.text;
             if(readFromFileHand)
                 jsonTest = jsonTestHand.text;
+            if (readFromFace)
+                jsonTest = jsonTestFace.text;
         }
         if (readFromFilePose)
         {
@@ -165,6 +173,16 @@ public class FrameReader : MonoBehaviour
             HandJsonVector handsVector = GetHandsVector(handJson);
             handPose.Predict3DPose(handsVector);
             videoPlayer.frame = handJson.frame;
+            videoPlayer.Play();
+            videoPlayer.Pause();
+        }
+
+        if (readFromFace)
+        {
+            FaceJson faceJson = GetBodyParts<FaceJson>(jsonTest);
+            facialExpressionHandler.UpdateData(faceJson.leftEyeWid,faceJson.rightEyeWid
+                ,faceJson.mouthWid,faceJson.mouthLen);
+            videoPlayer.frame = faceJson.frame;
             videoPlayer.Play();
             videoPlayer.Pause();
         }
@@ -205,25 +223,25 @@ public class FrameReader : MonoBehaviour
         {
 
             //body pose
-            if (!estimatedPoses.Count.Equals(0))
+            if (poseIndex < estimatedPoses.Count)
             {
                 currentPoseJsonVector = currentPoseJsonVectorNew;
                 currentPoseJsonVectorNew = estimatedPoses[poseIndex];
             }
 
             //Face
-            if (!estimatedFacialMocap.Count.Equals(0))
+            if (faceIndex < estimatedFacialMocap.Count)
             {
                 currentFaceJson = currentFaceJsonNew;
                 currentFaceJsonNew = estimatedFacialMocap[faceIndex];
             }
 
-            if (debug)
-            {
-                videoPlayer.frame = currentPoseJsonVectorNew.frame -1;
-                videoPlayer.Play();
-                videoPlayer.Pause();
-            }
+            // if (debug)
+            // {
+            //     videoPlayer.frame = currentPoseJsonVectorNew.frame -1;
+            //     videoPlayer.Play();
+            //     videoPlayer.Pause();
+            // }
             timer = 0;
             
             //TODO Sync
@@ -251,8 +269,12 @@ public class FrameReader : MonoBehaviour
             //TODO lerp hand data
             
             //----- Facial Mocap -------
-            
-            
+            if (faceIndex < estimatedFacialMocap.Count)
+            {
+                facialExpressionHandler.UpdateData(currentFaceJson.leftEyeWid, currentFaceJson.rightEyeWid
+                    , currentFaceJson.mouthWid, currentFaceJson.mouthLen);
+            }
+
         }
         catch (Exception e)
         {
@@ -375,6 +397,7 @@ public class FrameReader : MonoBehaviour
     
     public void SetFaceMocapList(List<FaceJson> estimated)
     {
+        print(estimated.Count);
         currentFaceJsonNew = estimated[0];
         estimatedFacialMocap = estimated;
     }

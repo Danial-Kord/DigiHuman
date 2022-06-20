@@ -13,6 +13,7 @@ public class NetworkManager : MonoBehaviour
     public static NetworkManager instance;
     [Header("Server")]
     [SerializeField] private string serverUploadURL; //server URL
+    [SerializeField] private string serverFaceUploadURL; //server URL
     [SerializeField] private string serverPoseEstimatorURL; //server URL
     [SerializeField] private string serverFaceMocapURL; //server URL
 
@@ -37,6 +38,7 @@ public class NetworkManager : MonoBehaviour
         {
             //UploadImageGauGan(filePath);
             //UploadAndEstimatePose(filePath);
+            UploadFaceMoacap(filePath);
         } 
 #endif
     }
@@ -62,7 +64,7 @@ public class NetworkManager : MonoBehaviour
     //starting coroutine for sending ASync to server
     public void UploadFaceMoacap(string localFileName)
     {
-        StartCoroutine(Upload(localFileName, serverFaceMocapURL,(responce,bytes) => { StartCoroutine(GetFaceMocap(responce,bytes)); })); //Get estimates }));
+        StartCoroutine(Upload(localFileName, serverFaceUploadURL,(responce,bytes) => { StartCoroutine(GetFaceMocap(responce,bytes)); })); //Get estimates }));
     }
     
     
@@ -177,6 +179,7 @@ public class NetworkManager : MonoBehaviour
                 {
                     if (webRequest.downloadHandler.text.Equals("Done"))
                         break;
+                    Debug.Log(webRequest.downloadHandler.text);
                     FaceJson receivedJson = JsonUtility.FromJson<FaceJson>(webRequest.downloadHandler.text);
                     faceJsons.Add(receivedJson);
                     Debug.Log(JsonUtility.FromJson<PoseJson>(webRequest.downloadHandler.text).frame);
