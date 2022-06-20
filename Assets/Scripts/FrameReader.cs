@@ -87,7 +87,9 @@ public class FrameReader : MonoBehaviour
     public HandsPreprocessor handPose;
     public FacialExpressionHandler facialExpressionHandler;
     public VideoPlayer videoPlayer;
-
+    private Dictionary<int,FrameData> frameData;
+    
+    
     [Header("Fractions to multiply by pose estimates")]
     public float fraction = 1.2f;
     public float fractionX = 1.2f;
@@ -96,7 +98,9 @@ public class FrameReader : MonoBehaviour
 
     [Header("Frame rate")]
     [SerializeField]private float nextFrameTime = 0.1f;
-
+    
+    
+    
     //Body pose
     private List<PoseJsonVector> estimatedPoses;
     [HideInInspector] public PoseJson currentPoseJson;
@@ -109,6 +113,10 @@ public class FrameReader : MonoBehaviour
     [HideInInspector] public FaceJson currentFaceJson;
     [HideInInspector] public FaceJson currentFaceJsonNew;
     [HideInInspector] public int faceIndex;
+
+
+    [Header("PlayController")] 
+    public bool pause = true;
     
     
     
@@ -132,6 +140,7 @@ public class FrameReader : MonoBehaviour
     {
         estimatedPoses = new List<PoseJsonVector>();
         estimatedFacialMocap = new List<FaceJson>();
+        frameData = new Dictionary<int, FrameData>();
         if (debug)
         {
             videoPlayer.Prepare();
@@ -218,7 +227,8 @@ public class FrameReader : MonoBehaviour
             return;
         }
         
-
+        if(pause)
+            return;
         if (timer > nextFrameTime)
         {
 
@@ -404,6 +414,14 @@ public class FrameReader : MonoBehaviour
 
     public void ArrangeDataFrames()
     {
-        
+        int handFrame = 0;
+        int faceFrame = 0;
+        int bodyFrame = 0;
+        int minFrame = 0;
+        int i, j, k;
+        while (true)
+        {
+            
+        }
     }
 }
