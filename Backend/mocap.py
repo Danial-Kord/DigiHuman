@@ -1,19 +1,12 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Sep 27 16:42:52 2019
-
-@author: James Wu
-"""
-
 import cv2
 import numpy as np
 import dlib
 import time
 import math
 import sys
-
 import socket
+
+#@citation: James Wu, OpenVHead
 
 detector = dlib.get_frontal_face_detector()
 predictor = dlib.shape_predictor("./data/shape_predictor_68_face_landmarks.dat")
@@ -217,33 +210,69 @@ def get_quaternion(rotation_vector):
     return round(w,4), round(x,4), round(y,4), round(z,4)
 
 
+
+
+#get process based on the input frame
+def get_frame_facial_mocap(img,frame):
+    size = img.shape
+
+    if size[0] > 700:
+        h = size[0] / 3
+        w = size[1] / 3
+        img = cv2.resize(img, (int(w), int(h)), interpolation=cv2.INTER_CUBIC)
+        size = img.shape
+
+    ret, landmark_shape = get_image_points(img)
+    if ret != 0:
+        print('ERROR: get_image_points failed')
+        return None
+
+    # Compute feature parameters of facial expressions (eyes, mouth)
+    landmarks_orig = landmarks_to_np(landmark_shape)  # convert format
+
+    leftEyeWid, rightEyewid, mouthWid, mouthLen = get_feature_parameters(landmarks_orig)
+    parameters_str = 'leftEyeWid:{}, rightEyewid:{}, mouthWid:{}, mouthLen:{}'.format(leftEyeWid, rightEyewid,
+                                                                                      mouthWid, mouthLen)
+    print(parameters_str)
+
+    try:
+        json_data = {
+            'leftEyeWid': leftEyeWid,
+            'rightEyeWid': rightEyewid,
+            'mouthWid': mouthWid,
+            'mouthLen': mouthLen,
+            'frame': frame
+        }
+        return json_data
+    except:
+        return None
+
+
 #calculating facial expression
 def face_mocap_video(video_path, debug=False):
-    detector = dlib.get_frontal_face_detector()
-    predictor = dlib.shape_predictor("./data/shape_predictor_68_face_landmarks.dat")
-    POINTS_NUM_LANDMARK = 68
+    cap = cv2.VideoCapture(video_path)
+    frame = 0
+    while (cap.isOpened()):
+        # Read Image
+        ret, img = cap.read()
+        # current_frame
+        frame = cap.get(cv2.CAP_PROP_POS_FRAMES)
 
-    clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))  # CLAHE Object (for Adaptive histogram equalization)
+        if ret != True:
+            print('read frame failed')
+            # continue
+            break
+        result = get_frame_facial_mocap(img,frame)
+        if result is not None:
+            yield result
+    cap.release()
 
-    boxPoints3D = np.array(([500., 500., 500.],
-                            [-500., 500., 500.],
-                            [-500., -500., 500.],
-                            [500., -500., 500.],
-                            [500., 500., -500.],
-                            [-500., 500., -500.],
-                            [-500., -500., -500.],
-                            [500., -500., -500.]))
-    boxPoints2D = np.zeros((1, 1, 8, 2))
-    # parameters for mean filter
-    windowlen_1 = 5
-    queue3D_points = np.zeros((windowlen_1, POINTS_NUM_LANDMARK, 2))
 
-    windowlen_2 = 5
-    queue1D = np.zeros(windowlen_2)
 
-    # pamameters for kalman filter
-    XX = 0
-    PP = 0.01
+
+def face_mocap_pose_video(video_path, debug=False):
+
+
     # initialize kalman object
     KalmanX = KalmanObject(POINTS_NUM_LANDMARK, 1, 10)  # Tune Q, R to change landmarks_x sensitivity
     KalmanY = KalmanObject(POINTS_NUM_LANDMARK, 1, 10)  # Tune Q, R to change landmarks_y sensitivity
@@ -251,67 +280,64 @@ def face_mocap_video(video_path, debug=False):
     # initialize PARAMETERS
     landmarks = np.zeros((POINTS_NUM_LANDMARK, 2))
 
-    test_data = [0]
-    test_time = [0]
-
-    # initialize kalman object
-    KalmanX = KalmanObject(POINTS_NUM_LANDMARK, 1,10) # Tune Q, R to change landmarks_x sensitivity
-    KalmanY = KalmanObject(POINTS_NUM_LANDMARK, 1,10) # Tune Q, R to change landmarks_y sensitivity
-    uu_ = np.zeros((POINTS_NUM_LANDMARK))
-    # initialize PARAMETERS
-    landmarks = np.zeros((POINTS_NUM_LANDMARK,2))
-    cap = cv2.VideoCapture(video_path)
-    frame = 0
+    open_time = time.time()
+    cap = cv2.VideoCapture(0)
     while (cap.isOpened()):
-        # Read Image
-        try:
+        start_time = time.time()
 
-            frame += 1
-            ret, img = cap.read()
-            if ret != True:
-                print('read frame failed')
-                # continue
-                break
+        # Read Image
+        ret, img = cap.read()
+        if ret != True:
+            print('read frame failed')
+            # continue
+            break
+        size = img.shape
+
+        if size[0] > 700:
+            h = size[0] / 3
+            w = size[1] / 3
+            img = cv2.resize(img, (int(w), int(h)), interpolation=cv2.INTER_CUBIC)
             size = img.shape
 
-            if size[0] > 700:
-                h = size[0] / 3
-                w = size[1] / 3
-                img = cv2.resize(img, (int(w), int(h)), interpolation=cv2.INTER_CUBIC)
-                size = img.shape
+        # img = cv2.normalize(img,dst=None,alpha=350,beta=10,norm_type=cv2.NORM_MINMAX)
+        ret, landmark_shape = get_image_points(img)
+        if ret != 0:
+            print('ERROR: get_image_points failed')
+            continue
 
-            # img = cv2.normalize(img,dst=None,alpha=350,beta=10,norm_type=cv2.NORM_MINMAX)
-            ret, landmark_shape = get_image_points(img)
-            if ret != 0:
-                print('ERROR: get_image_points failed')
-                continue
+        # Compute feature parameters of facial expressions (eyes, mouth)
+        landmarks_orig = landmarks_to_np(landmark_shape)  # convert format
 
-            # Compute feature parameters of facial expressions (eyes, mouth)
-            landmarks_orig = landmarks_to_np(landmark_shape)  # convert format
+        # Apply kalman filter to landmarks FOR POSE ESTIMATION
+        KalmanX.kalman_update(uu_, landmarks_orig[:, 0])
+        KalmanY.kalman_update(uu_, landmarks_orig[:, 1])
+        landmarks[:, 0] = KalmanX.xx.astype(np.int32)
+        landmarks[:, 1] = KalmanY.xx.astype(np.int32)
 
-            leftEyeWid, rightEyewid, mouthWid, mouthLen = get_feature_parameters(landmarks_orig)
-            parameters_str = 'leftEyeWid:{}, rightEyewid:{}, mouthWid:{}, mouthLen:{}'.format(leftEyeWid, rightEyewid,
-                                                                                              mouthWid, mouthLen)
-            print(parameters_str)
+        landmarks = mean_filter_for_landmarks(landmarks)  # Apply smooth filter to landmarks FOR POSE ESTIMATION
+        leftEyeWid, rightEyewid, mouthWid, mouthLen = get_feature_parameters(landmarks_orig)
 
 
 
-            try:
-                json_data = {
-                    'leftEyeWid': leftEyeWid,
-                    'rightEyeWid': rightEyewid,
-                    'mouthWid': mouthWid,
-                    'mouthLen': mouthLen,
-                    'frame': frame
-                }
-                yield json_data
-            except:
-                print("\n yielding problem!.\n")
+        # Five feature points for pose estimation
+        #        image_points = np.vstack((landmarks[30],landmarks[8],landmarks[36],landmarks[45],landmarks[48],landmarks[54]))
+        image_points = np.vstack(
+            (landmarks[30], landmarks[8], landmarks[36], landmarks[45], landmarks[1], landmarks[15]))
 
-        except:
-            print("\n calculation prblem!.\n")
+        ret, rotation_vector, translation_vector, camera_matrix, dist_coeffs = get_pose_estimation(size, image_points)
+        if ret != True:
+            print('ERROR: get_pose_estimation failed')
+            continue
+        used_time = time.time() - start_time
+        print("used_time:{} sec".format(round(used_time, 3)))
 
-        continue
+        # Convert rotation_vector to quaternion
+        w, x, y, z = get_quaternion(rotation_vector)
+        quaternion_str = 'w:{}, x:{}, y:{}, z:{}'.format(w, x, y, z)
+        print(quaternion_str)
+
+
+
         # ============================================================================
         # For visualization only (below)
         # ============================================================================
@@ -354,7 +380,9 @@ def face_mocap_video(video_path, debug=False):
 
         if (cv2.waitKey(5) & 0xFF) == 27:  # Press ESC to quit
             break
+    cap.release()
 
-        # client.close()  # Socket disconnect
-        # cap.release()
-        # cv2.destroyAllWindows()
+# if __name__ == '__main__':
+#     print("dd")
+#     for i in face_mocap_video(video_path="C:/Danial/Projects/Danial/DigiHuman/Assets/video/onegai_darling.mp4"):
+#         continue

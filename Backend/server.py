@@ -238,9 +238,16 @@ def upload_file():
                 thread2 = Thread(target=calculate_video_hand_pose_estimation,args=(file_name,))
                 thread2.start()
                 print("video type")
-                return Response(file_name)
-                # return jsonify(calculate_video_pose_estimation(file_name))
-                # return Response(stream_with_context(calculate_video_pose_estimation(file_name)),mimetype="text/json")
+                cap = cv2.VideoCapture(file_name)
+                tframe = cap.get(cv2.CAP_PROP_FRAME_COUNT)  # get total frame count
+                cap.release()
+
+                res = {
+                    'file' : file_name,
+                    'total_frames' : tframe
+                }
+                return jsonify(res)
+
             elif mimestart in ['image']:
                 print("image type")
                 GuGanImage = GauGanRunner(file_name)
@@ -282,9 +289,16 @@ def upload_face_video():
                 thread = Thread(target=calculate_video_mocap_estimation,args=(file_name,))
                 thread.start()
                 print("video type")
-                return Response(file_name)
-                # return jsonify(calculate_video_pose_estimation(file_name))
-                # return Response(stream_with_context(calculate_video_pose_estimation(file_name)),mimetype="text/json")
+                cap = cv2.VideoCapture(file_name)
+                tframe = cap.get(cv2.CAP_PROP_FRAME_COUNT)  # get total frame count
+                cap.release()
+
+                res = {
+                    'file' : file_name,
+                    'total_frames' : tframe
+                }
+                return jsonify(res)
+
             else:
                 print("Wrong input!")
                 return "Oops!"
