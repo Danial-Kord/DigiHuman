@@ -27,18 +27,9 @@ public class GauGanClient : MonoBehaviour
 
     private void SaveImage(NetworkManager.UploadResponse response, byte[] bytes)
     {
-        var dirPath = Application.dataPath + "/RenderOutput";
-        if (!System.IO.Directory.Exists(dirPath))
-        {
-            System.IO.Directory.CreateDirectory(dirPath);
-        }
-
+        var dirPath = FileManager.GauGanOutputDir;
         dirPath = dirPath + "/R_" + Random.Range(0, 100000) + ".png";
-        System.IO.File.WriteAllBytes(dirPath, bytes);
-        Debug.Log(bytes.Length / 1024 + "Kb was saved as: " + dirPath);
-#if UNITY_EDITOR
-            UnityEditor.AssetDatabase.Refresh();
-#endif
+        FileManager.SaveBinary(dirPath,bytes);
         lastImageGeneratedPath = dirPath;
         backgroundImageManager.AddNewImage(lastImageGeneratedPath);
     }
