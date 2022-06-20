@@ -26,12 +26,7 @@ public class BackgroundImageManager : MonoBehaviour
     private void Start()
     {
         slideShow.onSelection += SelectImage;
-        dirPath = Application.dataPath + "/RenderOutput";
-        if (!System.IO.Directory.Exists(dirPath))
-        {
-            System.IO.Directory.CreateDirectory(dirPath);
-        }
-
+        dirPath = FileManager.GauGanOutputDir;
         string[] files = System.IO.Directory.GetFiles(dirPath);
         for (int i = 0; i < files.Length; i++)
         {
