@@ -156,6 +156,37 @@ def calculate_video_mocap_estimation(file_name):
 
 
 
+
+@app.route("/hand", methods=["POST"])  # Hard-coded login route
+def get_frame_hand_pose():
+
+    global hand_pose_video_data
+    global hand_pose_video_data_statues
+
+
+    request_json = request.get_json()  # Get request body (JSON type)
+    index = request_json['index']
+    file_name = str(request_json['fileName'])
+    req = request.data
+    print(file_name)
+    try:
+        if hand_pose_video_data.keys().__contains__(file_name) is False:
+            print("Wrong!")
+            return Response("Wrong input!")
+        while True:
+            if len(hand_pose_video_data[file_name]) >= index + 1:
+                print(hand_pose_video_data[file_name][index])
+                return jsonify(hand_pose_video_data[file_name][index])
+            elif hand_pose_video_data_statues[file_name] is False:
+                time.sleep(0.15)
+            else:
+                return Response("Done")
+    except:
+        return Response("Good luck!")
+
+
+
+
 #TODO better ending connection "Done!"
 @app.route("/face", methods=["POST"])  # Hard-coded login route
 def get_frame_faccial_expression():
@@ -264,6 +295,44 @@ def upload_file():
         #     cv2.imshow("Display window", img)
         #     cv2.waitKey(0)
         return 'file uploaded successfully'
+
+
+# processing received file
+@app.route('/handUploader', methods=['GET', 'POST'])
+def upload_hand_video():
+
+    if request.method == 'POST':
+        f = request.files['file']
+        postfix = f.filename.split(".")[-1]
+        file_name = TEMP_FILE_FOLDER + str(uuid.uuid4()) + "." + postfix
+        f.save(file_name)
+
+        # checking file type
+        mimestart = mimetypes.guess_type(file_name)[0]
+        if mimestart != None:
+            mimestart = mimestart.split('/')[0]
+            if mimestart in ['video']:
+                global hand_pose_video_data
+                global hand_pose_video_data_statues
+                hand_pose_video_data[file_name] = []
+                hand_pose_video_data_statues[file_name] = False
+                thread2 = Thread(target=calculate_video_hand_pose_estimation,args=(file_name,))
+                thread2.start()
+                print("video type")
+                cap = cv2.VideoCapture(file_name)
+                tframe = cap.get(cv2.CAP_PROP_FRAME_COUNT)  # get total frame count
+                cap.release()
+
+                res = {
+                    'file' : file_name,
+                    'totalFrames' : int(tframe)
+                }
+                return jsonify(res)
+            else:
+                print("Wrong input!")
+                return "Oops!"
+        return 'file uploaded successfully'
+
 
 
 @app.route('/faceUploader', methods=['GET', 'POST'])

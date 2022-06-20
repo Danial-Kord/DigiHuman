@@ -1429,8 +1429,8 @@ MonoBehaviour:
   serverUploadURL: http://127.0.0.1:5000/uploader
   serverFullPoseUploadURL: 
   serverPoseEstimatorURL: http://127.0.0.1:5000/pose
-  serverHandUploadURL: 
-  serverHandPoseEstimatorURL: 
+  serverHandUploadURL: http://127.0.0.1:5000/handUploader
+  serverHandPoseEstimatorURL: http://127.0.0.1:5000/hand
   serverFaceUploadURL: http://127.0.0.1:5000/faceUploader
   serverFaceMocapURL: http://127.0.0.1:5000/face
   frameReader: {fileID: 620901066}
