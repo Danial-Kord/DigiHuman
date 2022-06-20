@@ -1427,12 +1427,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   serverUploadURL: http://127.0.0.1:5000/uploader
-  serverFaceUploadURL: http://127.0.0.1:5000/faceUploader
+  serverFullPoseUploadURL: 
   serverPoseEstimatorURL: http://127.0.0.1:5000/pose
+  serverHandUploadURL: 
+  serverHandPoseEstimatorURL: 
+  serverFaceUploadURL: http://127.0.0.1:5000/faceUploader
   serverFaceMocapURL: http://127.0.0.1:5000/face
   frameReader: {fileID: 620901066}
   enableDebug: 1
-  filePath: C:/Danial/Projects/Danial/DigiHuman/Assets/video/face.mp4
+  filePath: C:/Danial/Projects/Danial/DigiHuman/Assets/video/hand2.mp4
 --- !u!4 &203192803
 Transform:
   m_ObjectHideFlags: 0
@@ -2230,6 +2233,15 @@ MonoBehaviour:
     height: 0
     frame: 0
   poseIndex: 0
+  currentHandJsonVector:
+    handsR: []
+    handsL: []
+    frame: 0
+  currentHandJsonVectorNew:
+    handsR: []
+    handsL: []
+    frame: 0
+  handIndex: 0
   currentFaceJson:
     leftEyeWid: 0
     rightEyeWid: 0
@@ -2243,6 +2255,7 @@ MonoBehaviour:
     mouthLen: 0
     frame: 0
   faceIndex: 0
+  pause: 1
   debug: 0
   readFromFileHand: 0
   jsonTestHand: {fileID: 0}
@@ -2740,6 +2753,15 @@ MonoBehaviour:
     height: 0
     frame: 0
   poseIndex: 0
+  currentHandJsonVector:
+    handsR: []
+    handsL: []
+    frame: 0
+  currentHandJsonVectorNew:
+    handsR: []
+    handsL: []
+    frame: 0
+  handIndex: 0
   currentFaceJson:
     leftEyeWid: 0
     rightEyeWid: 0
@@ -2753,6 +2775,7 @@ MonoBehaviour:
     mouthLen: 0
     frame: 0
   faceIndex: 0
+  pause: 1
   debug: 0
   readFromFileHand: 1
   jsonTestHand: {fileID: 4900000, guid: dfc85833b696b4648bc353b27dce706d, type: 3}
@@ -4357,6 +4380,15 @@ MonoBehaviour:
     height: 0
     frame: 0
   poseIndex: 0
+  currentHandJsonVector:
+    handsR: []
+    handsL: []
+    frame: 0
+  currentHandJsonVectorNew:
+    handsR: []
+    handsL: []
+    frame: 0
+  handIndex: 0
   currentFaceJson:
     leftEyeWid: 0
     rightEyeWid: 0
@@ -4370,6 +4402,7 @@ MonoBehaviour:
     mouthLen: 0
     frame: 0
   faceIndex: 0
+  pause: 1
   debug: 0
   readFromFileHand: 0
   jsonTestHand: {fileID: 0}
