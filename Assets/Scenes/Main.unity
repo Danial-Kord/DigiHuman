@@ -1413,7 +1413,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &203192802
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1427,10 +1427,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   serverUploadURL: http://127.0.0.1:5000/uploader
+  serverFaceUploadURL: http://127.0.0.1:5000/faceUploader
   serverPoseEstimatorURL: http://127.0.0.1:5000/pose
+  serverFaceMocapURL: http://127.0.0.1:5000/face
   frameReader: {fileID: 620901066}
-  enableDebug: 0
-  filePath: C:/Danial/Projects/Danial/DigiHuman/Assets/video/Action_with_wiper_Trim.mp4
+  enableDebug: 1
+  filePath: C:/Danial/Projects/Danial/DigiHuman/Assets/video/face.mp4
 --- !u!4 &203192803
 Transform:
   m_ObjectHideFlags: 0
@@ -1999,7 +2001,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 779607029275719002, guid: 04537b29ee5db87499b8df1df06621cc, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 779607029275719005, guid: 04537b29ee5db87499b8df1df06621cc, type: 3}
       propertyPath: m_Pivot.x
@@ -2205,6 +2207,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pose3DMapper: {fileID: 0}
   handPose: {fileID: 0}
+  facialExpressionHandler: {fileID: 0}
   videoPlayer: {fileID: 0}
   fraction: 0.9
   fractionX: 1.2
@@ -2226,9 +2229,25 @@ MonoBehaviour:
     width: 0
     height: 0
     frame: 0
+  poseIndex: 0
+  currentFaceJson:
+    leftEyeWid: 0
+    rightEyeWid: 0
+    mouthWid: 0
+    mouthLen: 0
+    frame: 0
+  currentFaceJsonNew:
+    leftEyeWid: 0
+    rightEyeWid: 0
+    mouthWid: 0
+    mouthLen: 0
+    frame: 0
+  faceIndex: 0
   debug: 0
   readFromFileHand: 0
   jsonTestHand: {fileID: 0}
+  readFromFace: 0
+  jsonTestFace: {fileID: 0}
   readFromFilePose: 0
   jsonTestPose: {fileID: 0}
   enableFileSeriesReader: 0
@@ -2343,7 +2362,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &562632696
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2628,6 +2647,7 @@ GameObject:
   - component: {fileID: 620901066}
   - component: {fileID: 620901065}
   - component: {fileID: 620901068}
+  - component: {fileID: 620901069}
   m_Layer: 0
   m_Name: PoseEstimator
   m_TagString: Untagged
@@ -2697,6 +2717,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pose3DMapper: {fileID: 620901065}
   handPose: {fileID: 620901068}
+  facialExpressionHandler: {fileID: 620901069}
   videoPlayer: {fileID: 670222376}
   fraction: 1
   fractionX: 1
@@ -2718,9 +2739,25 @@ MonoBehaviour:
     width: 0
     height: 0
     frame: 0
-  debug: 1
+  poseIndex: 0
+  currentFaceJson:
+    leftEyeWid: 0
+    rightEyeWid: 0
+    mouthWid: 0
+    mouthLen: 0
+    frame: 0
+  currentFaceJsonNew:
+    leftEyeWid: 0
+    rightEyeWid: 0
+    mouthWid: 0
+    mouthLen: 0
+    frame: 0
+  faceIndex: 0
+  debug: 0
   readFromFileHand: 1
   jsonTestHand: {fileID: 4900000, guid: dfc85833b696b4648bc353b27dce706d, type: 3}
+  readFromFace: 0
+  jsonTestFace: {fileID: 0}
   readFromFilePose: 0
   jsonTestPose: {fileID: 4900000, guid: e865bbd47cdbb2441aea684bdcaf656d, type: 3}
   enableFileSeriesReader: 0
@@ -2756,6 +2793,21 @@ MonoBehaviour:
   character: {fileID: 1231570487}
   debugMode: 1
   debugGameObject: {fileID: 888376049}
+--- !u!114 &620901069
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 620901064}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28c04be777289184b912c89f6893a556, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  getleftEyeShape: {x: 0, y: 0, z: 0}
+  getrightEyeShape: {x: 0, y: 0, z: 0}
+  getmouthShape: {x: 0, y: 0, z: 0}
 --- !u!1 &637350357
 GameObject:
   m_ObjectHideFlags: 0
@@ -4282,6 +4334,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pose3DMapper: {fileID: 0}
   handPose: {fileID: 0}
+  facialExpressionHandler: {fileID: 0}
   videoPlayer: {fileID: 0}
   fraction: 1.2
   fractionX: 1.2
@@ -4303,9 +4356,25 @@ MonoBehaviour:
     width: 0
     height: 0
     frame: 0
+  poseIndex: 0
+  currentFaceJson:
+    leftEyeWid: 0
+    rightEyeWid: 0
+    mouthWid: 0
+    mouthLen: 0
+    frame: 0
+  currentFaceJsonNew:
+    leftEyeWid: 0
+    rightEyeWid: 0
+    mouthWid: 0
+    mouthLen: 0
+    frame: 0
+  faceIndex: 0
   debug: 0
   readFromFileHand: 0
   jsonTestHand: {fileID: 0}
+  readFromFace: 0
+  jsonTestFace: {fileID: 0}
   readFromFilePose: 0
   jsonTestPose: {fileID: 0}
   enableFileSeriesReader: 0
@@ -4609,6 +4678,82 @@ PrefabInstance:
     - target: {fileID: 9500000, guid: 412b92d4feeb9c548bfa98f62c4d1022, type: 3}
       propertyPath: m_ApplyRootMotion
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 13700014, guid: 412b92d4feeb9c548bfa98f62c4d1022, type: 3}
+      propertyPath: m_BlendShapeWeights.Array.data[0]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 13700014, guid: 412b92d4feeb9c548bfa98f62c4d1022, type: 3}
+      propertyPath: m_BlendShapeWeights.Array.data[1]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 13700014, guid: 412b92d4feeb9c548bfa98f62c4d1022, type: 3}
+      propertyPath: m_BlendShapeWeights.Array.data[2]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 13700014, guid: 412b92d4feeb9c548bfa98f62c4d1022, type: 3}
+      propertyPath: m_BlendShapeWeights.Array.data[3]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 13700014, guid: 412b92d4feeb9c548bfa98f62c4d1022, type: 3}
+      propertyPath: m_BlendShapeWeights.Array.data[4]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 13700014, guid: 412b92d4feeb9c548bfa98f62c4d1022, type: 3}
+      propertyPath: m_BlendShapeWeights.Array.data[5]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 13700014, guid: 412b92d4feeb9c548bfa98f62c4d1022, type: 3}
+      propertyPath: m_BlendShapeWeights.Array.data[6]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 13700024, guid: 412b92d4feeb9c548bfa98f62c4d1022, type: 3}
+      propertyPath: m_BlendShapeWeights.Array.data[0]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 13700024, guid: 412b92d4feeb9c548bfa98f62c4d1022, type: 3}
+      propertyPath: m_BlendShapeWeights.Array.data[2]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 13700024, guid: 412b92d4feeb9c548bfa98f62c4d1022, type: 3}
+      propertyPath: m_BlendShapeWeights.Array.data[3]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 13700024, guid: 412b92d4feeb9c548bfa98f62c4d1022, type: 3}
+      propertyPath: m_BlendShapeWeights.Array.data[4]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 13700024, guid: 412b92d4feeb9c548bfa98f62c4d1022, type: 3}
+      propertyPath: m_BlendShapeWeights.Array.data[5]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 13700024, guid: 412b92d4feeb9c548bfa98f62c4d1022, type: 3}
+      propertyPath: m_BlendShapeWeights.Array.data[6]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 13700024, guid: 412b92d4feeb9c548bfa98f62c4d1022, type: 3}
+      propertyPath: m_BlendShapeWeights.Array.data[7]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 13700024, guid: 412b92d4feeb9c548bfa98f62c4d1022, type: 3}
+      propertyPath: m_BlendShapeWeights.Array.data[8]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 13700024, guid: 412b92d4feeb9c548bfa98f62c4d1022, type: 3}
+      propertyPath: m_BlendShapeWeights.Array.data[9]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 13700024, guid: 412b92d4feeb9c548bfa98f62c4d1022, type: 3}
+      propertyPath: m_BlendShapeWeights.Array.data[10]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 13700032, guid: 412b92d4feeb9c548bfa98f62c4d1022, type: 3}
+      propertyPath: m_BlendShapeWeights.Array.data[0]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 13700032, guid: 412b92d4feeb9c548bfa98f62c4d1022, type: 3}
+      propertyPath: m_BlendShapeWeights.Array.data[6]
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 11400002, guid: 412b92d4feeb9c548bfa98f62c4d1022, type: 3}
@@ -5547,6 +5692,30 @@ MonoBehaviour:
   - m_Rig: {fileID: 1280355090}
     m_Active: 1
   m_Effectors: []
+--- !u!114 &1231570490
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1231570487}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c89670a4d0765a4ea005a347d2d9e3e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  blinkFunctionSelect: -1
+  leftEyeNum: -1
+  rightEyeNum: -1
+  mouthWidNum: 0
+  mouthLenNum: 10
+  shockEyeNum: -1
+  skinnedMeshRenderer: {fileID: 1231570491}
+--- !u!137 &1231570491 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 13700024, guid: 412b92d4feeb9c548bfa98f62c4d1022, type: 3}
+  m_PrefabInstance: {fileID: 1231570337}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1280355088
 GameObject:
   m_ObjectHideFlags: 0
