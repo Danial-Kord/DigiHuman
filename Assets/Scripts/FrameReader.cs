@@ -77,7 +77,8 @@ public class FrameData
 {
     public PoseJsonVector poseData;
     public FaceJson faceData;
-    public HandJson handData;
+    public HandJsonVector handData;
+    public int frame;
 }
 
 public class FrameReader : MonoBehaviour
@@ -88,6 +89,7 @@ public class FrameReader : MonoBehaviour
     public FacialExpressionHandler facialExpressionHandler;
     public VideoPlayer videoPlayer;
     private Dictionary<int,FrameData> frameData;
+    private FrameData currentFrameData;
     
     
     [Header("Fractions to multiply by pose estimates")]
@@ -97,8 +99,9 @@ public class FrameReader : MonoBehaviour
     public float fractionZ = 1.2f;
 
     [Header("Frame rate")]
-    [SerializeField]private float nextFrameTime = 0.1f;
-    
+    [SerializeField] private float nextFrameTime = 0.1f;
+
+    private int currentAnimationSlot = 0;
     
     
     //Body pose
@@ -240,52 +243,65 @@ public class FrameReader : MonoBehaviour
         if (timer > nextFrameTime)
         {
 
-            //body pose
-            if (poseIndex < estimatedPoses.Count)
-            {
-                currentPoseJsonVector = currentPoseJsonVectorNew;
-                currentPoseJsonVectorNew = estimatedPoses[poseIndex];
-            }
-            
-            //Hand
-            if (handIndex < estimatedHandPose.Count)
-            {
-                currentHandJsonVector = currentHandJsonVectorNew;
-                currentHandJsonVectorNew = estimatedHandPose[handIndex];
-            }
-
-            //Face
-            if (faceIndex < estimatedFacialMocap.Count)
-            {
-                currentFaceJson = currentFaceJsonNew;
-                currentFaceJsonNew = estimatedFacialMocap[faceIndex];
-            }
-
-            // if (debug)
+            // //body pose
+            // if (poseIndex < estimatedPoses.Count)
             // {
-            //     videoPlayer.frame = currentPoseJsonVectorNew.frame -1;
-            //     videoPlayer.Play();
-            //     videoPlayer.Pause();
+            //     currentPoseJsonVector = currentPoseJsonVectorNew;
+            //     currentPoseJsonVectorNew = estimatedPoses[poseIndex];
             // }
-            timer = 0;
+            //
+            // //Hand
+            // if (handIndex < estimatedHandPose.Count)
+            // {
+            //     currentHandJsonVector = currentHandJsonVectorNew;
+            //     currentHandJsonVectorNew = estimatedHandPose[handIndex];
+            // }
+            //
+            // //Face
+            // if (faceIndex < estimatedFacialMocap.Count)
+            // {
+            //     currentFaceJson = currentFaceJsonNew;
+            //     currentFaceJsonNew = estimatedFacialMocap[faceIndex];
+            // }
+
+            //Current Frame data
+            currentFrameData = frameData[currentAnimationSlot];
+            //Body
+            currentPoseJsonVector = currentPoseJsonVectorNew;
+            currentPoseJsonVectorNew = currentFrameData.poseData;
+            //Hand
+            currentHandJsonVector = currentHandJsonVectorNew;
+            currentHandJsonVectorNew = currentFrameData.handData;
+            //Face
+            currentFaceJson = currentFaceJsonNew;
+            currentFaceJsonNew = currentFrameData.faceData;
             
-            //TODO Sync
-            poseIndex++;
-            faceIndex++;
-            handIndex++;
+            if (debug)
+            {
+                videoPlayer.frame = frameData[currentAnimationSlot].frame;
+                videoPlayer.Play();
+                videoPlayer.Pause();
+            }
+            timer = 0;
+            currentAnimationSlot++;
         }
 
         try
         {
             //-------- Body Pose ------
-            if (!estimatedPoses.Count.Equals(0))
+            if (currentPoseJsonVector != null)
             {
-                //for each bone position in the current frame
-                for (int i = 0; i < currentPoseJsonVector.predictions.Length; i++)
+                //TODO change maybe looking for 5 frames later!
+                if (currentPoseJsonVectorNew != null)
                 {
-                    currentPoseJsonVector.predictions[i].position = Vector3.Lerp(
-                        currentPoseJsonVector.predictions[i].position, currentPoseJsonVectorNew.predictions[i].position,
-                        timer / nextFrameTime);
+                    //for each bone position in the current frame
+                    for (int i = 0; i < currentPoseJsonVector.predictions.Length; i++)
+                    {
+                        currentPoseJsonVector.predictions[i].position = Vector3.Lerp(
+                            currentPoseJsonVector.predictions[i].position,
+                            currentPoseJsonVectorNew.predictions[i].position,
+                            timer / nextFrameTime);
+                    }
                 }
 
                 pose3DMapper.Predict3DPose(currentPoseJsonVector);
@@ -293,10 +309,13 @@ public class FrameReader : MonoBehaviour
 
             //----- Hands -----
             //TODO lerp hand data
-            handPose.Predict3DPose(currentHandJsonVector);
-            
+            if (currentHandJsonVector != null)
+            {
+                handPose.Predict3DPose(currentHandJsonVector);
+            }
+
             //----- Facial Mocap -------
-            if (faceIndex < estimatedFacialMocap.Count)
+            if (currentFaceJson != null)
             {
                 facialExpressionHandler.UpdateData(currentFaceJson.leftEyeWid, currentFaceJson.rightEyeWid
                     , currentFaceJson.mouthWid, currentFaceJson.mouthLen);
@@ -449,10 +468,71 @@ public class FrameReader : MonoBehaviour
         int faceFrame = 0;
         int bodyFrame = 0;
         int minFrame = 0;
-        int i, j, k;
+
+        int bodyIndex = 0;
+        int faceIndex = 0;
+        int handIndex = 0;
+
+        int index = 0;
         while (true)
         {
+            if (bodyIndex < estimatedPoses.Count)
+            {
+                bodyFrame = estimatedPoses[bodyIndex].frame;
+            }
+            else
+            {
+                bodyFrame = int.MaxValue; //no more frames!
+            }
             
+            if (handIndex < estimatedHandPose.Count)
+            {
+                handFrame = estimatedHandPose[handIndex].frame;
+            }
+            else
+            {
+                handFrame = int.MaxValue; //no more frames!
+            }
+            
+            if (faceIndex < estimatedFacialMocap.Count)
+            {
+                faceFrame = estimatedFacialMocap[handIndex].frame;
+            }
+            else
+            {
+                faceFrame = int.MaxValue; //no more frames!
+            }
+
+            minFrame = Mathf.Min(bodyFrame, handFrame, faceFrame);
+            
+            if(minFrame == Int32.MaxValue)
+                break;
+            
+            FrameData currentFrameData = new FrameData();
+            if (bodyFrame == minFrame)
+            {
+                currentFrameData.poseData = estimatedPoses[bodyIndex];
+                bodyIndex++;
+            }
+            if (handFrame == minFrame)
+            {
+                currentFrameData.handData = estimatedHandPose[handIndex];
+                handIndex++;
+            }
+            if (faceIndex == minFrame)
+            {
+                currentFrameData.faceData = estimatedFacialMocap[faceIndex];
+                faceIndex++;
+            }
+
+            currentFrameData.frame = minFrame;
+            frameData.Add(index,currentFrameData);
         }
+
+        currentPoseJsonVectorNew = frameData[0].poseData;
+        currentHandJsonVectorNew = frameData[0].handData;
+        currentFaceJsonNew = frameData[0].faceData;
+        currentAnimationSlot = frameData[0].frame;
+
     }
 }
