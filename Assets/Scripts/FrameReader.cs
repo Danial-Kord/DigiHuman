@@ -238,7 +238,7 @@ public class FrameReader : MonoBehaviour
             return;
         }
         
-        if(pause)
+        if(pause || !frameData.ContainsKey(currentAnimationSlot))
             return;
         if (timer > nextFrameTime)
         {
@@ -265,6 +265,7 @@ public class FrameReader : MonoBehaviour
             // }
 
             //Current Frame data
+            
             currentFrameData = frameData[currentAnimationSlot];
             //Body
             currentPoseJsonVector = currentPoseJsonVectorNew;
@@ -324,7 +325,9 @@ public class FrameReader : MonoBehaviour
         }
         catch (Exception e)
         {
-            Debug.LogError("Problem with pose estimation: " + e.Message);
+            Console.WriteLine(e);
+            throw;
+            Debug.LogError("Problem occured: " + e.Message);
         }
         
     }
@@ -452,7 +455,7 @@ public class FrameReader : MonoBehaviour
         {
             estimatedPoses.Add(GetBodyPartsVector(poseJson));            
         }
-
+        Debug.Log(estimated.Count);
     }
     
     public void SetFaceMocapList(List<FaceJson> estimated)
@@ -527,6 +530,7 @@ public class FrameReader : MonoBehaviour
 
             currentFrameData.frame = minFrame;
             frameData.Add(index,currentFrameData);
+            index++;
         }
 
         currentPoseJsonVectorNew = frameData[0].poseData;

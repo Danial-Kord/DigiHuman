@@ -13,12 +13,16 @@ public enum WaitingModeUI
 
 public class UIManager : MonoSingleton<UIManager>
 {
+    [Header("Requirements")] 
+    [SerializeField] private FrameReader frameReader;
+    
     [Header("ProgressBars and Loading")] 
     [SerializeField] private Image progressBarImage;
     [SerializeField] private TextMeshProUGUI progressBarText;
     [SerializeField] private GameObject waitingUI; //full background color for progressbar and loading
     [SerializeField] private GameObject loading;
     [SerializeField] private GameObject progressBar;
+    
     
     // Start is called before the first frame update
     void Start()
@@ -60,6 +64,13 @@ public class UIManager : MonoSingleton<UIManager>
         {
             waitingUI.SetActive(false);
         }
+    }
+    
+    //Animation Actions
+    public void OnPlayAnimation()
+    {
+        frameReader.ArrangeDataFrames();
+        frameReader.pause = false;
     }
 
 }
