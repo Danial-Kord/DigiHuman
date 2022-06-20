@@ -145,6 +145,7 @@ def calculate_video_hand_pose_estimation(file_name):
     # return pose_estimator.Pose_Video(file_name)
 
 
+
 def calculate_video_mocap_estimation(file_name):
     global face_pose_video_data
     global face_pose_video_data_statues
@@ -152,6 +153,37 @@ def calculate_video_mocap_estimation(file_name):
     for i in mocap.face_mocap_video(file_name):
         face_pose_video_data[file_name].append(i)
     face_pose_video_data_statues[file_name] = True #means process is finished
+
+
+
+#TODO better ending connection "Done!"
+@app.route("/face", methods=["POST"])  # Hard-coded login route
+def get_frame_faccial_expression():
+
+    global face_pose_video_data
+    global face_pose_video_data_statues
+
+
+    request_json = request.get_json()  # Get request body (JSON type)
+    index = request_json['index']
+    file_name = str(request_json['fileName'])
+    req = request.data
+    print(file_name)
+    try:
+        if face_pose_video_data.keys().__contains__(file_name) is False:
+            print("Wrong!")
+            return Response("Wrong input!")
+        while True:
+            if len(face_pose_video_data[file_name]) >= index + 1:
+                print(face_pose_video_data[file_name][index])
+                return jsonify(face_pose_video_data[file_name][index])
+            elif face_pose_video_data_statues[file_name] is False:
+                time.sleep(0.15)
+            else:
+                return Response("Done")
+    except:
+        return Response("Good luck!")
+
 
 
 @app.route("/pose", methods=["POST"])  # Hard-coded login route
