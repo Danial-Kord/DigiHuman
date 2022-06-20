@@ -72,7 +72,7 @@ public class HandsPreprocessor : CharacterMapper
         }
         for (int i = 0; i < handLandmarks.Length; i++)
         {
-            rightHand[i].LandmarkPose = handLandmarks[i].position;
+            hand[i].LandmarkPose = handLandmarks[i].position;
         }
           
         JointPoint indexFingerFirst = hand[(int) HandPoints.IndexFingerFirst];
@@ -92,7 +92,7 @@ public class HandsPreprocessor : CharacterMapper
         for (int i = 0; i < rootHandPoints.Length; i++)
         {
 
-            JointPoint bone = rightHand[(int)rootHandPoints[i]];
+            JointPoint bone = hand[(int)rootHandPoints[i]];
             float distance = bone.DistanceFromDad;
             Vector3 direction = (-wrist.LandmarkPose + bone.LandmarkPose) / (bone.LandmarkPose - wrist.LandmarkPose).magnitude;
 
@@ -141,9 +141,9 @@ public class HandsPreprocessor : CharacterMapper
             // }
             // else if (bone.Child != null)
             // {
-            //     //forward = rightHand[(int) HandPoints.Wrist].Transform.position - bone.Transform.position;
-            //     //bone.Transform.rotation = Quaternion.LookRotation(bone.LandmarkPose- bone.Child.LandmarkPose, (rightHand[(int) HandPoints.Wrist].LandmarkPose - bone.LandmarkPose)) * bone.InverseRotation;
-            //     // bone.Transform.rotation = Quaternion.LookRotation(bone.LandmarkPose- bone.Child.LandmarkPose, (rightHand[(int) HandPoints.Wrist].LandmarkPose - bone.LandmarkPose)) * bone.InverseRotation;
+            //     //forward = hand[(int) HandPoints.Wrist].Transform.position - bone.Transform.position;
+            //     //bone.Transform.rotation = Quaternion.LookRotation(bone.LandmarkPose- bone.Child.LandmarkPose, (hand[(int) HandPoints.Wrist].LandmarkPose - bone.LandmarkPose)) * bone.InverseRotation;
+            //     // bone.Transform.rotation = Quaternion.LookRotation(bone.LandmarkPose- bone.Child.LandmarkPose, (hand[(int) HandPoints.Wrist].LandmarkPose - bone.LandmarkPose)) * bone.InverseRotation;
             //     //bone.Transform.rotation = Quaternion.LookRotation(bone.LandmarkPose- bone.Child.LandmarkPose, upward) * bone.InverseRotation;
             // }
             
@@ -196,11 +196,11 @@ public class HandsPreprocessor : CharacterMapper
             else if (bone.Child != null)
             {
                 // print(bone.Transform.name);
-                //forward = rightHand[(int) HandPoints.Wrist].Transform.position - bone.Transform.position;
+                //forward = hand[(int) HandPoints.Wrist].Transform.position - bone.Transform.position;
                 //Method1
                 //bone.Transform.rotation = Quaternion.LookRotation(bone.Transform.position- bone.Child.Transform.position, (bone.Transform.parent.position - bone.Transform.position)) * bone.InverseRotation;
                 //Method2
-                // bone.Transform.rotation = Quaternion.LookRotation(bone.LandmarkPose- bone.Child.LandmarkPose, (rightHand[(int) HandPoints.Wrist].LandmarkPose - bone.LandmarkPose)) * bone.InverseRotation;
+                // bone.Transform.rotation = Quaternion.LookRotation(bone.LandmarkPose- bone.Child.LandmarkPose, (hand[(int) HandPoints.Wrist].LandmarkPose - bone.LandmarkPose)) * bone.InverseRotation;
                 //bone.Transform.rotation = Quaternion.LookRotation(bone.LandmarkPose- bone.Child.LandmarkPose, upward) * bone.InverseRotation;
                 //Method3
                 // bone.Transform.rotation = Quaternion.LookRotation(bone.Transform.position- bone.Child.Transform.position, (wrist.Transform.position - bone.Transform.position)) * bone.InverseRotation;
@@ -230,13 +230,24 @@ public class HandsPreprocessor : CharacterMapper
     
     public void Predict3DPose(HandJsonVector poseJsonVector)
     {
-        
-        //right hand
-        BodyPartVector[] handR = poseJsonVector.handsR;
-        BodyPartVector[] handL = poseJsonVector.handsL;
+        try
+        {
+            //right hand
+            BodyPartVector[] handR = poseJsonVector.handsR;
+            BodyPartVector[] handL = poseJsonVector.handsL;
 
-        PredictHandPose(handR, rightHand);
-        PredictHandPose(handL, leftHand);
+            if(handR.Length != 0)
+                PredictHandPose(handR, rightHand);
+            if(handL.Length != 0)
+                PredictHandPose(handL, leftHand);
+        }
+        catch (Exception e)
+        {
+           // Console.WriteLine(e);
+           Debug.LogError("Hand Problem!");
+            throw;
+        }
+
     }
 
 

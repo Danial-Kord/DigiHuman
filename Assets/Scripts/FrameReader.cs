@@ -147,6 +147,7 @@ public class FrameReader : MonoBehaviour
     {
         estimatedPoses = new List<PoseJsonVector>();
         estimatedFacialMocap = new List<FaceJson>();
+        estimatedHandPose = new List<HandJsonVector>();
         frameData = new Dictionary<int, FrameData>();
         if (debug)
         {
@@ -271,6 +272,7 @@ public class FrameReader : MonoBehaviour
             //TODO Sync
             poseIndex++;
             faceIndex++;
+            handIndex++;
         }
 
         try
@@ -397,14 +399,14 @@ public class FrameReader : MonoBehaviour
         for (int i = 0; i < len; i++)
         {
             BodyPart data = handJson.handsR[i];
-            handJsonVector.handsR[i].position = new Vector3(-data.x * fractionX,-data.y * fractionY,-data.z * fractionZ);
+            handJsonVector.handsR[i].position = new Vector3(data.x * fractionX,-data.y * fractionY,-data.z * fractionZ);
             handJsonVector.handsR[i].visibility = data.visibility;
         }
 
         for (int i = 0; i < len2; i++)
         {
             BodyPart data = handJson.handsL[i];
-            handJsonVector.handsL[i].position = new Vector3(data.x * fractionX,data.y * fractionY,data.z * fractionZ);
+            handJsonVector.handsL[i].position = new Vector3(data.x * fractionX,-data.y * fractionY,-data.z * fractionZ);
             handJsonVector.handsL[i].visibility = data.visibility;
         }
         return handJsonVector;
@@ -418,6 +420,9 @@ public class FrameReader : MonoBehaviour
         {
             estimatedHandPose.Add(GetHandsVector(poseJson));            
         }
+        Debug.Log(estimatedHandPose.Count);
+        Debug.Log(estimatedHandPose[estimatedHandPose.Count/2].handsL.Length);
+        Debug.Log(estimatedHandPose[estimatedHandPose.Count/2].handsR.Length);
     }
     
 
@@ -428,6 +433,7 @@ public class FrameReader : MonoBehaviour
         {
             estimatedPoses.Add(GetBodyPartsVector(poseJson));            
         }
+
     }
     
     public void SetFaceMocapList(List<FaceJson> estimated)
