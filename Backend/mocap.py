@@ -219,6 +219,31 @@ def get_quaternion(rotation_vector):
 
 #calculating facial expression
 def face_mocap_video(video_path, debug=False):
+    detector = dlib.get_frontal_face_detector()
+    predictor = dlib.shape_predictor("./data/shape_predictor_68_face_landmarks.dat")
+    POINTS_NUM_LANDMARK = 68
+
+    clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))  # CLAHE Object (for Adaptive histogram equalization)
+
+    boxPoints3D = np.array(([500., 500., 500.],
+                            [-500., 500., 500.],
+                            [-500., -500., 500.],
+                            [500., -500., 500.],
+                            [500., 500., -500.],
+                            [-500., 500., -500.],
+                            [-500., -500., -500.],
+                            [500., -500., -500.]))
+    boxPoints2D = np.zeros((1, 1, 8, 2))
+    # parameters for mean filter
+    windowlen_1 = 5
+    queue3D_points = np.zeros((windowlen_1, POINTS_NUM_LANDMARK, 2))
+
+    windowlen_2 = 5
+    queue1D = np.zeros(windowlen_2)
+
+    # pamameters for kalman filter
+    XX = 0
+    PP = 0.01
     # initialize kalman object
     KalmanX = KalmanObject(POINTS_NUM_LANDMARK, 1, 10)  # Tune Q, R to change landmarks_x sensitivity
     KalmanY = KalmanObject(POINTS_NUM_LANDMARK, 1, 10)  # Tune Q, R to change landmarks_y sensitivity
@@ -226,7 +251,15 @@ def face_mocap_video(video_path, debug=False):
     # initialize PARAMETERS
     landmarks = np.zeros((POINTS_NUM_LANDMARK, 2))
 
-    open_time = time.time()
+    test_data = [0]
+    test_time = [0]
+
+    # initialize kalman object
+    KalmanX = KalmanObject(POINTS_NUM_LANDMARK, 1,10) # Tune Q, R to change landmarks_x sensitivity
+    KalmanY = KalmanObject(POINTS_NUM_LANDMARK, 1,10) # Tune Q, R to change landmarks_y sensitivity
+    uu_ = np.zeros((POINTS_NUM_LANDMARK))
+    # initialize PARAMETERS
+    landmarks = np.zeros((POINTS_NUM_LANDMARK,2))
     cap = cv2.VideoCapture(video_path)
     frame = 0
     while (cap.isOpened()):
@@ -261,9 +294,6 @@ def face_mocap_video(video_path, debug=False):
                                                                                               mouthWid, mouthLen)
             print(parameters_str)
 
-            if ret != True:
-                print('ERROR: get_pose_estimation failed')
-                continue
 
 
             try:
@@ -280,6 +310,7 @@ def face_mocap_video(video_path, debug=False):
 
         except:
             print("\n calculation prblem!.\n")
+
         continue
         # ============================================================================
         # For visualization only (below)
@@ -324,6 +355,6 @@ def face_mocap_video(video_path, debug=False):
         if (cv2.waitKey(5) & 0xFF) == 27:  # Press ESC to quit
             break
 
-        client.close()  # Socket disconnect
-        cap.release()
-        cv2.destroyAllWindows()
+        # client.close()  # Socket disconnect
+        # cap.release()
+        # cv2.destroyAllWindows()
