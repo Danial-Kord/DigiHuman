@@ -14,9 +14,13 @@ public class NetworkManager : MonoBehaviour
     [Header("Server")]
     [SerializeField] private string serverUploadURL;
     [SerializeField] private string serverFullPoseUploadURL;
-    [SerializeField] private string serverFaceUploadURL;
     [SerializeField] private string serverPoseEstimatorURL;
+    [SerializeField] private string serverHandUploadURL;
+    [SerializeField] private string serverHandPoseEstimatorURL;
+
+    [SerializeField] private string serverFaceUploadURL;
     [SerializeField] private string serverFaceMocapURL; 
+
 
     [Header("Dependencies")] 
     [SerializeField] private FrameReader frameReader;
@@ -39,7 +43,8 @@ public class NetworkManager : MonoBehaviour
         {
             //UploadImageGauGan(filePath);
             //UploadAndEstimatePose(filePath);
-            UploadFaceMoacap(filePath);
+            // UploadFaceMoacap(filePath);
+            UploadAndEstimateHandPose(filePath);
         } 
 #endif
     }
@@ -72,7 +77,7 @@ public class NetworkManager : MonoBehaviour
     //starting coroutine for sending ASync to server
     public void UploadFaceMoacap(string localFileName)
     {
-        StartCoroutine(Upload(localFileName, serverFaceUploadURL,(responce,bytes) => { StartCoroutine(GetFaceMocap(responce,bytes)); })); //Get estimates }));
+        StartCoroutine(Upload(localFileName, serverFaceUploadURL,(response,bytes) => { StartCoroutine(GetFaceMocap(response,bytes)); })); //Get estimates }));
     }
     
     
@@ -80,8 +85,16 @@ public class NetworkManager : MonoBehaviour
     public void UploadAndEstimatePose(string localFileName)
     {
 
-        StartCoroutine(Upload(localFileName, serverUploadURL,(responce,bytes) => { StartCoroutine(GetPoseEstimates(responce,bytes)); })); //Get estimates }));
+        StartCoroutine(Upload(localFileName, serverUploadURL,(response,bytes) => { StartCoroutine(GetPoseEstimates(response,bytes)); })); //Get estimates }));
     }
+    
+    
+    //starting coroutine for sending ASync to server
+    public void UploadAndEstimateHandPose(string localFileName)
+    {
+        StartCoroutine(Upload(localFileName, serverHandUploadURL,(response,bytes) => { StartCoroutine(GetHandPoseEstimates(response,bytes)); })); //Get estimates }));
+    }
+    
     
     //Async file uploader
     IEnumerator UploadFileCo(string localFileName, string uploadURL)
@@ -217,7 +230,62 @@ public class NetworkManager : MonoBehaviour
     }
     
     
+ //getting estimates for video hand pose
+    IEnumerator GetHandPoseEstimates(UploadResponse response, byte[] bytes)
+    {
+        PoseRequest poseRequest = new PoseRequest();
+        poseRequest.index = 0;
+        poseRequest.fileName = response.file;
+        float totalFrames = response.totalFrames;    
+        
+        List<HandJson> poseJsons = new List<HandJson>();
+        UIManager.Instancce.CheckAndEnableWaitingModeUI(WaitingModeUI.ProgressBar,true);
 
+        while (true)
+        {
+            UnityWebRequest webRequest = new UnityWebRequest(serverHandPoseEstimatorURL, "POST");
+            byte[] encodedPayload = new System.Text.UTF8Encoding().GetBytes(JsonUtility.ToJson(poseRequest));
+            webRequest.uploadHandler = (UploadHandler) new UploadHandlerRaw(encodedPayload);
+            webRequest.downloadHandler = (DownloadHandler) new DownloadHandlerBuffer();
+            webRequest.SetRequestHeader("Content-Type", "application/json");
+            webRequest.SetRequestHeader("cache-control", "no-cache");
+
+            yield return webRequest.SendWebRequest();
+            try
+            {
+                if (webRequest.result != UnityWebRequest.Result.Success)
+                {
+                    Debug.Log(webRequest.error);
+                }
+                else
+                {
+                    if (webRequest.downloadHandler.text.Equals("Done"))
+                        break;
+                    HandJson receivedJson = JsonUtility.FromJson<HandJson>(webRequest.downloadHandler.text);
+                    poseJsons.Add(receivedJson);
+                    Debug.Log(JsonUtility.FromJson<HandJson>(webRequest.downloadHandler.text).frame);
+                    poseRequest.index += 1;
+                    UIManager.Instancce.UpdateProgressBar(receivedJson.frame/totalFrames);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+
+            yield return null;
+        }
+        UIManager.Instancce.UpdateProgressBar(1);
+        yield return null;
+        frameReader.SetHandPoseList(poseJsons);
+        UIManager.Instancce.CheckAndEnableWaitingModeUI(WaitingModeUI.ProgressBar,false);
+
+        yield break;
+    }
+    
+    
+    
     
     //getting estimates for video pose
     IEnumerator GetPoseEstimates(UploadResponse response, byte[] bytes)

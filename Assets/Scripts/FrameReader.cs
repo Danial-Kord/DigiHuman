@@ -108,6 +108,13 @@ public class FrameReader : MonoBehaviour
     [HideInInspector] public PoseJsonVector currentPoseJsonVectorNew;
     [HideInInspector] public int poseIndex;
 
+    
+    //Hand pose
+    private List<HandJsonVector> estimatedHandPose;
+    [HideInInspector] public HandJsonVector currentHandJsonVector;
+    [HideInInspector] public HandJsonVector currentHandJsonVectorNew;
+    [HideInInspector] public int handIndex;
+    
     //facial mocap
     private List<FaceJson> estimatedFacialMocap;
     [HideInInspector] public FaceJson currentFaceJson;
@@ -238,6 +245,13 @@ public class FrameReader : MonoBehaviour
                 currentPoseJsonVector = currentPoseJsonVectorNew;
                 currentPoseJsonVectorNew = estimatedPoses[poseIndex];
             }
+            
+            //Hand
+            if (handIndex < estimatedHandPose.Count)
+            {
+                currentHandJsonVector = currentHandJsonVectorNew;
+                currentHandJsonVectorNew = estimatedHandPose[handIndex];
+            }
 
             //Face
             if (faceIndex < estimatedFacialMocap.Count)
@@ -277,6 +291,7 @@ public class FrameReader : MonoBehaviour
 
             //----- Hands -----
             //TODO lerp hand data
+            handPose.Predict3DPose(currentHandJsonVector);
             
             //----- Facial Mocap -------
             if (faceIndex < estimatedFacialMocap.Count)
@@ -393,6 +408,16 @@ public class FrameReader : MonoBehaviour
             handJsonVector.handsL[i].visibility = data.visibility;
         }
         return handJsonVector;
+    }
+    
+    
+    public void SetHandPoseList(List<HandJson> estimated)
+    {
+        currentHandJsonVector = GetHandsVector(estimated[0]);
+        foreach (HandJson poseJson in estimated)
+        {
+            estimatedHandPose.Add(GetHandsVector(poseJson));            
+        }
     }
     
 
