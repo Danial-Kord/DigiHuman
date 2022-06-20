@@ -3312,22 +3312,34 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6fdc792877873a040970dded4b1a1e84, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  pose3DMapper: {fileID: 0}
+  handPose: {fileID: 0}
   videoPlayer: {fileID: 0}
-  jsonTest: {fileID: 4900000, guid: e865bbd47cdbb2441aea684bdcaf656d, type: 3}
   fraction: 0.9
   fractionX: 1.2
   fractionY: 1.2
   fractionZ: 1.2
   nextFrameTime: 0
-  poseJson:
+  currentPoseJson:
     predictions: []
-    predictions_world: []
-  poseJsonVector:
+    width: 0
+    height: 0
+    frame: 0
+  currentPoseJsonVector:
     predictions: []
-    predictions_world: []
-  poseJsonVectorNew:
+    width: 0
+    height: 0
+    frame: 0
+  currentPoseJsonVectorNew:
     predictions: []
-    predictions_world: []
+    width: 0
+    height: 0
+    frame: 0
+  debug: 0
+  readFromFileHand: 0
+  jsonTestHand: {fileID: 0}
+  readFromFilePose: 0
+  jsonTestPose: {fileID: 0}
 --- !u!4 &680940037
 Transform:
   m_ObjectHideFlags: 0
@@ -3354,8 +3366,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf5f050ec7d03644583aeeace65725d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  frameReader: {fileID: 0}
   character: {fileID: 0}
+  debugMode: 0
+  debugGameObject: {fileID: 0}
+  frameReader: {fileID: 0}
   characterBodyIK:
     nose: {fileID: 0}
     leftEyeInner: {fileID: 0}
@@ -3387,8 +3401,7 @@ MonoBehaviour:
   hips: {fileID: 0}
   IKEnable: 0
   normalMode: 0
-  debugMode: 0
-  debugGameObject: {fileID: 0}
+  characterPlacement: {x: 0, y: 0, z: 0}
 --- !u!4 &693046806 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4781371403807246, guid: 0aae88e8f94751f42ae73ea94a2155cc, type: 3}
@@ -3502,8 +3515,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf5f050ec7d03644583aeeace65725d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  frameReader: {fileID: 744271029}
   character: {fileID: 352527581}
+  debugMode: 0
+  debugGameObject: {fileID: 1193169156}
+  frameReader: {fileID: 744271029}
   characterBodyIK:
     nose: {fileID: 0}
     leftEyeInner: {fileID: 0}
@@ -3535,8 +3550,7 @@ MonoBehaviour:
   hips: {fileID: 1882289625}
   IKEnable: 0
   normalMode: 1
-  debugMode: 0
-  debugGameObject: {fileID: 1193169156}
+  characterPlacement: {x: 0, y: 0, z: 0}
 --- !u!114 &744271029
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3549,22 +3563,34 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6fdc792877873a040970dded4b1a1e84, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  pose3DMapper: {fileID: 744271028}
+  handPose: {fileID: 0}
   videoPlayer: {fileID: 1721838737}
-  jsonTest: {fileID: 4900000, guid: e865bbd47cdbb2441aea684bdcaf656d, type: 3}
   fraction: 1
   fractionX: 1
   fractionY: 1
   fractionZ: -1
   nextFrameTime: 0.05
-  poseJson:
+  currentPoseJson:
     predictions: []
-    predictions_world: []
-  poseJsonVector:
+    width: 0
+    height: 0
+    frame: 0
+  currentPoseJsonVector:
     predictions: []
-    predictions_world: []
-  poseJsonVectorNew:
+    width: 0
+    height: 0
+    frame: 0
+  currentPoseJsonVectorNew:
     predictions: []
-    predictions_world: []
+    width: 0
+    height: 0
+    frame: 0
+  debug: 1
+  readFromFileHand: 1
+  jsonTestHand: {fileID: 0}
+  readFromFilePose: 0
+  jsonTestPose: {fileID: 4900000, guid: e865bbd47cdbb2441aea684bdcaf656d, type: 3}
 --- !u!4 &744271030
 Transform:
   m_ObjectHideFlags: 0
@@ -4557,8 +4583,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf5f050ec7d03644583aeeace65725d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  frameReader: {fileID: 0}
   character: {fileID: 0}
+  debugMode: 0
+  debugGameObject: {fileID: 0}
+  frameReader: {fileID: 0}
   characterBodyIK:
     nose: {fileID: 0}
     leftEyeInner: {fileID: 0}
@@ -4590,8 +4618,7 @@ MonoBehaviour:
   hips: {fileID: 0}
   IKEnable: 0
   normalMode: 0
-  debugMode: 0
-  debugGameObject: {fileID: 0}
+  characterPlacement: {x: 0, y: 0, z: 0}
 --- !u!114 &1077549481
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4604,22 +4631,34 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6fdc792877873a040970dded4b1a1e84, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  pose3DMapper: {fileID: 0}
+  handPose: {fileID: 0}
   videoPlayer: {fileID: 0}
-  jsonTest: {fileID: 4900000, guid: e865bbd47cdbb2441aea684bdcaf656d, type: 3}
   fraction: 1.2
   fractionX: 1.2
   fractionY: 1.2
   fractionZ: 1.2
   nextFrameTime: 0
-  poseJson:
+  currentPoseJson:
     predictions: []
-    predictions_world: []
-  poseJsonVector:
+    width: 0
+    height: 0
+    frame: 0
+  currentPoseJsonVector:
     predictions: []
-    predictions_world: []
-  poseJsonVectorNew:
+    width: 0
+    height: 0
+    frame: 0
+  currentPoseJsonVectorNew:
     predictions: []
-    predictions_world: []
+    width: 0
+    height: 0
+    frame: 0
+  debug: 0
+  readFromFileHand: 0
+  jsonTestHand: {fileID: 0}
+  readFromFilePose: 0
+  jsonTestPose: {fileID: 0}
 --- !u!4 &1077549482
 Transform:
   m_ObjectHideFlags: 0

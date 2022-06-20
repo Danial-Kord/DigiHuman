@@ -33,8 +33,9 @@ public class UIManager : MonoSingleton<UIManager>
     }
     public void UpdateProgressBar(float percent)
     {
+        Debug.Log(percent);
         progressBarImage.fillAmount = percent;
-        progressBarText.text = percent + "%";
+        progressBarText.text = (percent*100).ToString("0.0") + "%";
     }
     public void CheckAndEnableWaitingModeUI(WaitingModeUI waitingModeUI,bool enable)
     {

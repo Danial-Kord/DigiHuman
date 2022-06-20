@@ -12,8 +12,11 @@ public class NetworkManager : MonoBehaviour
 
     public static NetworkManager instance;
     [Header("Server")]
-    [SerializeField] private string serverUploadURL; //server URL
-    [SerializeField] private string serverPoseEstimatorURL; //server URL
+    [SerializeField] private string serverUploadURL;
+    [SerializeField] private string serverFullPoseUploadURL;
+    [SerializeField] private string serverFaceUploadURL;
+    [SerializeField] private string serverPoseEstimatorURL;
+    [SerializeField] private string serverFaceMocapURL; 
 
     [Header("Dependencies")] 
     [SerializeField] private FrameReader frameReader;
@@ -36,11 +39,19 @@ public class NetworkManager : MonoBehaviour
         {
             //UploadImageGauGan(filePath);
             //UploadAndEstimatePose(filePath);
+            UploadFaceMoacap(filePath);
         } 
 #endif
     }
 
 
+    [Serializable] 
+    public struct UploadResponse
+    {
+        public string file;
+        public int totalFrames;
+    }
+    
     
     [Serializable] 
     public struct PoseRequest
@@ -52,11 +63,17 @@ public class NetworkManager : MonoBehaviour
     
     
     //starting coroutine for sending ASync to server
-    public void UploadImageGauGan(string localFileName,Action<string,byte[]> onFinished)
+    public void UploadImageGauGan(string localFileName,Action<UploadResponse,byte[]> onFinished)
     {
         StartCoroutine(Upload(localFileName, serverUploadURL,onFinished)); //Get estimates }));
     }
     
+    
+    //starting coroutine for sending ASync to server
+    public void UploadFaceMoacap(string localFileName)
+    {
+        StartCoroutine(Upload(localFileName, serverFaceUploadURL,(responce,bytes) => { StartCoroutine(GetFaceMocap(responce,bytes)); })); //Get estimates }));
+    }
     
     
     //starting coroutine for sending ASync to server
@@ -99,7 +116,7 @@ public class NetworkManager : MonoBehaviour
     }
 
     //Async file uploader method2
-    IEnumerator Upload(string localFileName, string url, Action<string,byte[]> onFinishedUpload) {
+    IEnumerator Upload(string localFileName, string url, Action<UploadResponse,byte[]> onFinishedUpload) {
 
         WWW localFile = new WWW("file:///" + localFileName);
         yield return localFile;
@@ -132,24 +149,84 @@ public class NetworkManager : MonoBehaviour
             }
             
             Debug.Log(www.downloadHandler.text);
+            UploadResponse uploadResponse = JsonUtility.FromJson<UploadResponse>(www.downloadHandler.text);
             //sending response to the action method
-            onFinishedUpload(www.downloadHandler.text,results);
+            onFinishedUpload(uploadResponse,results);
             Debug.Log("Upload complete!");
         }
     }
 
 
 
-
-
-    
-    //getting estimates for video pose
-    IEnumerator GetPoseEstimates(string poseVideoName, byte[] bytes)
+    //getting estimates for video facial mocap
+    IEnumerator GetFaceMocap(UploadResponse reponse, byte[] bytes)
     {
         PoseRequest poseRequest = new PoseRequest();
         poseRequest.index = 0;
-        poseRequest.fileName = poseVideoName;
+        poseRequest.fileName = reponse.file;
 
+        float totalFrames = reponse.totalFrames;
+        
+        List<FaceJson> faceJsons = new List<FaceJson>();
+        UIManager.Instancce.CheckAndEnableWaitingModeUI(WaitingModeUI.ProgressBar,true);
+
+        while (true)
+        {
+            UnityWebRequest webRequest = new UnityWebRequest(serverFaceMocapURL, "POST");
+            byte[] encodedPayload = new System.Text.UTF8Encoding().GetBytes(JsonUtility.ToJson(poseRequest));
+            webRequest.uploadHandler = (UploadHandler) new UploadHandlerRaw(encodedPayload);
+            webRequest.downloadHandler = (DownloadHandler) new DownloadHandlerBuffer();
+            webRequest.SetRequestHeader("Content-Type", "application/json");
+            webRequest.SetRequestHeader("cache-control", "no-cache");
+
+            yield return webRequest.SendWebRequest();
+            try
+            {
+                if (webRequest.result != UnityWebRequest.Result.Success)
+                {
+                    Debug.Log(webRequest.error);
+                }
+                else
+                {
+                    if (webRequest.downloadHandler.text.Equals("Done"))
+                        break;
+                    // Debug.Log(webRequest.downloadHandler.text);
+                    FaceJson receivedJson = JsonUtility.FromJson<FaceJson>(webRequest.downloadHandler.text);
+                    faceJsons.Add(receivedJson);
+                    // Debug.Log(JsonUtility.FromJson<PoseJson>(webRequest.downloadHandler.text).frame);
+                    poseRequest.index += 1;
+                    UIManager.Instancce.UpdateProgressBar(((float)receivedJson.frame)/totalFrames);
+                }
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+
+            yield return null;
+        }
+        UIManager.Instancce.UpdateProgressBar(1);
+        yield return null;
+        
+        frameReader.SetFaceMocapList(faceJsons);
+        UIManager.Instancce.CheckAndEnableWaitingModeUI(WaitingModeUI.ProgressBar,false);
+
+        yield break;
+    }
+    
+    
+
+    
+    //getting estimates for video pose
+    IEnumerator GetPoseEstimates(UploadResponse response, byte[] bytes)
+    {
+        PoseRequest poseRequest = new PoseRequest();
+        poseRequest.index = 0;
+        poseRequest.fileName = response.file;
+        float totalFrames = response.totalFrames;    
+        
         List<PoseJson> poseJsons = new List<PoseJson>();
         UIManager.Instancce.CheckAndEnableWaitingModeUI(WaitingModeUI.ProgressBar,true);
 
@@ -177,8 +254,8 @@ public class NetworkManager : MonoBehaviour
                     poseJsons.Add(receivedJson);
                     Debug.Log(JsonUtility.FromJson<PoseJson>(webRequest.downloadHandler.text).frame);
                     poseRequest.index += 1;
+                    UIManager.Instancce.UpdateProgressBar(receivedJson.frame/totalFrames);
                 }
-                UIManager.Instancce.UpdateProgressBar(1);
             }
             catch (Exception e)
             {
@@ -188,8 +265,9 @@ public class NetworkManager : MonoBehaviour
 
             yield return null;
         }
-
-        frameReader.SetPosesQueue(poseJsons);
+        UIManager.Instancce.UpdateProgressBar(1);
+        yield return null;
+        frameReader.SetPoseList(poseJsons);
         UIManager.Instancce.CheckAndEnableWaitingModeUI(WaitingModeUI.ProgressBar,false);
 
         yield break;

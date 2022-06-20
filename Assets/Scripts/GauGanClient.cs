@@ -25,7 +25,7 @@ public class GauGanClient : MonoBehaviour
         networkManager.UploadImageGauGan(dirPath,SaveImage);
     }
 
-    private void SaveImage(string responce, byte[] bytes)
+    private void SaveImage(NetworkManager.UploadResponse responce, byte[] bytes)
     {
         var dirPath = Application.dataPath + "/RenderOutput";
         if (!System.IO.Directory.Exists(dirPath))

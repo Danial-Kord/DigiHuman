@@ -16,4 +16,10 @@ public static class ExtensionMethods
     {
         return Quaternion.Inverse(Quaternion.LookRotation(p1 - p2, forward));
     }
+
+    public static void DrawNormal(Vector3 origin,Vector3 normal ,float distance = 1000)
+    {
+        
+        Debug.DrawRay(origin,normal * distance,Color.blue);
+    }
 }

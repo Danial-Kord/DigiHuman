@@ -27,6 +27,35 @@ public class PoseJson
     
 }
 
+
+[Serializable]
+public class FaceJson
+{
+    public float leftEyeWid;
+    public float rightEyeWid;
+    public float mouthWid;
+    public float mouthLen;
+    public int frame;
+    
+}
+
+
+[Serializable]
+public class HandJson
+{
+    public BodyPart[] handsR;
+    public BodyPart[] handsL;
+    public int frame;
+}
+
+[Serializable]
+public class HandJsonVector
+{
+    public BodyPartVector[] handsR;
+    public BodyPartVector[] handsL;
+    public int frame;
+}
+
 [Serializable] 
 public struct BodyPartVector
 {
@@ -44,11 +73,23 @@ public class PoseJsonVector
 
 }
 
+public class FrameData
+{
+    public PoseJsonVector poseData;
+    public FaceJson faceData;
+    public HandJson handData;
+}
+
 public class FrameReader : MonoBehaviour
 {
-    public CharacterMapper characterMapper;
+    [Header("Requirements")]
+    public Pose3DMapper pose3DMapper;
+    public HandsPreprocessor handPose;
+    public FacialExpressionHandler facialExpressionHandler;
     public VideoPlayer videoPlayer;
-
+    private Dictionary<int,FrameData> frameData;
+    
+    
     [Header("Fractions to multiply by pose estimates")]
     public float fraction = 1.2f;
     public float fractionX = 1.2f;
@@ -57,72 +98,258 @@ public class FrameReader : MonoBehaviour
 
     [Header("Frame rate")]
     [SerializeField]private float nextFrameTime = 0.1f;
-
-    private Queue<PoseJsonVector> estimatedPoses;
+    
+    
+    
+    //Body pose
+    private List<PoseJsonVector> estimatedPoses;
     [HideInInspector] public PoseJson currentPoseJson;
     [HideInInspector] public PoseJsonVector currentPoseJsonVector;
     [HideInInspector] public PoseJsonVector currentPoseJsonVectorNew;
+    [HideInInspector] public int poseIndex;
 
+    //facial mocap
+    private List<FaceJson> estimatedFacialMocap;
+    [HideInInspector] public FaceJson currentFaceJson;
+    [HideInInspector] public FaceJson currentFaceJsonNew;
+    [HideInInspector] public int faceIndex;
+
+
+    [Header("PlayController")] 
+    public bool pause = true;
+    
+    
+    
     [Header("Debug")] 
     [SerializeField] private bool debug;
-    [SerializeField] private TextAsset jsonTest;
 
-    private void Awake()
+    [SerializeField] private bool readFromFileHand;
+    [SerializeField] private TextAsset jsonTestHand;
+    
+    [SerializeField] private bool readFromFace;
+    [SerializeField] private TextAsset jsonTestFace;
+    
+    [SerializeField] private bool readFromFilePose;
+    [SerializeField] private TextAsset jsonTestPose;
+
+    [SerializeField] private bool enableFileSeriesReader;
+    [SerializeField] private string path = "C:\\Danial\\Projects\\Danial\\DigiHuman\\Backend\\hand_json\\";
+    [SerializeField] private bool onlyCurrentIndex;
+    
+    private void Start()
     {
-        estimatedPoses = new Queue<PoseJsonVector>();
+        estimatedPoses = new List<PoseJsonVector>();
+        estimatedFacialMocap = new List<FaceJson>();
+        frameData = new Dictionary<int, FrameData>();
         if (debug)
         {
             videoPlayer.Prepare();
-
-            //currentPoseJson = GetBodyParts(jsonTest.text);
-            //currentPoseJsonVector = GetBodyPartsVector(currentPoseJson);
         }
-        
     }
 
     private float timer = 0;
-    private void Update()
+    private string jsonTest;
+    [SerializeField] private int fileIndex = 1;
+
+    private void TestFromFile()
+    {
+        if (enableFileSeriesReader)
+        {
+            StreamReader reader = new StreamReader(path + "" + fileIndex + ".json");
+            jsonTest = reader.ReadToEnd();
+        }
+        else
+        {
+            if(readFromFilePose)
+                jsonTest = jsonTestPose.text;
+            if(readFromFileHand)
+                jsonTest = jsonTestHand.text;
+            if (readFromFace)
+                jsonTest = jsonTestFace.text;
+        }
+        if (readFromFilePose)
+        {
+            currentPoseJson = GetBodyParts<PoseJson>(jsonTest);
+            currentPoseJsonVector = GetBodyPartsVector(currentPoseJson);
+            pose3DMapper.Predict3DPose(currentPoseJsonVector);
+            videoPlayer.frame = currentPoseJson.frame;
+            videoPlayer.Play();
+            videoPlayer.Pause();
+        }
+        if (readFromFileHand)
+        {
+            HandJson handJson = GetBodyParts<HandJson>(jsonTest);
+            HandJsonVector handsVector = GetHandsVector(handJson);
+            handPose.Predict3DPose(handsVector);
+            videoPlayer.frame = handJson.frame;
+            videoPlayer.Play();
+            videoPlayer.Pause();
+        }
+
+        if (readFromFace)
+        {
+            FaceJson faceJson = GetBodyParts<FaceJson>(jsonTest);
+            facialExpressionHandler.UpdateData(faceJson.leftEyeWid,faceJson.rightEyeWid
+                ,faceJson.mouthWid,faceJson.mouthLen);
+            videoPlayer.frame = faceJson.frame;
+            videoPlayer.Play();
+            videoPlayer.Pause();
+        }
+    }
+    private void LateUpdate()
     {
         timer += Time.deltaTime;
-        if(estimatedPoses.Count.Equals(0))
+        if (debug)
+        {
+            
+            // videoPlayer.frame = fileIndex-1;
+            // videoPlayer.Play();
+            // videoPlayer.Pause();
+            if (timer > nextFrameTime)
+            {
+                timer = 0;
+                if(!onlyCurrentIndex)
+                    fileIndex += 1;
+            }
+            try
+            {
+                TestFromFile();
+            }
+            catch (Exception e)
+            {
+                print("File problem or empty array!" + "\n" + e.StackTrace);
+                throw;
+                Console.Write(e);
+            }
+            
+            
+
+            return;
+        }
+        
+        if(pause)
             return;
         if (timer > nextFrameTime)
         {
 
-            currentPoseJsonVector = currentPoseJsonVectorNew;
-            currentPoseJsonVectorNew = estimatedPoses.Dequeue();
-            timer = 0;
-            if (debug)
+            //body pose
+            if (poseIndex < estimatedPoses.Count)
             {
-                videoPlayer.frame = currentPoseJsonVectorNew.frame;
-                videoPlayer.Play();
-                videoPlayer.Pause();
+                currentPoseJsonVector = currentPoseJsonVectorNew;
+                currentPoseJsonVectorNew = estimatedPoses[poseIndex];
             }
+
+            //Face
+            if (faceIndex < estimatedFacialMocap.Count)
+            {
+                currentFaceJson = currentFaceJsonNew;
+                currentFaceJsonNew = estimatedFacialMocap[faceIndex];
+            }
+
+            // if (debug)
+            // {
+            //     videoPlayer.frame = currentPoseJsonVectorNew.frame -1;
+            //     videoPlayer.Play();
+            //     videoPlayer.Pause();
+            // }
+            timer = 0;
             
+            //TODO Sync
+            poseIndex++;
+            faceIndex++;
         }
 
         try
         {
-            for (int i = 0; i < currentPoseJsonVector.predictions.Length; i++)
+            //-------- Body Pose ------
+            if (!estimatedPoses.Count.Equals(0))
             {
-                currentPoseJsonVector.predictions[i].position = Vector3.Lerp(
-                    currentPoseJsonVector.predictions[i].position, currentPoseJsonVectorNew.predictions[i].position,
-                    timer / nextFrameTime);
+                //for each bone position in the current frame
+                for (int i = 0; i < currentPoseJsonVector.predictions.Length; i++)
+                {
+                    currentPoseJsonVector.predictions[i].position = Vector3.Lerp(
+                        currentPoseJsonVector.predictions[i].position, currentPoseJsonVectorNew.predictions[i].position,
+                        timer / nextFrameTime);
+                }
+
+                pose3DMapper.Predict3DPose(currentPoseJsonVector);
             }
-            characterMapper.Predict3DPose(currentPoseJsonVector);
+
+            //----- Hands -----
+            //TODO lerp hand data
+            
+            //----- Facial Mocap -------
+            if (faceIndex < estimatedFacialMocap.Count)
+            {
+                facialExpressionHandler.UpdateData(currentFaceJson.leftEyeWid, currentFaceJson.rightEyeWid
+                    , currentFaceJson.mouthWid, currentFaceJson.mouthLen);
+            }
+
         }
         catch (Exception e)
         {
-
+            Debug.LogError("Problem with pose estimation: " + e.Message);
         }
         
     }
 
-    
-    
-    private PoseJson GetBodyParts(string jsonText)
+    // private void Update()
+    // {
+    //     timer += Time.deltaTime;
+    //     if (debug)
+    //     {
+    //         if (readFromFilePose)
+    //         {
+    //             currentPoseJson = GetBodyParts<PoseJson>(jsonTestPose.text);
+    //             currentPoseJsonVector = GetBodyPartsVector(currentPoseJson);
+    //             pose3DMapper.Predict3DPose(currentPoseJsonVector);
+    //         }
+    //         if (readFromFileHand)
+    //         {
+    //             HandJson handJson = GetBodyParts<HandJson>(jsonTestHand.text);
+    //             HandJsonVector handsVector = GetHandsVector(handJson);
+    //             handPose.Predict3DPose(handsVector);
+    //         }
+    //         return;
+    //     }
+    //     if(estimatedPoses.Count.Equals(0))
+    //         return;
+    //     if (timer > nextFrameTime)
+    //     {
+    //
+    //         currentPoseJsonVector = currentPoseJsonVectorNew;
+    //         currentPoseJsonVectorNew = estimatedPoses.Dequeue();
+    //         timer = 0;
+    //         if (debug)
+    //         {
+    //             videoPlayer.frame = currentPoseJsonVectorNew.frame;
+    //             videoPlayer.Play();
+    //             videoPlayer.Pause();
+    //         }
+    //         
+    //     }
+    //
+    //     try
+    //     {
+    //         for (int i = 0; i < currentPoseJsonVector.predictions.Length; i++)
+    //         {
+    //             currentPoseJsonVector.predictions[i].position = Vector3.Lerp(
+    //                 currentPoseJsonVector.predictions[i].position, currentPoseJsonVectorNew.predictions[i].position,
+    //                 timer / nextFrameTime);
+    //         }
+    //         pose3DMapper.Predict3DPose(currentPoseJsonVector);
+    //     }
+    //     catch (Exception e)
+    //     {
+    //
+    //     }
+    //
+    // }
+    //
+
+    private T GetBodyParts<T>(string jsonText)
     {
-        return JsonUtility.FromJson<PoseJson>(jsonText);
+        return JsonUtility.FromJson<T>(jsonText);
     }
     private PoseJsonVector GetBodyPartsVector(PoseJson poseJson)
     {
@@ -142,14 +369,59 @@ public class FrameReader : MonoBehaviour
 
         return poseJsonVector;
     }
+    
+    
+    private HandJsonVector GetHandsVector(HandJson handJson)
+    {
+        int len = handJson.handsR.Length;
+        int len2 = handJson.handsL.Length;
+        HandJsonVector handJsonVector = new HandJsonVector();
+        handJsonVector.handsR = new BodyPartVector[len];
+        handJsonVector.handsL = new BodyPartVector[len2];
+        handJsonVector.frame = handJson.frame;
+        for (int i = 0; i < len; i++)
+        {
+            BodyPart data = handJson.handsR[i];
+            handJsonVector.handsR[i].position = new Vector3(-data.x * fractionX,-data.y * fractionY,-data.z * fractionZ);
+            handJsonVector.handsR[i].visibility = data.visibility;
+        }
 
-    public void SetPosesQueue(List<PoseJson> estimated)
+        for (int i = 0; i < len2; i++)
+        {
+            BodyPart data = handJson.handsL[i];
+            handJsonVector.handsL[i].position = new Vector3(data.x * fractionX,data.y * fractionY,data.z * fractionZ);
+            handJsonVector.handsL[i].visibility = data.visibility;
+        }
+        return handJsonVector;
+    }
+    
+
+    public void SetPoseList(List<PoseJson> estimated)
     {
         currentPoseJsonVectorNew = GetBodyPartsVector(estimated[0]);
         foreach (PoseJson poseJson in estimated)
         {
-            estimatedPoses.Enqueue(GetBodyPartsVector(poseJson));            
+            estimatedPoses.Add(GetBodyPartsVector(poseJson));            
         }
-        
+    }
+    
+    public void SetFaceMocapList(List<FaceJson> estimated)
+    {
+        print(estimated.Count);
+        currentFaceJsonNew = estimated[0];
+        estimatedFacialMocap = estimated;
+    }
+
+    public void ArrangeDataFrames()
+    {
+        int handFrame = 0;
+        int faceFrame = 0;
+        int bodyFrame = 0;
+        int minFrame = 0;
+        int i, j, k;
+        while (true)
+        {
+            
+        }
     }
 }
