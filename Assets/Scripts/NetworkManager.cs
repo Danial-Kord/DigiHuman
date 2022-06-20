@@ -14,6 +14,7 @@ public class NetworkManager : MonoBehaviour
     [Header("Server")]
     [SerializeField] private string serverUploadURL;
     [SerializeField] private string serverFullPoseUploadURL;
+    [SerializeField] private string serverPoseUploadURL;
     [SerializeField] private string serverPoseEstimatorURL;
     [SerializeField] private string serverHandUploadURL;
     [SerializeField] private string serverHandPoseEstimatorURL;
@@ -42,9 +43,9 @@ public class NetworkManager : MonoBehaviour
         if (enableDebug)
         {
             //UploadImageGauGan(filePath);
-            //UploadAndEstimatePose(filePath);
+            UploadAndEstimatePose(filePath);
             // UploadFaceMoacap(filePath);
-            UploadAndEstimateHandPose(filePath);
+            // UploadAndEstimateHandPose(filePath);
         } 
 #endif
     }
@@ -85,7 +86,7 @@ public class NetworkManager : MonoBehaviour
     public void UploadAndEstimatePose(string localFileName)
     {
 
-        StartCoroutine(Upload(localFileName, serverUploadURL,(response,bytes) => { StartCoroutine(GetPoseEstimates(response,bytes)); })); //Get estimates }));
+        StartCoroutine(Upload(localFileName, serverPoseUploadURL,(response,bytes) => { StartCoroutine(GetPoseEstimates(response,bytes)); })); //Get estimates }));
     }
     
     

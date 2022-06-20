@@ -262,11 +262,11 @@ def upload_file():
                 # global process_reqs
                 # process_reqs.append(file_name)
                 print(":(")
-                global hand_pose_video_data
-                global hand_pose_video_data_statues
-                hand_pose_video_data[file_name] = []
-                hand_pose_video_data_statues[file_name] = False
-                thread2 = Thread(target=calculate_video_hand_pose_estimation,args=(file_name,))
+                global pose_video_data
+                global pose_video_data_statues
+                pose_video_data[file_name] = []
+                pose_video_data_statues[file_name] = False
+                thread2 = Thread(target=calculate_video_pose_estimation,args=(file_name,))
                 thread2.start()
                 print("video type")
                 cap = cv2.VideoCapture(file_name)

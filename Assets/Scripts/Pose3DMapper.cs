@@ -425,7 +425,7 @@ public class Pose3DMapper : CharacterMapper
         }
         catch (Exception e)
         {
-            Debug.Log("problem");
+            Debug.LogError("Pose problem");
             throw e;
         }
     }
