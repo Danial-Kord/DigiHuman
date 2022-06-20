@@ -244,7 +244,7 @@ def upload_file():
 
                 res = {
                     'file' : file_name,
-                    'total_frames' : tframe
+                    'totalFrames' : int(tframe)
                 }
                 return jsonify(res)
 
@@ -295,7 +295,7 @@ def upload_face_video():
 
                 res = {
                     'file' : file_name,
-                    'total_frames' : tframe
+                    'totalFrames' : int(tframe)
                 }
                 return jsonify(res)
 
