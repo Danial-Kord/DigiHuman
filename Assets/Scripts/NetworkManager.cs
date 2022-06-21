@@ -6,11 +6,11 @@ using UnityEngine;
 using UnityEngine.Networking;
 using Random = UnityEngine.Random;
 
-public class NetworkManager : MonoBehaviour
+public class NetworkManager : MonoSingleton<NetworkManager>
 {
 
 
-    public static NetworkManager instance;
+
     [Header("Server")]
     [SerializeField] private string serverUploadURL;
     [SerializeField] private string serverFullPoseUploadURL;
@@ -35,20 +35,7 @@ public class NetworkManager : MonoBehaviour
     [SerializeField] private string filePath; //for testing system
 #endif
 
-    private void Awake()
-    {
-        instance = this;
-        //for testing in engine only
-#if UNITY_EDITOR
-        if (enableDebug)
-        {
-            //UploadImageGauGan(filePath);
-            UploadAndEstimatePose(filePath);
-            // UploadFaceMoacap(filePath);
-            // UploadAndEstimateHandPose(filePath);
-        } 
-#endif
-    }
+
 
 
     [Serializable] 
@@ -75,25 +62,43 @@ public class NetworkManager : MonoBehaviour
     }
     
     
+
+    
+    
     //starting coroutine for sending ASync to server
-    public void UploadFaceMoacap(string localFileName)
+
+    public void UploadFaceMoacap(string localFileName, Action onSuccess=null)
     {
-        StartCoroutine(Upload(localFileName, serverFaceUploadURL,(response,bytes) => { StartCoroutine(GetFaceMocap(response,bytes)); })); //Get estimates }));
+        StartCoroutine(Upload(localFileName, serverFaceUploadURL, (response, bytes) =>
+        {
+            StartCoroutine(GetFaceMocap(response,bytes));
+            onSuccess?.Invoke();
+
+        })); //Get estimates }));
     }
     
     
     //starting coroutine for sending ASync to server
-    public void UploadAndEstimatePose(string localFileName)
+
+    public void UploadAndEstimatePose(string localFileName, Action onSuccess=null)
     {
 
-        StartCoroutine(Upload(localFileName, serverPoseUploadURL,(response,bytes) => { StartCoroutine(GetPoseEstimates(response,bytes)); })); //Get estimates }));
+        StartCoroutine(Upload(localFileName, serverPoseUploadURL, (response, bytes) =>
+        {
+            StartCoroutine(GetPoseEstimates(response,bytes)); 
+            onSuccess?.Invoke();
+        })); //Get estimates }));
     }
     
     
     //starting coroutine for sending ASync to server
-    public void UploadAndEstimateHandPose(string localFileName)
+    public void UploadAndEstimateHandPose(string localFileName, Action onSuccess=null)
     {
-        StartCoroutine(Upload(localFileName, serverHandUploadURL,(response,bytes) => { StartCoroutine(GetHandPoseEstimates(response,bytes)); })); //Get estimates }));
+        StartCoroutine(Upload(localFileName, serverHandUploadURL, (response, bytes) =>
+        {
+            StartCoroutine(GetHandPoseEstimates(response,bytes));
+            onSuccess?.Invoke();
+        })); //Get estimates }));
     }
     
     
@@ -153,6 +158,7 @@ public class NetworkManager : MonoBehaviour
         
         if (www.result != UnityWebRequest.Result.Success) {
             Debug.Log(www.error);
+            UIManager.Instancce.ShowErrorMessage("Server Connection Failed!");
         }
         else {
             byte[] results = www.downloadHandler.data;
@@ -221,6 +227,7 @@ public class NetworkManager : MonoBehaviour
 
             yield return null;
         }
+        UIManager.Instancce.OnFaceDataReceived();
         UIManager.Instancce.UpdateProgressBar(1);
         yield return null;
         
@@ -277,6 +284,7 @@ public class NetworkManager : MonoBehaviour
 
             yield return null;
         }
+        UIManager.Instancce.OnHandPoseDataReceived();
         UIManager.Instancce.UpdateProgressBar(1);
         yield return null;
         frameReader.SetHandPoseList(poseJsons);
@@ -334,6 +342,7 @@ public class NetworkManager : MonoBehaviour
 
             yield return null;
         }
+        UIManager.Instancce.OnPoseDataReceived();
         UIManager.Instancce.UpdateProgressBar(1);
         yield return null;
         frameReader.SetPoseList(poseJsons);

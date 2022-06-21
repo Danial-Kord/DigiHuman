@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using UnityEditor;
 using UnityEngine;
 
 public class FileManager : MonoBehaviour
@@ -30,6 +31,11 @@ public class FileManager : MonoBehaviour
         {
             Directory.CreateDirectory(AnimationsDir);
         }
+    }
+
+    private void Start()
+    {
+        OpenFileExplorer();
     }
 
     public static void SaveBinary(string path,byte[] bytes)
@@ -91,6 +97,11 @@ public class FileManager : MonoBehaviour
         AnimationData animationData = JsonUtility.FromJson<AnimationData>(data);
         FrameData[] frameData = animationData.frameData;
         return frameData;
+    }
+
+    public static string OpenFileExplorer()
+    {
+        return EditorUtility.OpenFilePanel("Hello", "", "png");
     }
     
     
