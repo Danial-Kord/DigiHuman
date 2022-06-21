@@ -16,10 +16,12 @@ public class BackgroundImageManager : MonoBehaviour
     
     [Header("Camera Background")] 
     [SerializeField] private Image backgroundImage;
+
+
     
     [Header("Image")]
     [SerializeField] private GameObject resultImageCanvas;
-    [SerializeField] private Image imageSource;
+    [SerializeField] private Image resultImage;
     private Sprite chosenGauGanSprite;
 
 
@@ -57,8 +59,10 @@ public class BackgroundImageManager : MonoBehaviour
         if (show)
         {
             backgroundImage.sprite = chosenGauGanSprite;
+            UIManager.Instancce.ShowSuccessMessage("Image background set!");
         }
         backgroundImage.gameObject.SetActive(show);
+        
     }
 
 
@@ -68,7 +72,7 @@ public class BackgroundImageManager : MonoBehaviour
         Sprite sprite = LoadNewSprite(path);
         newImageNode.GetComponentInChildren<Image>().sprite = sprite;
         slideShow.AddNode(newImageNode);
-        imageSource.sprite = sprite;
+        resultImage.sprite = sprite;
 
     }
     
@@ -80,9 +84,11 @@ public class BackgroundImageManager : MonoBehaviour
 
 
     
+
+    
     public void OnSetImage()
     {
-        chosenGauGanSprite = imageSource.sprite;
+        chosenGauGanSprite = resultImage.sprite;
         SetBackgroundView(true,chosenGauGanSprite);
     }
 
