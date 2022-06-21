@@ -31,9 +31,17 @@ public class UIManager : MonoSingleton<UIManager>
     // [SerializeField] private GameObject imageSlideShowPanel;
     // [SerializeField] private GameObject characterSlideShowPanel;
 
-    
-    
+    [Header("Upload Panel")] 
+    [SerializeField] private Image poseUploadCircleImage;
+    [SerializeField] private Image poseUploadCompleteImage;
 
+    [SerializeField] private Image handPoseUploadCircleImage;
+    [SerializeField] private Image handPoseUploadCompleteImage;
+
+    [SerializeField] private Image faceUploadCircleImage;
+    [SerializeField] private Image faceUploadCompleteImage;
+
+    
     [Header("SideBar panels")] 
     [SerializeField] private GameObject rightPanel;
     [SerializeField] private GameObject leftPanel;
@@ -139,6 +147,41 @@ public class UIManager : MonoSingleton<UIManager>
     }
     
     
+    //Uploading
+
+    public void OnUploadBodyPoseClick()
+    {
+        string filePath = FileManager.OpenFileExplorer();
+        NetworkManager.Instancce.UploadAndEstimatePose(filePath);
+    }
+
+    public void OnPoseDataReceived()
+    {
+        poseUploadCircleImage.color = Color.green;
+        poseUploadCompleteImage.gameObject.SetActive(true);
+    }
+    public void OnUploadHandPoseClick()
+    {
+        string filePath = FileManager.OpenFileExplorer();
+        NetworkManager.Instancce.UploadAndEstimateHandPose(filePath);
+    }
+    
+    public void OnHandPoseDataReceived()
+    {
+        handPoseUploadCircleImage.color = Color.green;
+        handPoseUploadCompleteImage.gameObject.SetActive(true);
+    }
+    
+    public void OnUploadFacialExpressionClick()
+    {
+        string filePath = FileManager.OpenFileExplorer();
+        NetworkManager.Instancce.UploadFaceMoacap(filePath);
+    }
+    public void OnFaceDataReceived()
+    {
+        faceUploadCircleImage.color = Color.green;
+        faceUploadCompleteImage.gameObject.SetActive(true);
+    }
     
     
     //side panels
