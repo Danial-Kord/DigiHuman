@@ -12,7 +12,7 @@ public class BackgroundImageManager : MonoBehaviour
     [Header("ImageSlideShow")] 
     [SerializeField] private GameObject imageNodePrefab;
     [SerializeField] private SlideShow slideShow;
-    public static string dirPath;
+    private static string dirPath;
     
     [Header("Camera Background")] 
     [SerializeField] private Image backgroundImage;
@@ -32,6 +32,8 @@ public class BackgroundImageManager : MonoBehaviour
         string[] files = System.IO.Directory.GetFiles(dirPath);
         for (int i = 0; i < files.Length; i++)
         {
+            if(files[i].EndsWith(".meta"))
+                continue;
             AddNewImage(files[i]);
         }
     }

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
@@ -442,6 +443,7 @@ public class FrameReader : MonoBehaviour
     
     public void SetHandPoseList(List<HandJson> estimated)
     {
+        framesLoaded = false;
         currentHandJsonVector = GetHandsVector(estimated[0]);
         foreach (HandJson poseJson in estimated)
         {
@@ -455,6 +457,7 @@ public class FrameReader : MonoBehaviour
 
     public void SetPoseList(List<PoseJson> estimated)
     {
+        framesLoaded = false;
         currentPoseJsonVectorNew = GetBodyPartsVector(estimated[0]);
         foreach (PoseJson poseJson in estimated)
         {
@@ -465,13 +468,22 @@ public class FrameReader : MonoBehaviour
     
     public void SetFaceMocapList(List<FaceJson> estimated)
     {
+        framesLoaded = false;
         print(estimated.Count);
         currentFaceJsonNew = estimated[0];
         estimatedFacialMocap = estimated;
     }
 
+    private bool framesLoaded = false;
+    public void LoadFrames(FrameData[] frameData)
+    {
+        framesLoaded = true;
+        this.frameData = frameData.ToList<FrameData>();
+    }
     public void ArrangeDataFrames()
     {
+        if(framesLoaded)
+            return;
         int handFrame = 0;
         int faceFrame = 0;
         int bodyFrame = 0;
