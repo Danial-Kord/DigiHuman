@@ -168,14 +168,13 @@ def get_frame_hand_pose():
     index = request_json['index']
     file_name = str(request_json['fileName'])
     req = request.data
-    print(file_name)
     try:
         if hand_pose_video_data.keys().__contains__(file_name) is False:
             print("Wrong!")
             return Response("Wrong input!")
         while True:
             if len(hand_pose_video_data[file_name]) >= index + 1:
-                print(hand_pose_video_data[file_name][index])
+                # print(hand_pose_video_data[file_name][index])
                 return jsonify(hand_pose_video_data[file_name][index])
             elif hand_pose_video_data_statues[file_name] is False:
                 time.sleep(0.15)
@@ -206,7 +205,7 @@ def get_frame_faccial_expression():
             return Response("Wrong input!")
         while True:
             if len(face_pose_video_data[file_name]) >= index + 1:
-                print(face_pose_video_data[file_name][index])
+                # print(face_pose_video_data[file_name][index])
                 return jsonify(face_pose_video_data[file_name][index])
             elif face_pose_video_data_statues[file_name] is False:
                 time.sleep(0.15)
@@ -235,7 +234,7 @@ def get_frame_pose():
             return Response("Wrong input!")
         while True:
             if len(pose_video_data[file_name]) >= index + 1:
-                print(pose_video_data[file_name][index])
+                # print(pose_video_data[file_name][index])
                 return jsonify(pose_video_data[file_name][index])
             elif pose_video_data_statues[file_name] is False:
                 time.sleep(0.15)

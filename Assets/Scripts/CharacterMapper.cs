@@ -40,6 +40,12 @@ public abstract class CharacterMapper : MonoBehaviour
     public abstract void Predict3DPose(PoseJsonVector poseJsonVector);
     private void Awake()
     {
+        SetCharacter(character);
+    }
+
+    public void SetCharacter(GameObject newCharacter)
+    {
+        character = newCharacter;
         anim = character.GetComponent<Animator>();
         if (debugMode)
         {
@@ -51,5 +57,5 @@ public abstract class CharacterMapper : MonoBehaviour
         }
         InitializationHumanoidPose();
     }
-    
+
 }
