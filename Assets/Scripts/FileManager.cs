@@ -60,7 +60,7 @@ public class FileManager : MonoBehaviour
     }
 
     [Serializable]
-    public struct AnimationData
+    public class AnimationData
     {
         public FrameData[] frameData;
     }
@@ -74,7 +74,8 @@ public class FileManager : MonoBehaviour
         {
             frameData = frameData
         };
-        string data = JsonUtility.ToJson(animationData);
+        string data = JsonUtility.ToJson(animationData); 
+        Debug.Log(data);
         File.WriteAllText(path,data);
         return true;
     }

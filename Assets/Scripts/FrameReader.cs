@@ -73,6 +73,7 @@ public class PoseJsonVector
 
 }
 
+[Serializable]
 public class FrameData
 {
     public PoseJsonVector poseData;
@@ -88,7 +89,7 @@ public class FrameReader : MonoBehaviour
     public HandsPreprocessor handPose;
     public FacialExpressionHandler facialExpressionHandler;
     public VideoPlayer videoPlayer;
-    private Dictionary<int,FrameData> frameData;
+    private List<FrameData> frameData;
     private FrameData currentFrameData;
     
     
@@ -151,7 +152,7 @@ public class FrameReader : MonoBehaviour
         estimatedPoses = new List<PoseJsonVector>();
         estimatedFacialMocap = new List<FaceJson>();
         estimatedHandPose = new List<HandJsonVector>();
-        frameData = new Dictionary<int, FrameData>();
+        frameData = new List<FrameData>();
         if (debug)
         {
             videoPlayer.Prepare();
@@ -238,7 +239,7 @@ public class FrameReader : MonoBehaviour
             return;
         }
         
-        if(pause || !frameData.ContainsKey(currentAnimationSlot))
+        if(pause || currentAnimationSlot >= frameData.Count)
             return;
         if (timer > nextFrameTime)
         {
@@ -517,19 +518,31 @@ public class FrameReader : MonoBehaviour
                 currentFrameData.poseData = estimatedPoses[bodyIndex];
                 bodyIndex++;
             }
+            else
+            {
+                currentFrameData.poseData.frame = -1;
+            }
             if (handFrame == minFrame)
             {
                 currentFrameData.handData = estimatedHandPose[handIndex];
                 handIndex++;
+            }
+            else
+            {
+                currentFrameData.handData.frame = -1;
             }
             if (faceIndex == minFrame)
             {
                 currentFrameData.faceData = estimatedFacialMocap[faceIndex];
                 faceIndex++;
             }
+            else
+            {
+                currentFrameData.faceData.frame = -1;
+            }
 
             currentFrameData.frame = minFrame;
-            frameData.Add(index,currentFrameData);
+            frameData.Add(currentFrameData);
             index++;
         }
 
@@ -537,6 +550,12 @@ public class FrameReader : MonoBehaviour
         currentHandJsonVectorNew = frameData[0].handData;
         currentFaceJsonNew = frameData[0].faceData;
         currentAnimationSlot = frameData[0].frame;
+    }
 
+    public FrameData[] GetFrameData()
+    {
+        
+        Debug.Log(frameData.ToArray().Length);
+        return frameData.ToArray();
     }
 }

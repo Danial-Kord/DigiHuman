@@ -32,5 +32,6 @@ public class GauGanClient : MonoBehaviour
         FileManager.SaveBinary(dirPath,bytes);
         lastImageGeneratedPath = dirPath;
         backgroundImageManager.AddNewImage(lastImageGeneratedPath);
+        backgroundImageManager.ShowChoiceMenuCanvas();
     }
 }
