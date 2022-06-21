@@ -89,11 +89,10 @@ public class Pose3DMapper : CharacterMapper
     
 
     [Tooltip("optional")] [SerializeField] private CharacterBody characterBodyIK;
-    [SerializeField] private GameObject nose;
-    [SerializeField] private GameObject hips;
+    private Transform hips;
     [SerializeField] private bool IKEnable;
     [SerializeField] private bool normalMode;
-    [SerializeField] private Vector3 characterPlacement;
+    [SerializeField] private Transform characterPlacement;
     private Vector3 headUpVector;
     private Vector3 distanceOffset;
     private JointPoint[] jointPoints;
@@ -101,7 +100,8 @@ public class Pose3DMapper : CharacterMapper
 
     protected override void InitializationHumanoidPose()
     {
-       jointPoints = new JointPoint[37];
+        character.transform.rotation = Quaternion.identity;
+        jointPoints = new JointPoint[37];
         for (var i = 0; i < jointPoints.Length; i++) jointPoints[i] = new JointPoint();
 
         // Right Arm
@@ -170,6 +170,7 @@ public class Pose3DMapper : CharacterMapper
         // Set Inverse
         Vector3 a = jointPoints[(int) BodyPoints.LeftHip].Transform.position;
         Vector3 b = jointPoints[(int) BodyPoints.Hips].Transform.position;
+        hips = jointPoints[(int) BodyPoints.Hips].Transform;
         Vector3 c = jointPoints[(int) BodyPoints.RightHip].Transform.position;
         var forward = b.TriangleNormal(a,c);
         
@@ -193,10 +194,10 @@ public class Pose3DMapper : CharacterMapper
         // For Head Rotation
         var head = jointPoints[(int) BodyPoints.Head];
         head.InitRotation = jointPoints[(int) BodyPoints.Head].Transform.rotation.normalized;
-        var gaze = head.Transform.up.normalized;
+        var gaze = head.Transform.up;
         Debug.Log(gaze);
         head.Inverse = Quaternion.Inverse(Quaternion.LookRotation(gaze));
-       // head.InverseRotation = head.Inverse.normalized * head.InitRotation; //TODO check why?
+       // head.InverseRotation = head.Inverse * head.InitRotation; //TODO check why?
        
         head.InverseRotation = head.InitRotation;
         headUpVector = head.Transform.up;
@@ -215,6 +216,8 @@ public class Pose3DMapper : CharacterMapper
         
         // distanceOffset = character.transform.position
         Debug.Log("wtf");
+        character.transform.rotation = characterPlacement.rotation;
+        hips.position = characterPlacement.position;
     }
     
     
@@ -414,6 +417,7 @@ public class Pose3DMapper : CharacterMapper
         }
         try
         {
+            character.transform.rotation = Quaternion.identity;
             if (normalMode)
             {
                 UpdateNormalMode(bodyPartVectors);
@@ -422,6 +426,8 @@ public class Pose3DMapper : CharacterMapper
             {
                 UpdateModeIK(bodyPartVectors);
             }
+            character.transform.rotation = characterPlacement.rotation;
+            hips.position = characterPlacement.position;
         }
         catch (Exception e)
         {

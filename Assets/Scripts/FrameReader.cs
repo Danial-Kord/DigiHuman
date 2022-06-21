@@ -126,6 +126,9 @@ public class FrameReader : MonoBehaviour
     [HideInInspector] public int faceIndex;
 
 
+    [Header("3D Character")] 
+    [SerializeField] private GameObject character;
+
     [Header("PlayController")] 
     public bool pause = true;
     
@@ -157,6 +160,7 @@ public class FrameReader : MonoBehaviour
         {
             videoPlayer.Prepare();
         }
+
     }
 
     private float timer = 0;
@@ -518,28 +522,18 @@ public class FrameReader : MonoBehaviour
                 currentFrameData.poseData = estimatedPoses[bodyIndex];
                 bodyIndex++;
             }
-            else
-            {
-                currentFrameData.poseData.frame = -1;
-            }
             if (handFrame == minFrame)
             {
                 currentFrameData.handData = estimatedHandPose[handIndex];
                 handIndex++;
             }
-            else
-            {
-                currentFrameData.handData.frame = -1;
-            }
+
             if (faceIndex == minFrame)
             {
                 currentFrameData.faceData = estimatedFacialMocap[faceIndex];
                 faceIndex++;
             }
-            else
-            {
-                currentFrameData.faceData.frame = -1;
-            }
+
 
             currentFrameData.frame = minFrame;
             frameData.Add(currentFrameData);
@@ -557,5 +551,15 @@ public class FrameReader : MonoBehaviour
         
         Debug.Log(frameData.ToArray().Length);
         return frameData.ToArray();
+    }
+
+    public void SetNewCharacter(GameObject newCharacter)
+    {
+        character.SetActive(false);
+        character = newCharacter;
+        pose3DMapper.SetCharacter(character);
+        handPose.SetCharacter(character);
+        facialExpressionHandler.SetCharacter(newCharacter);
+
     }
 }

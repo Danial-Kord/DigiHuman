@@ -11,15 +11,25 @@ public class FacialExpressionHandler : MonoBehaviour
     ControlObject MouthWidControl = new ControlObject();
     ControlObject MouthLenControl = new ControlObject();
 
+    
 
     public Vector3 getleftEyeShape;
     public Vector3 getrightEyeShape;
     public Vector3 getmouthShape;
-    
+
+    [SerializeField] private GameObject character;
+    private BlendShapeController characterBlendShapeController;
     // Start is called before the first frame update
     void Start()
-    {  
+    {
 
+        Initialization();
+
+    }
+
+    private void Initialization()
+    {
+        characterBlendShapeController = character.GetComponentInChildren<BlendShapeController>();
         // Initialize head parameters
 
         getleftEyeShape = new Vector3(0.2f, 0.2f, 0.2f);
@@ -42,9 +52,14 @@ public class FacialExpressionHandler : MonoBehaviour
         LeftEyeControl.mode = 1;
         MouthLenControl.mode = 1;
         MouthWidControl.mode = 1;
-
     }
-
+    
+    public void SetCharacter(GameObject character)
+    {
+        this.character = character;
+        Initialization();
+    }
+    
     public void UpdateData(float leftEyeWid, float rightEyeWid, float mouthWid, float mouthLen)
     {
         

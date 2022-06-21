@@ -27,8 +27,9 @@ public class UIManager : MonoSingleton<UIManager>
     [SerializeField] private GameObject progressBar;
 
 
-    [Header("Slides")] 
-    [SerializeField] private GameObject imageSlideShowPanel;
+    // [Header("Slides")] 
+    // [SerializeField] private GameObject imageSlideShowPanel;
+    // [SerializeField] private GameObject characterSlideShowPanel;
 
     
     
@@ -125,16 +126,19 @@ public class UIManager : MonoSingleton<UIManager>
     
     
     //Slides
-    public void OnShowImageSlideShow()
+    public void OnSlideShowEnter(GameObject panel)
     {
-        imageSlideShowPanel.SetActive(true);
+        panel.SetActive(true);
         canvas.gameObject.SetActive(false);
     }
-    public void OnExitImageSlideShow()
+    public void OnSlideShowExit(GameObject panel)
     {
-        imageSlideShowPanel.SetActive(false);
+        panel.SetActive(false);
         canvas.gameObject.SetActive(true);
     }
+    
+    
+    
     
     //side panels
     public void SideBarPanelTrigger(Animator panel)

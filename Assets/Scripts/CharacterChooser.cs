@@ -6,9 +6,8 @@ using UnityEngine;
 public class CharacterChooser : MonoBehaviour
 {
 
-    [SerializeField] private Transform characterPlace;
+    [SerializeField] private FrameReader frameReader;
     [SerializeField] private SlideShow slideShow;
-    [SerializeField] private GameObject currentCharacter;
     private void Start()
     {
         slideShow.onSelection += OnCharacterSelect;
@@ -16,7 +15,6 @@ public class CharacterChooser : MonoBehaviour
 
     private void OnCharacterSelect(int index,GameObject node)
     {
-        currentCharacter.SetActive(false);
-        // currentCharacter = Instantiate(node);
+        frameReader.SetNewCharacter(Instantiate(node));
     }
 }
