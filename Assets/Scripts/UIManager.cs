@@ -43,7 +43,7 @@ public class UIManager : MonoSingleton<UIManager>
     [SerializeField] private Button saveAnimationButton;
     [SerializeField] private GameObject animationPanel;
     [SerializeField] private TextMeshProUGUI animationNameText;
-
+    
 
     [Header("Messages")] 
     [SerializeField] private GameObject errorPanel;
@@ -119,6 +119,7 @@ public class UIManager : MonoSingleton<UIManager>
             ShowSuccessMessage("Animation Saved Successfully!");
             animationPanel.SetActive(false);
             saveAnimationButton.gameObject.SetActive(true);
+            AnimationChooser.Instancce.AddNewAnimation(animationName);
         }
         else
             ShowErrorMessage("Use another animation name!");
