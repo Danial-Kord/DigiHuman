@@ -150,7 +150,9 @@ public class FrameReader : MonoBehaviour
     [SerializeField] private bool enableFileSeriesReader;
     [SerializeField] private string path = "C:\\Danial\\Projects\\Danial\\DigiHuman\\Backend\\hand_json\\";
     [SerializeField] private bool onlyCurrentIndex;
-    
+
+
+    private Quaternion characterRotation;
     private void Start()
     {
         estimatedPoses = new List<PoseJsonVector>();
@@ -162,6 +164,7 @@ public class FrameReader : MonoBehaviour
             videoPlayer.Prepare();
         }
 
+        characterRotation = character.transform.rotation;
     }
 
     private float timer = 0;
@@ -295,9 +298,11 @@ public class FrameReader : MonoBehaviour
 
         try
         {
+            character.transform.rotation = Quaternion.identity;
             //-------- Body Pose ------
             if (currentPoseJsonVector != null)
             {
+                
                 //TODO change maybe looking for 5 frames later!
                 if (currentPoseJsonVectorNew != null)
                 {
@@ -328,9 +333,12 @@ public class FrameReader : MonoBehaviour
                     , currentFaceJson.mouthWid, currentFaceJson.mouthLen);
             }
 
+            character.transform.rotation = characterRotation;
+
         }
         catch (Exception e)
         {
+            character.transform.rotation = characterRotation;
             Console.WriteLine(e);
             throw;
             Debug.LogError("Problem occured: " + e.Message);
@@ -540,7 +548,7 @@ public class FrameReader : MonoBehaviour
                 handIndex++;
             }
 
-            if (faceIndex == minFrame)
+            if (faceFrame == minFrame)
             {
                 currentFrameData.faceData = estimatedFacialMocap[faceIndex];
                 faceIndex++;
@@ -572,6 +580,6 @@ public class FrameReader : MonoBehaviour
         pose3DMapper.SetCharacter(character);
         handPose.SetCharacter(character);
         facialExpressionHandler.SetCharacter(newCharacter);
-
+        characterRotation = character.transform.rotation;
     }
 }

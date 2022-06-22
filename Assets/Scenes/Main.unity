@@ -4118,7 +4118,7 @@ Canvas:
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 25
   m_SortingLayerID: 0
-  m_SortingOrder: 10
+  m_SortingOrder: 0
   m_TargetDisplay: 0
 --- !u!224 &562632699
 RectTransform:
@@ -4167,11 +4167,12 @@ MonoBehaviour:
   waitingUI: {fileID: 1590560530}
   loading: {fileID: 8742063}
   progressBar: {fileID: 235023714}
-  poseUploadCircleImage: {fileID: 1003222161}
+  successDownloadColor: {r: 0.3254902, g: 0.101960786, b: 0.5411765, a: 1}
+  poseUploadCircleImage: {fileID: 454090785}
   poseUploadCompleteImage: {fileID: 162300690}
-  handPoseUploadCircleImage: {fileID: 1103128100}
+  handPoseUploadCircleImage: {fileID: 105361151}
   handPoseUploadCompleteImage: {fileID: 141278399}
-  faceUploadCircleImage: {fileID: 1391294643}
+  faceUploadCircleImage: {fileID: 1546188042}
   faceUploadCompleteImage: {fileID: 1951305199}
   rightPanel: {fileID: 0}
   leftPanel: {fileID: 0}
@@ -4539,7 +4540,7 @@ Canvas:
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 25
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 2
   m_TargetDisplay: 0
 --- !u!224 &594470578
 RectTransform:
@@ -4950,7 +4951,7 @@ MonoBehaviour:
   fractionX: 1
   fractionY: 1
   fractionZ: -0.8
-  nextFrameTime: 0.025
+  nextFrameTime: 0.05
   currentPoseJson:
     predictions: []
     width: 0
@@ -17063,7 +17064,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &2118461220
 RectTransform:
   m_ObjectHideFlags: 0

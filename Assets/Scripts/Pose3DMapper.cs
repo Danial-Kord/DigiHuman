@@ -408,6 +408,8 @@ public class Pose3DMapper : CharacterMapper
     public override void Predict3DPose(PoseJsonVector poseJsonVector)
     {
         BodyPartVector[] bodyPartVectors = poseJsonVector.predictions;
+        if(bodyPartVectors.Length == 0)
+            return;
         if (debugMode)
         {
             for (int i = 0; i < bodyPartVectors.Length; i++)
