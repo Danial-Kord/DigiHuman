@@ -32,11 +32,7 @@ public class FileManager : MonoBehaviour
             Directory.CreateDirectory(AnimationsDir);
         }
     }
-
-    private void Start()
-    {
-        OpenFileExplorer();
-    }
+    
 
     public static void SaveBinary(string path,byte[] bytes)
     {

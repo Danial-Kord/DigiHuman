@@ -32,6 +32,7 @@ public class UIManager : MonoSingleton<UIManager>
     // [SerializeField] private GameObject characterSlideShowPanel;
 
     [Header("Upload Panel")] 
+    [SerializeField] private Color successDownloadColor;
     [SerializeField] private Image poseUploadCircleImage;
     [SerializeField] private Image poseUploadCompleteImage;
 
@@ -151,35 +152,45 @@ public class UIManager : MonoSingleton<UIManager>
 
     public void OnUploadBodyPoseClick()
     {
+        poseUploadCircleImage.color = Color.white;
+        poseUploadCompleteImage.gameObject.SetActive(false);
         string filePath = FileManager.OpenFileExplorer();
         NetworkManager.Instancce.UploadAndEstimatePose(filePath);
     }
 
     public void OnPoseDataReceived()
     {
-        poseUploadCircleImage.color = Color.green;
+        ShowSuccessMessage("Pose data downloaded successfully!");
+        poseUploadCircleImage.color = successDownloadColor;
         poseUploadCompleteImage.gameObject.SetActive(true);
     }
     public void OnUploadHandPoseClick()
     {
+        handPoseUploadCircleImage.color = Color.white;
+        handPoseUploadCompleteImage.gameObject.SetActive(false);
         string filePath = FileManager.OpenFileExplorer();
         NetworkManager.Instancce.UploadAndEstimateHandPose(filePath);
+        
     }
     
     public void OnHandPoseDataReceived()
     {
-        handPoseUploadCircleImage.color = Color.green;
+        ShowSuccessMessage("Hands data downloaded successfully!");
+        handPoseUploadCircleImage.color = successDownloadColor;
         handPoseUploadCompleteImage.gameObject.SetActive(true);
     }
     
     public void OnUploadFacialExpressionClick()
     {
+        faceUploadCircleImage.color = Color.white;
+        faceUploadCompleteImage.gameObject.SetActive(false);
         string filePath = FileManager.OpenFileExplorer();
         NetworkManager.Instancce.UploadFaceMoacap(filePath);
     }
     public void OnFaceDataReceived()
     {
-        faceUploadCircleImage.color = Color.green;
+        ShowSuccessMessage("Face data downloaded successfully!");
+        faceUploadCircleImage.color = successDownloadColor;
         faceUploadCompleteImage.gameObject.SetActive(true);
     }
     
