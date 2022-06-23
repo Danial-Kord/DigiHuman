@@ -10,8 +10,7 @@ public class GradientBackground : MonoBehaviour
     [SerializeField] private float minRGBValue;
     [SerializeField] private float maxRGBValue;
     [SerializeField] private float speed;
-    [SerializeField] private Image image;
-
+    [SerializeField] private Camera camera;
     private void Start()
     {
         StartCoroutine(PlayAnimation());
@@ -27,11 +26,10 @@ public class GradientBackground : MonoBehaviour
         bool BChanging = false;
         int direction = -1;
         Color color = new Color(R, G, B);
-        
+        camera.backgroundColor = color;
         while (true)
         {
-            if (!this.gameObject.activeSelf)
-                yield return null;
+
             if (RChanging)
             {
                 if (direction == -1 && R < minRGBValue)
@@ -60,7 +58,7 @@ public class GradientBackground : MonoBehaviour
                 }
                 else
                 {
-                    R += Time.deltaTime * speed * direction;
+                    R += (Time.deltaTime * speed * direction);
                 }
             }
             else if (GChanging)
@@ -91,7 +89,7 @@ public class GradientBackground : MonoBehaviour
                 }
                 else
                 {
-                    G += Time.deltaTime * speed * direction;
+                    G += (Time.deltaTime * speed * direction);
                 }
             }
             else
@@ -122,14 +120,14 @@ public class GradientBackground : MonoBehaviour
                 }
                 else
                 {
-                    B += Time.deltaTime * speed * direction;
+                    B += (Time.deltaTime * speed * direction);
                 }
             }
-
+            
             color.r = R / 255.0f;
             color.g = G / 255.0f;
             color.b = B / 255.0f;
-            Camera.main.backgroundColor = color;
+            camera.backgroundColor = color;
             yield return new WaitForEndOfFrame();
         }
     }

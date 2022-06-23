@@ -19,6 +19,11 @@ public class SlideShow : MonoBehaviour
     private int index = 0;
 
 
+    [Header("rotator")] 
+    [SerializeField] private GameObject rotator;
+
+    [SerializeField] private bool enableRotator;
+    
     private void Awake()
     {
         nodes ??= new List<GameObject>();
@@ -31,29 +36,53 @@ public class SlideShow : MonoBehaviour
     {
         if(nodes.Count == 0)
             return;
-        nodes[0].transform.position = centerNodePos.position;
+        GameObject node = nodes[0];
+        if (enableRotator)
+        {
+            node = SetRotator(nodes[0]);
+            node.transform.parent = parent.transform;
+        }
+
+        node.transform.position = centerNodePos.position;
         for (int i = 1; i < nodes.Count; i++)
         {
+            node = nodes[i];
+            if (enableRotator)
+            {
+                node = SetRotator(node);
+                node.transform.parent = parent.transform;
+            }
             Vector3 targetPos = nodes[i-1].transform.position + Vector3.right * distanceBetweenNodes;
-            nodes[i].transform.position = targetPos; 
+            node.transform.position = targetPos; 
         }
     }
     
 
-    public void AddNode(GameObject node)
+    public void AddNode(GameObject originalNode)
     {
-        node.transform.parent = parent.transform;
+        GameObject newNode = originalNode;
+        if (enableRotator)
+            newNode = SetRotator(originalNode);
+        newNode.transform.parent = parent.transform;
         if (nodes.Count != 0)
         {
             Vector3 targetPos = nodes[nodes.Count - 1].transform.position + Vector3.right * distanceBetweenNodes;
-            node.transform.position = targetPos;
-            nodes.Add(node);
+            newNode.transform.position = targetPos;
         }
         else
         {
-            node.transform.position = centerNodePos.position;
-            nodes.Add(node);
+            newNode.transform.position = centerNodePos.position;
         }
+        nodes.Add(originalNode);
+
+    }
+
+    private GameObject SetRotator(GameObject node)
+    {
+        GameObject rotate = Instantiate(rotator);
+        node.transform.parent = rotate.transform;
+        node.transform.localPosition = Vector3.zero;
+        return rotate;
     }
     
     public void MoveLast()
