@@ -114,8 +114,10 @@ public class BlendShapeController : MonoBehaviour
         }
 
         // Apply deformation weights
-        // skinnedMeshRenderer.SetBlendShapeWeight(leftEyeNum, leftEyeWeight);
-        // skinnedMeshRenderer.SetBlendShapeWeight(rightEyeNum, rightEyeWeight);
+        if(leftEyeNum != -1)
+            skinnedMeshRenderer.SetBlendShapeWeight(leftEyeNum, leftEyeWeight);
+        if(rightEyeNum != -1)
+            skinnedMeshRenderer.SetBlendShapeWeight(rightEyeNum, rightEyeWeight);
         // skinnedMeshRenderer.SetBlendShapeWeight (shockEyeNum, shockEyeWeight);
 
         skinnedMeshRenderer.SetBlendShapeWeight (mouthWidNum, Mathf.Clamp(mouthWidWeight,0,100));

@@ -62,7 +62,6 @@ public class UIManager : MonoSingleton<UIManager>
 
     public void UpdateProgressBar(float percent)
     {
-        Debug.Log(percent);
         progressBarImage.fillAmount = percent;
         progressBarText.text = (percent*100).ToString("0.0") + "%";
     }
@@ -150,11 +149,13 @@ public class UIManager : MonoSingleton<UIManager>
     {
         panel.SetActive(true);
         canvas.gameObject.SetActive(false);
+        frameReader.HideCharacter();
     }
     public void OnSlideShowExit(GameObject panel)
     {
         panel.SetActive(false);
         canvas.gameObject.SetActive(true);
+        frameReader.ShowCharacter();
     }
     
     
