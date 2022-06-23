@@ -564,7 +564,7 @@ public class FrameReader : MonoBehaviour
             index++;
         }
 
-
+        MakeSceneReady();
     }
 
     public FrameData[] GetFrameData()
@@ -582,6 +582,7 @@ public class FrameReader : MonoBehaviour
         handPose.SetCharacter(character);
         facialExpressionHandler.SetCharacter(newCharacter);
         characterRotation = character.transform.rotation;
+        HideCharacter();
     }
 
     private void MakeSceneReady()
@@ -595,5 +596,14 @@ public class FrameReader : MonoBehaviour
         currentFaceJsonNew = frameData[0].faceData;
         currentAnimationSlot = frameData[0].frame;
     }
+
+    public void HideCharacter()
+    {
+        character.SetActive(false);
+    }
     
+    public void ShowCharacter()
+    {
+        character.SetActive(true);
+    }
 }

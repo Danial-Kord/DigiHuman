@@ -189,6 +189,7 @@ public class NetworkManager : MonoSingleton<NetworkManager>
         
         List<FaceJson> faceJsons = new List<FaceJson>();
         UIManager.Instancce.CheckAndEnableWaitingModeUI(WaitingModeUI.ProgressBar,true);
+        UIManager.Instancce.UpdateProgressBar(0);
 
         while (true)
         {
@@ -227,11 +228,12 @@ public class NetworkManager : MonoSingleton<NetworkManager>
 
             yield return null;
         }
-        UIManager.Instancce.OnFaceDataReceived();
         UIManager.Instancce.UpdateProgressBar(1);
         yield return null;
         
         frameReader.SetFaceMocapList(faceJsons);
+        UIManager.Instancce.OnFaceDataReceived();
+
         UIManager.Instancce.CheckAndEnableWaitingModeUI(WaitingModeUI.ProgressBar,false);
 
         yield break;
@@ -248,6 +250,7 @@ public class NetworkManager : MonoSingleton<NetworkManager>
         
         List<HandJson> poseJsons = new List<HandJson>();
         UIManager.Instancce.CheckAndEnableWaitingModeUI(WaitingModeUI.ProgressBar,true);
+        UIManager.Instancce.UpdateProgressBar(0);
 
         while (true)
         {
@@ -284,10 +287,11 @@ public class NetworkManager : MonoSingleton<NetworkManager>
 
             yield return null;
         }
-        UIManager.Instancce.OnHandPoseDataReceived();
         UIManager.Instancce.UpdateProgressBar(1);
         yield return null;
         frameReader.SetHandPoseList(poseJsons);
+        UIManager.Instancce.OnHandPoseDataReceived();
+
         UIManager.Instancce.CheckAndEnableWaitingModeUI(WaitingModeUI.ProgressBar,false);
 
         yield break;
@@ -306,6 +310,7 @@ public class NetworkManager : MonoSingleton<NetworkManager>
         
         List<PoseJson> poseJsons = new List<PoseJson>();
         UIManager.Instancce.CheckAndEnableWaitingModeUI(WaitingModeUI.ProgressBar,true);
+        UIManager.Instancce.UpdateProgressBar(0);
 
         while (true)
         {
@@ -342,10 +347,11 @@ public class NetworkManager : MonoSingleton<NetworkManager>
 
             yield return null;
         }
-        UIManager.Instancce.OnPoseDataReceived();
         UIManager.Instancce.UpdateProgressBar(1);
         yield return null;
         frameReader.SetPoseList(poseJsons);
+        UIManager.Instancce.OnPoseDataReceived();
+
         UIManager.Instancce.CheckAndEnableWaitingModeUI(WaitingModeUI.ProgressBar,false);
 
         yield break;
