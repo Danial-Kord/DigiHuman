@@ -132,6 +132,9 @@ public class FrameReader : MonoBehaviour
 
     [Header("PlayController")] 
     public bool pause = true;
+
+    [SerializeField] private Slider slider;
+    
     
     
     
@@ -219,6 +222,7 @@ public class FrameReader : MonoBehaviour
     private void LateUpdate()
     {
         timer += Time.deltaTime;
+        currentAnimationSlot = (int)slider.value;
         if (debug)
         {
             
@@ -334,10 +338,11 @@ public class FrameReader : MonoBehaviour
             }
 
             character.transform.rotation = characterRotation;
-
+            slider.value = currentAnimationSlot;
         }
         catch (Exception e)
         {
+            slider.value = currentAnimationSlot;
             character.transform.rotation = characterRotation;
             Console.WriteLine(e);
             throw;
@@ -485,13 +490,12 @@ public class FrameReader : MonoBehaviour
     private bool framesLoaded = false;
     public void LoadFrames(FrameData[] frameData)
     {
-        framesLoaded = true;
         this.frameData = frameData.ToList<FrameData>();
+        MakeSceneReady();
     }
     public void ArrangeDataFrames()
     {
-        if(framesLoaded)
-            return;
+        frameData.Clear();
         int handFrame = 0;
         int faceFrame = 0;
         int bodyFrame = 0;
@@ -560,10 +564,7 @@ public class FrameReader : MonoBehaviour
             index++;
         }
 
-        currentPoseJsonVectorNew = frameData[0].poseData;
-        currentHandJsonVectorNew = frameData[0].handData;
-        currentFaceJsonNew = frameData[0].faceData;
-        currentAnimationSlot = frameData[0].frame;
+
     }
 
     public FrameData[] GetFrameData()
@@ -582,4 +583,17 @@ public class FrameReader : MonoBehaviour
         facialExpressionHandler.SetCharacter(newCharacter);
         characterRotation = character.transform.rotation;
     }
+
+    private void MakeSceneReady()
+    {
+        framesLoaded = true;
+        slider.maxValue = frameData.Count;
+        slider.interactable = true;
+        UIManager.Instancce.ActiveAnimationControlPanel();
+        currentPoseJsonVectorNew = frameData[0].poseData;
+        currentHandJsonVectorNew = frameData[0].handData;
+        currentFaceJsonNew = frameData[0].faceData;
+        currentAnimationSlot = frameData[0].frame;
+    }
+    
 }

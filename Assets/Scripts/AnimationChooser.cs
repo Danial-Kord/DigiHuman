@@ -37,5 +37,6 @@ public class AnimationChooser : MonoSingleton<AnimationChooser>
         string animationName = node.GetComponentInChildren<TextMeshProUGUI>().text;
         FrameData[] frameData = FileManager.LoadAnimation(animationName);
         frameReader.LoadFrames(frameData);
+        
     }
 }
