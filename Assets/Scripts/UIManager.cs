@@ -42,15 +42,16 @@ public class UIManager : MonoSingleton<UIManager>
     [SerializeField] private Image faceUploadCircleImage;
     [SerializeField] private Image faceUploadCompleteImage;
 
-    
-    [Header("SideBar panels")] 
-    [SerializeField] private GameObject rightPanel;
-    [SerializeField] private GameObject leftPanel;
-    
-    
-    [Header("Animation panel")] 
+
+    [Header("Animation Control Panel")] 
+    [SerializeField] private Button animationPlayButton;
+    [SerializeField] private Sprite pauseImage;
+    [SerializeField] private Sprite resumeImage;
     [SerializeField] private Button saveAnimationButton;
-    [SerializeField] private GameObject animationPanel;
+
+    
+    [Header("Save Animation Panel")] 
+    [SerializeField] private GameObject saveAnimationPanel;
     [SerializeField] private TextMeshProUGUI animationNameText;
     
 
@@ -106,15 +107,24 @@ public class UIManager : MonoSingleton<UIManager>
     
     
     //Animation Actions
-    public void OnPlayAnimation()
+    public void OnPlayAnimationButtonClick()
     {
-        frameReader.ArrangeDataFrames();
-        frameReader.pause = false;
+        frameReader.pause = !frameReader.pause;
+        if (frameReader.pause)
+            animationPlayButton.image.sprite = resumeImage;
+        else
+            animationPlayButton.image.sprite = pauseImage;
+        
     }
 
+    public void ActiveAnimationControlPanel()
+    {
+        saveAnimationButton.interactable = true;
+        animationPlayButton.interactable = true;
+    }
     public void ShowAnimationSavePanel()
     {
-        animationPanel.SetActive(true);
+        saveAnimationPanel.SetActive(true);
         saveAnimationButton.gameObject.SetActive(false);
     }
     public void OnSubmitAnimationSave()
@@ -126,7 +136,7 @@ public class UIManager : MonoSingleton<UIManager>
         if (result)
         {
             ShowSuccessMessage("Animation Saved Successfully!");
-            animationPanel.SetActive(false);
+            saveAnimationPanel.SetActive(false);
             saveAnimationButton.gameObject.SetActive(true);
             AnimationChooser.Instancce.AddNewAnimation(animationName);
         }
@@ -163,6 +173,7 @@ public class UIManager : MonoSingleton<UIManager>
         ShowSuccessMessage("Pose data downloaded successfully!");
         poseUploadCircleImage.color = successDownloadColor;
         poseUploadCompleteImage.gameObject.SetActive(true);
+        frameReader.ArrangeDataFrames();
     }
     public void OnUploadHandPoseClick()
     {
@@ -178,6 +189,7 @@ public class UIManager : MonoSingleton<UIManager>
         ShowSuccessMessage("Hands data downloaded successfully!");
         handPoseUploadCircleImage.color = successDownloadColor;
         handPoseUploadCompleteImage.gameObject.SetActive(true);
+        frameReader.ArrangeDataFrames();
     }
     
     public void OnUploadFacialExpressionClick()
@@ -192,8 +204,10 @@ public class UIManager : MonoSingleton<UIManager>
         ShowSuccessMessage("Face data downloaded successfully!");
         faceUploadCircleImage.color = successDownloadColor;
         faceUploadCompleteImage.gameObject.SetActive(true);
+        frameReader.ArrangeDataFrames();
     }
     
+
     
     //side panels
     public void SideBarPanelTrigger(Animator panel)
