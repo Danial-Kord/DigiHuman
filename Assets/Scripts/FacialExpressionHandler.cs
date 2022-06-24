@@ -103,7 +103,7 @@ public class FacialExpressionHandler : MonoBehaviour
         BlendShapeController.leftEyeShape = getleftEyeShape;
         BlendShapeController.rightEyeShape = getrightEyeShape;
         BlendShapeController.mouthShape = getmouthShape;
-
+        characterBlendShapeController.UpdateBlendShape();
     }
 }
 

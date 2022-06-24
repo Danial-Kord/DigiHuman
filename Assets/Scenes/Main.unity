@@ -5008,7 +5008,7 @@ MonoBehaviour:
   fractionX: 1
   fractionY: 1
   fractionZ: -0.8
-  nextFrameTime: 0.05
+  nextFrameTime: 0.025
   currentPoseJson:
     predictions: []
     width: 0
@@ -5051,7 +5051,7 @@ MonoBehaviour:
   pause: 1
   slider: {fileID: 1986810590}
   debug: 0
-  readFromFileHand: 1
+  readFromFileHand: 0
   jsonTestHand: {fileID: 4900000, guid: dfc85833b696b4648bc353b27dce706d, type: 3}
   readFromFace: 0
   jsonTestFace: {fileID: 0}
@@ -5262,7 +5262,7 @@ VideoPlayer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 670222375}
   m_Enabled: 1
-  m_VideoClip: {fileID: 32900000, guid: 636be29beb12ec94584392831f251396, type: 3}
+  m_VideoClip: {fileID: 32900000, guid: 7e58cb00c3999ed49a0540b2699ff783, type: 3}
   m_TargetCameraAlpha: 1
   m_TargetCamera3DLayout: 0
   m_TargetCamera: {fileID: 0}
@@ -5275,14 +5275,12 @@ VideoPlayer:
   m_DataSource: 0
   m_PlaybackSpeed: 1
   m_AudioOutputMode: 2
-  m_TargetAudioSources:
-  - {fileID: 0}
-  m_DirectAudioVolumes:
-  - 1
+  m_TargetAudioSources: []
+  m_DirectAudioVolumes: []
   m_Url: 
-  m_EnabledAudioTracks: 01
-  m_DirectAudioMutes: 00
-  m_ControlledAudioTrackCount: 1
+  m_EnabledAudioTracks: 
+  m_DirectAudioMutes: 
+  m_ControlledAudioTrackCount: 0
   m_PlayOnAwake: 0
   m_SkipOnDrop: 1
   m_Looping: 0
@@ -11899,10 +11897,10 @@ RectTransform:
   m_Father: {fileID: 2095134057}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -33.0708, y: 7.6318}
-  m_SizeDelta: {x: 1477.3608, y: 1364.917}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 250, y: -250}
+  m_SizeDelta: {x: 500, y: 500}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1414997327
 MonoBehaviour:
@@ -13621,7 +13619,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1848088943}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 981dd2a0a6d24934aab8d3dcb83e2324, type: 3}
   m_Name: 
@@ -15668,7 +15666,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &2095134054
 MonoBehaviour:
   m_ObjectHideFlags: 0

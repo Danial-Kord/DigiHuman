@@ -166,6 +166,19 @@ public class Pose3DMapper : CharacterMapper
         // jointPoints[(int) BodyPoints.Neck].Child = jointPoints[(int) BodyPoints.Head];
         // jointPoints[(int) BodyPoints.Head].Child = jointPoints[(int) BodyPoints.Nose];
 
+        
+        for (int i = 0; i < jointPoints.Length; i++)
+        {
+            if (jointPoints[i].Child != null)
+            {
+                if(jointPoints[i].Child.Transform != null)            
+                {
+                    jointPoints[i].DistanceFromChild = Vector3.Distance(jointPoints[i].Child.Transform.position,
+                        jointPoints[i].Transform.position);
+                }
+            }
+        }
+        
 
         // Set Inverse
         Vector3 a = jointPoints[(int) BodyPoints.LeftHip].Transform.position;
@@ -232,19 +245,41 @@ public class Pose3DMapper : CharacterMapper
         }
         
         //setting position of each bone
+        // jointPoints[(int) BodyPoints.Spine].Transform.position = bodyPartVectors[(int) BodyPoints.Spine].position;
         jointPoints[(int) BodyPoints.Hips].Transform.position = bodyPartVectors[(int) BodyPoints.Hips].position;
+
         for (int i = 0; i < jointPoints.Length && i < bodyPartVectors.Length; i++)
         {
-            if(i == (int) BodyPoints.RightShoulder || i == (int) BodyPoints.LeftShoulder || 
-               i == (int) BodyPoints.LeftHip || i== (int) BodyPoints.RightHip || i == (int) BodyPoints.Head || i== (int) BodyPoints.Neck)
-                continue;
-            if (jointPoints[i].Transform != null)
+            JointPoint bone = jointPoints[i];
+            if (bone.Child != null)
             {
-                if(bodyPartVectors[i].visibility > 0.75f)
-                    jointPoints[i].Transform.position = bodyPartVectors[i].position;
+                if (bone.Child.Transform != null) 
+                {
+                    JointPoint child = bone.Child;
+                    float distance = bone.DistanceFromChild;
+                    Vector3 direction = (-bone.LandmarkPose + child.LandmarkPose) / (-bone.LandmarkPose + child.LandmarkPose).magnitude;
+                    child.Transform.position = bone.Transform.position + direction * distance;
+//                    Debug.Log(distance + "  " + Vector3.Distance(child.Transform.position,bone.Transform.position));
+                }
             }
+            else
+            {
+                // if(i == (int) BodyPoints.RightShoulder || i == (int) BodyPoints.LeftShoulder || 
+                //    i == (int) BodyPoints.LeftHip || i== (int) BodyPoints.RightHip || i == (int) BodyPoints.Head || i== (int) BodyPoints.Neck)
+                //     continue;
+                // if (jointPoints[i].Transform != null)
+                // {
+                //     if(bodyPartVectors[i].visibility > 0.75f)
+                //         jointPoints[i].Transform.position = bodyPartVectors[i].position;
+                // }
+            }
+            
+            
+
         }
 
+
+        
         //setting hip rotation
         Vector3 a = bodyPartVectors[(int) BodyPoints.LeftShoulder].position;
         Vector3 b = jointPoints[(int) BodyPoints.Hips].Transform.position;
@@ -408,6 +443,8 @@ public class Pose3DMapper : CharacterMapper
     public override void Predict3DPose(PoseJsonVector poseJsonVector)
     {
         BodyPartVector[] bodyPartVectors = poseJsonVector.predictions;
+        if(bodyPartVectors == null)
+            return;
         if(bodyPartVectors.Length == 0)
             return;
         if (debugMode)

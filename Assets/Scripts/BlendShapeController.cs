@@ -26,7 +26,7 @@ public class BlendShapeController : MonoBehaviour
     {
     }
 
-    void LateUpdate ()
+    public void UpdateBlendShape()
     {
         // Blinking function
         switch(blinkFunctionSelect)
