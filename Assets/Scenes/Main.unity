@@ -3406,6 +3406,26 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 562632699}
     m_Modifications:
+    - target: {fileID: 779607027724840665, guid: 04537b29ee5db87499b8df1df06621cc, type: 3}
+      propertyPath: m_fontAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: 2e498d1c8094910479dc3e1b768306a4, type: 2}
+    - target: {fileID: 779607027724840665, guid: 04537b29ee5db87499b8df1df06621cc, type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: 2180264, guid: 2e498d1c8094910479dc3e1b768306a4, type: 2}
+    - target: {fileID: 779607027962463964, guid: 04537b29ee5db87499b8df1df06621cc, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 779607027973532361, guid: 04537b29ee5db87499b8df1df06621cc, type: 3}
+      propertyPath: m_Value
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 779607027973532361, guid: 04537b29ee5db87499b8df1df06621cc, type: 3}
+      propertyPath: m_MaxValue
+      value: 20
+      objectReference: {fileID: 0}
     - target: {fileID: 779607028189951530, guid: 04537b29ee5db87499b8df1df06621cc, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -3416,7 +3436,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 779607028783921164, guid: 04537b29ee5db87499b8df1df06621cc, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.33333334
+      value: 0.21052632
       objectReference: {fileID: 0}
     - target: {fileID: 779607028783921164, guid: 04537b29ee5db87499b8df1df06621cc, type: 3}
       propertyPath: m_AnchorMax.y
@@ -3452,7 +3472,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 779607029275719005, guid: 04537b29ee5db87499b8df1df06621cc, type: 3}
       propertyPath: m_RootOrder
-      value: 8
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 779607029275719005, guid: 04537b29ee5db87499b8df1df06621cc, type: 3}
       propertyPath: m_AnchorMax.x
@@ -3538,9 +3558,13 @@ PrefabInstance:
       propertyPath: resultImageCanvas
       value: 
       objectReference: {fileID: 368265709}
+    - target: {fileID: 779607029275719007, guid: 04537b29ee5db87499b8df1df06621cc, type: 3}
+      propertyPath: backgroundImageManager
+      value: 
+      objectReference: {fileID: 1277562335}
     - target: {fileID: 779607029390760579, guid: 04537b29ee5db87499b8df1df06621cc, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.33333334
+      value: 0.21052632
       objectReference: {fileID: 0}
     - target: {fileID: 779607029390760579, guid: 04537b29ee5db87499b8df1df06621cc, type: 3}
       propertyPath: m_AnchorMax.y
@@ -3548,11 +3572,47 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 779607029390760579, guid: 04537b29ee5db87499b8df1df06621cc, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0.33333334
+      value: 0.21052632
+      objectReference: {fileID: 0}
+    - target: {fileID: 5565349726610558663, guid: 04537b29ee5db87499b8df1df06621cc, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1277562335}
+    - target: {fileID: 5565349726610558663, guid: 04537b29ee5db87499b8df1df06621cc, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnSetImage
+      objectReference: {fileID: 0}
+    - target: {fileID: 5565349726610558663, guid: 04537b29ee5db87499b8df1df06621cc, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: BackgroundImageManager, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 7605359184506311622, guid: 04537b29ee5db87499b8df1df06621cc, type: 3}
+      propertyPath: m_Color.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7605359184506311622, guid: 04537b29ee5db87499b8df1df06621cc, type: 3}
+      propertyPath: m_Color.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7605359184506311622, guid: 04537b29ee5db87499b8df1df06621cc, type: 3}
+      propertyPath: m_Color.r
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7801612553678446671, guid: 04537b29ee5db87499b8df1df06621cc, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8217779338298259650, guid: 04537b29ee5db87499b8df1df06621cc, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1277562335}
+    - target: {fileID: 8217779338298259650, guid: 04537b29ee5db87499b8df1df06621cc, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnRemoveImage
+      objectReference: {fileID: 0}
+    - target: {fileID: 8217779338298259650, guid: 04537b29ee5db87499b8df1df06621cc, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: BackgroundImageManager, Assembly-CSharp
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 04537b29ee5db87499b8df1df06621cc, type: 3}

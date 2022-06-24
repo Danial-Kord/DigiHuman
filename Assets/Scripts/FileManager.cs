@@ -99,6 +99,10 @@ public class FileManager : MonoBehaviour
     {
         return EditorUtility.OpenFilePanel("Hello", "", "png");
     }
-    
+
+    public static void RemoveFile(string path)
+    {
+        File.Delete(path);
+    }
     
 }

@@ -169,9 +169,21 @@ public class NetworkManager : MonoSingleton<NetworkManager>
             }
             
             Debug.Log(www.downloadHandler.text);
-            UploadResponse uploadResponse = JsonUtility.FromJson<UploadResponse>(www.downloadHandler.text);
+            try
+            {
+                UploadResponse uploadResponse = JsonUtility.FromJson<UploadResponse>(www.downloadHandler.text);
+                onFinishedUpload(uploadResponse,results);
+
+            }
+            catch (Exception e)
+            {
+                
+                onFinishedUpload((new UploadResponse()),results);
+
+                Console.WriteLine(e);
+                throw;
+            }
             //sending response to the action method
-            onFinishedUpload(uploadResponse,results);
             Debug.Log("Upload complete!");
         }
     }

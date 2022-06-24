@@ -97,5 +97,6 @@ public class BackgroundImageManager : MonoBehaviour
     public void OnRemoveImage()
     {
         resultImageCanvas.SetActive(false);
+        FileManager.RemoveFile(GauGanClient.lastImageGeneratedPath);
     }
 }
