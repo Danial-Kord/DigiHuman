@@ -108,7 +108,7 @@ public class UIManager : MonoSingleton<UIManager>
     //Animation Actions
     public void OnPlayAnimationButtonClick()
     {
-        frameReader.pause = !frameReader.pause;
+        frameReader.OnTogglePlay();
         if (frameReader.pause)
             animationPlayButton.image.sprite = resumeImage;
         else

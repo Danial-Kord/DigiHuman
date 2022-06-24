@@ -101,7 +101,7 @@ public class FrameReader : MonoBehaviour
     public float fractionZ = 1.2f;
 
     [Header("Frame rate")]
-    [SerializeField] private float nextFrameTime = 0.1f;
+    [SerializeField] private float nextFrameTime;
 
     private int currentAnimationSlot = 0;
     
@@ -166,7 +166,6 @@ public class FrameReader : MonoBehaviour
         {
             videoPlayer.Prepare();
         }
-
         characterRotation = character.transform.rotation;
     }
 
@@ -221,11 +220,11 @@ public class FrameReader : MonoBehaviour
     }
     private void LateUpdate()
     {
-        timer += Time.deltaTime;
+        if(!pause)
+            timer += Time.deltaTime;
         currentAnimationSlot = (int)slider.value;
         if (debug)
         {
-            
             // videoPlayer.frame = fileIndex-1;
             // videoPlayer.Play();
             // videoPlayer.Pause();
@@ -251,45 +250,47 @@ public class FrameReader : MonoBehaviour
             return;
         }
         
-        if(pause || currentAnimationSlot >= frameData.Count)
+        if(currentAnimationSlot >= frameData.Count)
             return;
-        if (timer > nextFrameTime)
-        {
 
-            // //body pose
-            // if (poseIndex < estimatedPoses.Count)
-            // {
-            //     currentPoseJsonVector = currentPoseJsonVectorNew;
-            //     currentPoseJsonVectorNew = estimatedPoses[poseIndex];
-            // }
-            //
-            // //Hand
-            // if (handIndex < estimatedHandPose.Count)
-            // {
-            //     currentHandJsonVector = currentHandJsonVectorNew;
-            //     currentHandJsonVectorNew = estimatedHandPose[handIndex];
-            // }
-            //
-            // //Face
-            // if (faceIndex < estimatedFacialMocap.Count)
-            // {
-            //     currentFaceJson = currentFaceJsonNew;
-            //     currentFaceJsonNew = estimatedFacialMocap[faceIndex];
-            // }
 
-            //Current Frame data
-            
-            currentFrameData = frameData[currentAnimationSlot];
-            //Body
-            currentPoseJsonVector = currentPoseJsonVectorNew;
-            currentPoseJsonVectorNew = currentFrameData.poseData;
-            //Hand
-            currentHandJsonVector = currentHandJsonVectorNew;
-            currentHandJsonVectorNew = currentFrameData.handData;
-            //Face
-            currentFaceJson = currentFaceJsonNew;
-            currentFaceJsonNew = currentFrameData.faceData;
-            
+        // //body pose
+        // if (poseIndex < estimatedPoses.Count)
+        // {
+        //     currentPoseJsonVector = currentPoseJsonVectorNew;
+        //     currentPoseJsonVectorNew = estimatedPoses[poseIndex];
+        // }
+        //
+        // //Hand
+        // if (handIndex < estimatedHandPose.Count)
+        // {
+        //     currentHandJsonVector = currentHandJsonVectorNew;
+        //     currentHandJsonVectorNew = estimatedHandPose[handIndex];
+        // }
+        //
+        // //Face
+        // if (faceIndex < estimatedFacialMocap.Count)
+        // {
+        //     currentFaceJson = currentFaceJsonNew;
+        //     currentFaceJsonNew = estimatedFacialMocap[faceIndex];
+        // }
+
+        //Current Frame data
+        
+        currentFrameData = frameData[currentAnimationSlot];
+        //Body
+        currentPoseJsonVector = currentPoseJsonVectorNew;
+        currentPoseJsonVectorNew = currentFrameData.poseData;
+        //Hand
+        currentHandJsonVector = currentHandJsonVectorNew;
+        currentHandJsonVectorNew = currentFrameData.handData;
+        //Face
+        // currentFaceJson = currentFaceJsonNew;
+        // currentFaceJsonNew = currentFrameData.faceData;
+        currentFaceJson = currentFrameData.faceData;
+        
+        if (timer >= nextFrameTime)
+        {  
             if (debug)
             {
                 videoPlayer.frame = frameData[currentAnimationSlot].frame;
@@ -348,8 +349,21 @@ public class FrameReader : MonoBehaviour
             throw;
             Debug.LogError("Problem occured: " + e.Message);
         }
-        
+
+        try
+        {
+            Debug.Log(videoPlayer.frame +"--" + currentFaceJson.frame);
+            if(videoPlayer.frame > currentFaceJson.frame || pause)
+                videoPlayer.frame = currentFaceJson.frame ;
+
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
+
 
     // private void Update()
     // {
@@ -491,6 +505,7 @@ public class FrameReader : MonoBehaviour
     public void LoadFrames(FrameData[] frameData)
     {
         this.frameData = frameData.ToList<FrameData>();
+        Debug.Log(frameData.Length);
         MakeSceneReady();
     }
     public void ArrangeDataFrames()
@@ -528,7 +543,7 @@ public class FrameReader : MonoBehaviour
             
             if (faceIndex < estimatedFacialMocap.Count)
             {
-                faceFrame = estimatedFacialMocap[handIndex].frame;
+                faceFrame = estimatedFacialMocap[faceIndex].frame;
             }
             else
             {
@@ -594,7 +609,8 @@ public class FrameReader : MonoBehaviour
         currentPoseJsonVectorNew = frameData[0].poseData;
         currentHandJsonVectorNew = frameData[0].handData;
         currentFaceJsonNew = frameData[0].faceData;
-        currentAnimationSlot = frameData[0].frame;
+        currentAnimationSlot = 0;
+        // currentAnimationSlot = frameData[0].frame;
     }
 
     public void HideCharacter()
@@ -605,5 +621,21 @@ public class FrameReader : MonoBehaviour
     public void ShowCharacter()
     {
         character.SetActive(true);
+    }
+
+    public void OnTogglePlay()
+    {
+        pause = !pause;
+        // nextFrameTime = (float) (videoPlayer.length / videoPlayer.frameCount);
+        // test();
+        // Invoke("test",0.5f);
+    }
+
+    private void test()
+    {
+        if(pause)
+            videoPlayer.Pause();
+        else
+            videoPlayer.Play();
     }
 }
