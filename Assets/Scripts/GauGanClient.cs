@@ -17,7 +17,7 @@ public class GauGanClient : MonoBehaviour
 
     
 
-    private string lastImageGeneratedPath;
+    public static string lastImageGeneratedPath;
 
     public void SendAndReceiveSketch()
     {
@@ -33,5 +33,10 @@ public class GauGanClient : MonoBehaviour
         lastImageGeneratedPath = dirPath;
         backgroundImageManager.AddNewImage(lastImageGeneratedPath);
         backgroundImageManager.ShowChoiceMenuCanvas();
+    }
+
+    private void DeleteImage()
+    {
+        
     }
 }
