@@ -97,7 +97,7 @@ public class FileManager : MonoBehaviour
 
     public static string OpenFileExplorer()
     {
-        return EditorUtility.OpenFilePanel("Hello", "", "png");
+        return EditorUtility.OpenFilePanel("Hello", "","mp4");
     }
 
     public static void RemoveFile(string path)

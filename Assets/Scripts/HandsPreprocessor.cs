@@ -237,10 +237,10 @@ public class HandsPreprocessor : CharacterMapper
             BodyPartVector[] handL = poseJsonVector.handsL;
             if(handR != null)
                 if(handR.Length != 0)
-                    PredictHandPose(handR, rightHand);
+                    PredictHandPose(handR, leftHand);
             if(handL != null)
                 if(handL.Length != 0)
-                    PredictHandPose(handL, leftHand);
+                    PredictHandPose(handL, rightHand);
         }
         catch (Exception e)
         {

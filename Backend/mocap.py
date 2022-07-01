@@ -213,7 +213,7 @@ def get_quaternion(rotation_vector):
 
 
 #get process based on the input frame
-def get_frame_facial_mocap(img,frame):
+def get_frame_facial_mocap(img,frame,currentTime=None):
     size = img.shape
 
     if size[0] > 700:
@@ -236,13 +236,23 @@ def get_frame_facial_mocap(img,frame):
     print(parameters_str)
 
     try:
-        json_data = {
-            'leftEyeWid': leftEyeWid,
-            'rightEyeWid': rightEyewid,
-            'mouthWid': mouthWid,
-            'mouthLen': mouthLen,
-            'frame': frame
-        }
+        if currentTime != None:
+            json_data = {
+                'leftEyeWid': leftEyeWid,
+                'rightEyeWid': rightEyewid,
+                'mouthWid': mouthWid,
+                'mouthLen': mouthLen,
+                'frame': frame,
+                'time' : currentTime
+            }
+        else:
+            json_data = {
+                'leftEyeWid': leftEyeWid,
+                'rightEyeWid': rightEyewid,
+                'mouthWid': mouthWid,
+                'mouthLen': mouthLen,
+                'frame': frame
+            }
         return json_data
     except:
         return None
@@ -257,12 +267,13 @@ def face_mocap_video(video_path, debug=False):
         ret, img = cap.read()
         # current_frame
         frame = cap.get(cv2.CAP_PROP_POS_FRAMES)
-
+        currentTime = cap.get(cv2.CAP_PROP_POS_MSEC)
+        print(currentTime)
         if ret != True:
             print('read frame failed')
             # continue
             break
-        result = get_frame_facial_mocap(img,frame)
+        result = get_frame_facial_mocap(img,frame,currentTime)
         if result is not None:
             yield result
     cap.release()

@@ -198,7 +198,11 @@ public class UIManager : MonoSingleton<UIManager>
         faceUploadCircleImage.color = Color.white;
         faceUploadCompleteImage.gameObject.SetActive(false);
         string filePath = FileManager.OpenFileExplorer();
-        NetworkManager.Instancce.UploadFaceMoacap(filePath);
+        NetworkManager.Instancce.UploadFaceMoacap(filePath,(() =>
+        {
+            frameReader.SetFaceOriginalVideo(filePath);
+
+        }));
     }
     public void OnFaceDataReceived()
     {

@@ -73,7 +73,6 @@ public class NetworkManager : MonoSingleton<NetworkManager>
         {
             StartCoroutine(GetFaceMocap(response,bytes));
             onSuccess?.Invoke();
-
         })); //Get estimates }));
     }
     
