@@ -198,7 +198,7 @@ def get_frame_faccial_expression():
     index = request_json['index']
     file_name = str(request_json['fileName'])
     req = request.data
-    print(file_name)
+    #print(file_name)
     try:
         if face_pose_video_data.keys().__contains__(file_name) is False:
             print("Wrong!")
@@ -227,7 +227,7 @@ def get_frame_pose():
     index = request_json['index']
     file_name = str(request_json['fileName'])
     req = request.data
-    print(file_name)
+    #print(file_name)
     try:
         if pose_video_data.keys().__contains__(file_name) is False:
             print("Wrong!")

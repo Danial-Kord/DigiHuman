@@ -66,10 +66,10 @@ public class FacialExpressionHandler : MonoBehaviour
         getleftEyeShape = new Vector3(0.2f, leftEyeWid, 0.2f);
         getrightEyeShape = new Vector3(0.2f, rightEyeWid, 0.2f);
         getmouthShape = new Vector3(mouthLen, mouthWid, 0.2f);
-        FaceUpdate();
+        // FaceUpdate();
     }
     
-    void FaceUpdate()
+    void FixedUpdate()
     {
         
         // Facial expression control!

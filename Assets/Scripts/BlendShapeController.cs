@@ -120,7 +120,9 @@ public class BlendShapeController : MonoBehaviour
             skinnedMeshRenderer.SetBlendShapeWeight(rightEyeNum, rightEyeWeight);
         // skinnedMeshRenderer.SetBlendShapeWeight (shockEyeNum, shockEyeWeight);
 
-        skinnedMeshRenderer.SetBlendShapeWeight (mouthWidNum, Mathf.Clamp(mouthWidWeight,0,100));
-        skinnedMeshRenderer.SetBlendShapeWeight (mouthLenNum, Mathf.Clamp(mouthLenWeight,0,100));
+        // skinnedMeshRenderer.SetBlendShapeWeight (mouthWidNum, Mathf.Clamp(mouthWidWeight,0,100));
+        // skinnedMeshRenderer.SetBlendShapeWeight (mouthLenNum, Mathf.Clamp(mouthLenWeight,0,100));
+        skinnedMeshRenderer.SetBlendShapeWeight (mouthWidNum, mouthWidWeight);
+        skinnedMeshRenderer.SetBlendShapeWeight (mouthLenNum, mouthLenWeight);
     }
 }

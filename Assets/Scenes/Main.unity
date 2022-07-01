@@ -3963,16 +3963,19 @@ MonoBehaviour:
     mouthWid: 0
     mouthLen: 0
     frame: 0
+    time: 0
   currentFaceJsonNew:
     leftEyeWid: 0
     rightEyeWid: 0
     mouthWid: 0
     mouthLen: 0
     frame: 0
+    time: 0
   faceIndex: 0
   character: {fileID: 0}
   pause: 1
   slider: {fileID: 0}
+  enableVideo: 0
   debug: 0
   readFromFileHand: 0
   jsonTestHand: {fileID: 0}
@@ -5100,16 +5103,19 @@ MonoBehaviour:
     mouthWid: 0
     mouthLen: 0
     frame: 0
+    time: 0
   currentFaceJsonNew:
     leftEyeWid: 0
     rightEyeWid: 0
     mouthWid: 0
     mouthLen: 0
     frame: 0
+    time: 0
   faceIndex: 0
   character: {fileID: 1231570487}
   pause: 1
   slider: {fileID: 1986810590}
+  enableVideo: 1
   debug: 0
   readFromFileHand: 0
   jsonTestHand: {fileID: 4900000, guid: dfc85833b696b4648bc353b27dce706d, type: 3}
@@ -5133,7 +5139,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &620901068
 MonoBehaviour:
@@ -5322,7 +5328,7 @@ VideoPlayer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 670222375}
   m_Enabled: 1
-  m_VideoClip: {fileID: 32900000, guid: 7e58cb00c3999ed49a0540b2699ff783, type: 3}
+  m_VideoClip: {fileID: 32900000, guid: 92ba151ff17207a41ac390e5d716afc3, type: 3}
   m_TargetCameraAlpha: 1
   m_TargetCamera3DLayout: 0
   m_TargetCamera: {fileID: 0}
@@ -5332,17 +5338,19 @@ VideoPlayer:
   m_TargetMaterialProperty: _MainTex
   m_RenderMode: 2
   m_AspectRatio: 2
-  m_DataSource: 0
+  m_DataSource: 1
   m_PlaybackSpeed: 1
   m_AudioOutputMode: 2
-  m_TargetAudioSources: []
-  m_DirectAudioVolumes: []
+  m_TargetAudioSources:
+  - {fileID: 0}
+  m_DirectAudioVolumes:
+  - 1
   m_Url: 
-  m_EnabledAudioTracks: 
-  m_DirectAudioMutes: 
-  m_ControlledAudioTrackCount: 0
+  m_EnabledAudioTracks: 01
+  m_DirectAudioMutes: 00
+  m_ControlledAudioTrackCount: 1
   m_PlayOnAwake: 0
-  m_SkipOnDrop: 1
+  m_SkipOnDrop: 0
   m_Looping: 0
   m_WaitForFirstFrame: 0
   m_FrameReadyEventEnabled: 0
@@ -7676,7 +7684,7 @@ Transform:
   m_LocalScale: {x: 0.01, y: 0.01, z: 0.01}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 14
+  m_RootOrder: 15
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &899725285
 GameObject:
@@ -9477,16 +9485,19 @@ MonoBehaviour:
     mouthWid: 0
     mouthLen: 0
     frame: 0
+    time: 0
   currentFaceJsonNew:
     leftEyeWid: 0
     rightEyeWid: 0
     mouthWid: 0
     mouthLen: 0
     frame: 0
+    time: 0
   faceIndex: 0
   character: {fileID: 0}
   pause: 1
   slider: {fileID: 0}
+  enableVideo: 0
   debug: 0
   readFromFileHand: 0
   jsonTestHand: {fileID: 0}
@@ -12957,7 +12968,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1031314121711542604, guid: bce30a6cc7e9c834db1091b45a8adf7b, type: 3}
       propertyPath: m_RootOrder
-      value: 7
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 1031314121711542604, guid: bce30a6cc7e9c834db1091b45a8adf7b, type: 3}
       propertyPath: m_LocalPosition.x
@@ -13925,7 +13936,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 400096, guid: 412b92d4feeb9c548bfa98f62c4d1022, type: 3}
       propertyPath: m_RootOrder
-      value: 15
+      value: 14
       objectReference: {fileID: 0}
     - target: {fileID: 400096, guid: 412b92d4feeb9c548bfa98f62c4d1022, type: 3}
       propertyPath: m_LocalPosition.x
@@ -15726,7 +15737,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &2095134054
 MonoBehaviour:
   m_ObjectHideFlags: 0
