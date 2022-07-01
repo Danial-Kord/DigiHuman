@@ -46,7 +46,7 @@ public abstract class CharacterMapper : MonoBehaviour
     public void SetCharacter(GameObject newCharacter)
     {
         character = newCharacter;
-        anim = character.GetComponent<Animator>();
+        anim = character.GetComponentInChildren<Animator>();
         if (debugMode)
         {
             jointsDebug = new GameObject[33];
