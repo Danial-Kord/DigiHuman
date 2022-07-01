@@ -137,7 +137,11 @@ public class FrameReader : MonoBehaviour
     
     [SerializeField] private bool enableVideo;
 
-    
+
+    [Header("Camera Zoom")] 
+    [SerializeField] private Transform bodyZoomCameraPlace;
+    [SerializeField] private Transform faceZoomCameraPlace;
+    [SerializeField] private Camera camera;
     
     [Header("Debug")] 
     [SerializeField] private bool debug;
@@ -164,6 +168,7 @@ public class FrameReader : MonoBehaviour
         estimatedHandPose = new List<HandJsonVector>();
         frameData = new List<FrameData>();
         characterRotation = character.transform.rotation;
+        SetBodyZoomCamera();
     }
 
     private float timer = 0;
@@ -366,13 +371,13 @@ public class FrameReader : MonoBehaviour
         }
     }
     
-    private void LateUpdate()
+    private void FixedUpdate()
     {
 
 
 
         if(!pause)
-            timer += Time.deltaTime;
+            timer += Time.fixedDeltaTime;
         currentAnimationSlot = (int)slider.value;
         if (debug)
         {
@@ -498,9 +503,27 @@ public class FrameReader : MonoBehaviour
             }
 
             //----- Hands -----
-            //TODO lerp hand data
             if (currentHandJsonVector != null)
             {
+                if (currentHandJsonVectorNew != null)
+                {
+                    //for each bone position in the current frame
+                    for (int i = 0; i < currentHandJsonVector.handsR.Length; i++)
+                    {
+                        currentHandJsonVector.handsR[i].position = Vector3.Lerp(
+                            currentHandJsonVector.handsR[i].position,
+                            currentHandJsonVectorNew.handsR[i].position,
+                            timer / nextFrameTime);
+                    }
+                    //for each bone position in the current frame
+                    for (int i = 0; i < currentHandJsonVector.handsL.Length; i++)
+                    {
+                        currentHandJsonVector.handsL[i].position = Vector3.Lerp(
+                            currentHandJsonVector.handsL[i].position,
+                            currentHandJsonVectorNew.handsL[i].position,
+                            timer / nextFrameTime);
+                    }
+                }
                 handPose.Predict3DPose(currentHandJsonVector);
             }
 
@@ -518,9 +541,10 @@ public class FrameReader : MonoBehaviour
         {
             slider.value = currentAnimationSlot;
             character.transform.rotation = characterRotation;
+            Debug.LogError("Problem occured: " + e.Message);
+
             Console.WriteLine(e);
             throw;
-            Debug.LogError("Problem occured: " + e.Message);
         }
 
         try
@@ -800,7 +824,8 @@ public class FrameReader : MonoBehaviour
 
     public void OnTogglePlay()
     {
-        nextFrameTime = 1 / videoPlayer.frameRate;
+        if(enableVideo && videoPlayer.url != "")
+            nextFrameTime = 1 / videoPlayer.frameRate;
         timer = 10;
         videoPlayer.frame = 0;
         
@@ -829,5 +854,21 @@ public class FrameReader : MonoBehaviour
     {
         videoPlayer.url = path;
         videoPlayer.Prepare();
+        videoPlayer.Play();
+        videoPlayer.frame = 0;
+        videoPlayer.Pause();
+    }
+    
+    //Set Camera Zoom
+    public void SetFaceZoomCamera()
+    {
+        camera.transform.position = faceZoomCameraPlace.position;
+        camera.transform.rotation = faceZoomCameraPlace.rotation;
+    }
+    
+    public void SetBodyZoomCamera()
+    {
+        camera.transform.position = bodyZoomCameraPlace.position;
+        camera.transform.rotation = bodyZoomCameraPlace.rotation;
     }
 }

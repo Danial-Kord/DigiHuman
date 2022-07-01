@@ -53,8 +53,13 @@ public class UIManager : MonoSingleton<UIManager>
     [Header("Save Animation Panel")] 
     [SerializeField] private GameObject saveAnimationPanel;
     [SerializeField] private TextMeshProUGUI animationNameText;
-    
 
+
+    [Header("Camera Zoom Panel")] 
+    [SerializeField] private GameObject bodyZoomButton;
+    [SerializeField] private GameObject faceZoomButton;
+    
+    
     [Header("Messages")] 
     [SerializeField] private GameObject errorPanel;
     [SerializeField] private GameObject successPanel;
@@ -223,4 +228,22 @@ public class UIManager : MonoSingleton<UIManager>
     {
         button.SetTrigger("Rotate");
     }
+    
+    
+    //Camera Zoom actions
+    public void OnFaceZoomClicked()
+    {
+        faceZoomButton.SetActive(false);
+        bodyZoomButton.SetActive(true);
+        frameReader.SetFaceZoomCamera();
+    }
+    
+    public void OnFullBodyZoomClicked()
+    {
+        faceZoomButton.SetActive(true);
+        bodyZoomButton.SetActive(false);
+        frameReader.SetBodyZoomCamera();
+    }
+
+
 }
