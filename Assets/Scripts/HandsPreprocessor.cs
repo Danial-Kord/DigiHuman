@@ -112,7 +112,6 @@ public class HandsPreprocessor : CharacterMapper
                     float distance = bone.DistanceFromChild;
                     Vector3 direction = (-bone.LandmarkPose + child.LandmarkPose) / (-bone.LandmarkPose + child.LandmarkPose).magnitude;
                     child.Transform.position = bone.Transform.position + direction * distance;
-//                    Debug.Log(distance + "  " + Vector3.Distance(child.Transform.position,bone.Transform.position));
                 }
             }
         }
@@ -244,8 +243,9 @@ public class HandsPreprocessor : CharacterMapper
         }
         catch (Exception e)
         {
+            Debug.LogError("Hand Problem!");
+
            Console.WriteLine(e);
-           Debug.LogError("Hand Problem!");
             throw;
         }
 

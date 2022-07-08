@@ -362,7 +362,7 @@ def Hand_pose_video(video_path, debug=False):
     with mp_hands.Hands(
             model_complexity=1,
             max_num_hands=2,
-            min_detection_confidence=0.2,
+            min_detection_confidence=0.1,
             min_tracking_confidence=0.8) as hands:
         while cap.isOpened():
             success, image = cap.read()
@@ -401,10 +401,10 @@ def Hand_pose_video(video_path, debug=False):
 
                     if results.multi_handedness[count].classification[0].label == "Left":
                         hands_array_L = landmarks_list_to_array(hand_landmarks)
-                        print("L")
+                        # print("L")
                     elif results.multi_handedness[count].classification[0].label == "Right":
                         hands_array_R = landmarks_list_to_array(hand_landmarks)
-                        print("R")
+                        # print("R")
 
 
             json_data = {
