@@ -169,6 +169,10 @@ public class FrameReader : MonoBehaviour
         frameData = new List<FrameData>();
         characterRotation = character.transform.rotation;
         SetBodyZoomCamera();
+        videoPlayer.Prepare();
+        videoPlayer.Play();
+        videoPlayer.frame = 0;
+        videoPlayer.Pause();
     }
 
     private float timer = 0;
@@ -414,18 +418,22 @@ public class FrameReader : MonoBehaviour
 
         if (!pause && enableVideo)
         {
-            Debug.Log(videoPlayer.time);
-            Debug.Log(currentFaceJson.time);
-            if(videoPlayer.time < currentFaceJson.time/1000.0f)
-                return;
-            if (!videoPlayer.isPaused && Mathf.Abs((float) (videoPlayer.time - (currentFaceJson.time / 1000.0f))) > 0.2f &&
-                currentFaceJson.time != 0.0f)
+            if (videoPlayer.url != "")
             {
-                videoPlayer.Pause();
-            }
-            else if(videoPlayer.isPaused)
-            {
-                videoPlayer.Play();
+                Debug.Log(videoPlayer.time);
+                Debug.Log(currentFaceJson.time);
+                if (videoPlayer.time < currentFaceJson.time / 1000.0f)
+                    return;
+                if (!videoPlayer.isPaused &&
+                    Mathf.Abs((float) (videoPlayer.time - (currentFaceJson.time / 1000.0f))) > 0.2f &&
+                    currentFaceJson.time != 0.0f)
+                {
+                    videoPlayer.Pause();
+                }
+                else if (videoPlayer.isPaused)
+                {
+                    videoPlayer.Play();
+                }
             }
         }
         
@@ -507,22 +515,24 @@ public class FrameReader : MonoBehaviour
             {
                 if (currentHandJsonVectorNew != null)
                 {
-                    //for each bone position in the current frame
-                    for (int i = 0; i < currentHandJsonVector.handsR.Length; i++)
-                    {
-                        currentHandJsonVector.handsR[i].position = Vector3.Lerp(
-                            currentHandJsonVector.handsR[i].position,
-                            currentHandJsonVectorNew.handsR[i].position,
-                            timer / nextFrameTime);
-                    }
-                    //for each bone position in the current frame
-                    for (int i = 0; i < currentHandJsonVector.handsL.Length; i++)
-                    {
-                        currentHandJsonVector.handsL[i].position = Vector3.Lerp(
-                            currentHandJsonVector.handsL[i].position,
-                            currentHandJsonVectorNew.handsL[i].position,
-                            timer / nextFrameTime);
-                    }
+                    if(currentHandJsonVector.handsR.Length == currentHandJsonVectorNew.handsR.Length)
+                        //for each bone position in the current frame
+                        for (int i = 0; i < currentHandJsonVector.handsR.Length; i++)
+                        {
+                            currentHandJsonVector.handsR[i].position = Vector3.Lerp(
+                                currentHandJsonVector.handsR[i].position,
+                                currentHandJsonVectorNew.handsR[i].position,
+                                timer / nextFrameTime);
+                        }
+                    if(currentHandJsonVector.handsL.Length == currentHandJsonVectorNew.handsL.Length)
+                        //for each bone position in the current frame
+                        for (int i = 0; i < currentHandJsonVector.handsL.Length; i++)
+                        {
+                            currentHandJsonVector.handsL[i].position = Vector3.Lerp(
+                                currentHandJsonVector.handsL[i].position,
+                                currentHandJsonVectorNew.handsL[i].position,
+                                timer / nextFrameTime);
+                        }
                 }
                 handPose.Predict3DPose(currentHandJsonVector);
             }
@@ -544,7 +554,7 @@ public class FrameReader : MonoBehaviour
             Debug.LogError("Problem occured: " + e.Message);
 
             Console.WriteLine(e);
-            throw;
+            //throw;
         }
 
         try
@@ -831,7 +841,8 @@ public class FrameReader : MonoBehaviour
         
         pause = !pause;
         // videoPlayer.Play();
-        test();
+        if(enableVideo && videoPlayer.url != "")
+            test();
 
         // nextFrameTime = (float) (videoPlayer.length / videoPlayer.frameCount);
 
@@ -852,6 +863,8 @@ public class FrameReader : MonoBehaviour
 
     public void SetFaceOriginalVideo(string path)
     {
+        if(!enableVideo)
+            return;
         videoPlayer.url = path;
         videoPlayer.Prepare();
         videoPlayer.Play();
