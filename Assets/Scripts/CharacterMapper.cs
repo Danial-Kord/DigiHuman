@@ -33,12 +33,14 @@ public abstract class CharacterMapper : MonoBehaviour
     [Header("Debug")] 
     [SerializeField] protected bool debugMode;
     [SerializeField] protected GameObject debugGameObject;
-    protected GameObject[] jointsDebug;
 
 
     [Header("Kalman Filter")] 
-    [SerializeField] private float KalmanParamQ;
-    [SerializeField] private float KalmanParamR;
+    [SerializeField] protected bool enableKalmanFilter;
+    [SerializeField] protected float KalmanParamQ;
+    [SerializeField] protected float KalmanParamR;
+    
+    
     
     protected Animator anim;
     protected abstract void InitializationHumanoidPose();
@@ -52,14 +54,7 @@ public abstract class CharacterMapper : MonoBehaviour
     {
         character = newCharacter;
         anim = character.GetComponentInChildren<Animator>();
-        if (debugMode)
-        {
-            jointsDebug = new GameObject[33];
-            for (int i = 0; i < jointsDebug.Length; i++)
-            {
-                jointsDebug[i] = Instantiate(debugGameObject);
-            }
-        }
+
         InitializationHumanoidPose();
     }
 

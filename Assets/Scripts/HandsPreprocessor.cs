@@ -36,10 +36,27 @@ public class HandsPreprocessor : CharacterMapper
     private JointPoint[] rightRootFingers;
     private JointPoint[] leftRootFingers;
     private HandPoints[] rootHandPoints;
+    private GameObject[] RHandJointsDebug;
+    private GameObject[] LHandJointsDebug;
     protected override void InitializationHumanoidPose()
     {
         InitializeRightHand();
         InitializeLeftHand();
+        
+        if (debugMode)
+        {
+            RHandJointsDebug = new GameObject[21];
+            LHandJointsDebug = new GameObject[21];
+            for (int i = 0; i < RHandJointsDebug.Length; i++)
+            {
+                RHandJointsDebug[i] = Instantiate(debugGameObject);
+            }
+            for (int i = 0; i < LHandJointsDebug.Length; i++)
+            {
+                LHandJointsDebug[i] = Instantiate(debugGameObject);
+            }
+        }
+        
         rightRootFingers = new JointPoint[5];
         leftRootFingers = new JointPoint[5];
         rootHandPoints = new[]
@@ -66,10 +83,7 @@ public class HandsPreprocessor : CharacterMapper
 
     private void PredictHandPose(BodyPartVector[] handLandmarks, JointPoint[] hand)
     {
-        for (int i = 0; i < handLandmarks.Length; i++)
-        {
-            jointsDebug[i].transform.position = handLandmarks[i].position;
-        }
+
         for (int i = 0; i < handLandmarks.Length; i++)
         {
             hand[i].LandmarkPose = handLandmarks[i].position;
@@ -117,6 +131,13 @@ public class HandsPreprocessor : CharacterMapper
         }
         
 
+        if(enableKalmanFilter)
+            for (int i = 0; i < hand.Length; i++)
+            {
+                if(hand[i].Transform != null)
+                    KalmanUpdate(hand[i]);
+            }
+        
     
         //rotation
         
@@ -162,7 +183,7 @@ public class HandsPreprocessor : CharacterMapper
                     // 1'
                     // bone.Transform.rotation = Quaternion.LookRotation(bone.Transform.position- bone.Child.Transform.position, (forwardFinger + bone.Parent.Transform.right)/2.0f) * bone.InverseRotation;
                     
-                    bone.Transform.rotation = Quaternion.LookRotation(bone.Transform.position- bone.Child.Transform.position, forwardFinger) * bone.InverseRotation;
+                    bone.Transform.rotation = Quaternion.LookRotation(bone.KalmanPos- bone.Child.KalmanPos, forwardFinger) * bone.InverseRotation;
                     
                     //2
                     // bone.Transform.rotation = Quaternion.LookRotation(bone.Transform.position- bone.Child.Transform.position, forwardFinger) 
@@ -235,11 +256,26 @@ public class HandsPreprocessor : CharacterMapper
             BodyPartVector[] handR = poseJsonVector.handsR;
             BodyPartVector[] handL = poseJsonVector.handsL;
             if(handR != null)
-                if(handR.Length != 0)
+                if (handR.Length != 0)
+                {
                     PredictHandPose(handR, leftHand);
+                    if(debugMode)
+                        for (int i = 0; i < handR.Length; i++)
+                        {
+                            RHandJointsDebug[i].transform.position = handR[i].position;
+                        }
+                }
+
             if(handL != null)
-                if(handL.Length != 0)
+                if (handL.Length != 0)
+                {
                     PredictHandPose(handL, rightHand);
+                    if(debugMode)
+                        for (int i = 0; i < handL.Length; i++)
+                        {
+                            LHandJointsDebug[i].transform.position = handL[i].position;
+                        }
+                }
         }
         catch (Exception e)
         {

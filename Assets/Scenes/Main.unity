@@ -4075,6 +4075,7 @@ MonoBehaviour:
   character: {fileID: 0}
   debugMode: 0
   debugGameObject: {fileID: 0}
+  enableKalmanFilter: 0
   KalmanParamQ: 0
   KalmanParamR: 0
   frameReader: {fileID: 0}
@@ -5228,6 +5229,7 @@ MonoBehaviour:
   character: {fileID: 1231570487}
   debugMode: 0
   debugGameObject: {fileID: 0}
+  enableKalmanFilter: 1
   KalmanParamQ: 0.001
   KalmanParamR: 0.0015
   frameReader: {fileID: 620901066}
@@ -5369,8 +5371,9 @@ MonoBehaviour:
   character: {fileID: 1231570487}
   debugMode: 1
   debugGameObject: {fileID: 888376049}
-  KalmanParamQ: 0
-  KalmanParamR: 0
+  enableKalmanFilter: 1
+  KalmanParamQ: 0.001
+  KalmanParamR: 0.0015
 --- !u!114 &620901069
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7997,7 +8000,7 @@ Transform:
   m_GameObject: {fileID: 888376049}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -1000, y: -1000, z: 1000}
-  m_LocalScale: {x: 0.01, y: 0.01, z: 0.01}
+  m_LocalScale: {x: 0.007, y: 0.007, z: 0.007}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 17
@@ -9748,6 +9751,7 @@ MonoBehaviour:
   character: {fileID: 0}
   debugMode: 0
   debugGameObject: {fileID: 0}
+  enableKalmanFilter: 0
   KalmanParamQ: 0
   KalmanParamR: 0
   frameReader: {fileID: 0}
