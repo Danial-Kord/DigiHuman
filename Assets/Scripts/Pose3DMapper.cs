@@ -96,6 +96,7 @@ public class Pose3DMapper : CharacterMapper
     private Vector3 headUpVector;
     private Vector3 distanceOffset;
     private JointPoint[] jointPoints;
+    private GameObject[] jointsDebug;
 
 
     protected override void InitializationHumanoidPose()
@@ -103,6 +104,16 @@ public class Pose3DMapper : CharacterMapper
         character.transform.rotation = Quaternion.identity;
         jointPoints = new JointPoint[37];
         for (var i = 0; i < jointPoints.Length; i++) jointPoints[i] = new JointPoint();
+        
+        if (debugMode)
+        {
+            jointsDebug = new GameObject[33];
+            for (int i = 0; i < jointsDebug.Length; i++)
+            {
+                jointsDebug[i] = Instantiate(debugGameObject);
+            }
+        }
+        
 
         // Right Arm
         jointPoints[(int) BodyPoints.RightShoulder].Transform = anim.GetBoneTransform(HumanBodyBones.RightUpperArm);
@@ -279,12 +290,12 @@ public class Pose3DMapper : CharacterMapper
         }
 
 
-
-        for (int i = 0; i < jointPoints.Length; i++)
-        {
-            if(jointPoints[i].Transform != null)
-                KalmanUpdate(jointPoints[i]);
-        }
+        if(enableKalmanFilter)
+            for (int i = 0; i < jointPoints.Length; i++)
+            {
+                if(jointPoints[i].Transform != null)
+                    KalmanUpdate(jointPoints[i]);
+            }
 
 
 
