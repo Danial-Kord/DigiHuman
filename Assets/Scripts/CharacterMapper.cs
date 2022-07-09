@@ -7,6 +7,7 @@ public class JointPoint
     
     // Bones
     public Transform Transform = null;
+    public Vector3 KalmanPos  = new Vector3();
     public Quaternion InitRotation;
     public Quaternion Inverse;
     public Quaternion InverseRotation;
@@ -33,7 +34,11 @@ public abstract class CharacterMapper : MonoBehaviour
     [SerializeField] protected bool debugMode;
     [SerializeField] protected GameObject debugGameObject;
     protected GameObject[] jointsDebug;
-    
+
+
+    [Header("Kalman Filter")] 
+    [SerializeField] private float KalmanParamQ;
+    [SerializeField] private float KalmanParamR;
     
     protected Animator anim;
     protected abstract void InitializationHumanoidPose();
@@ -56,6 +61,29 @@ public abstract class CharacterMapper : MonoBehaviour
             }
         }
         InitializationHumanoidPose();
+    }
+
+ protected void KalmanUpdate(JointPoint measurement)
+    {
+        //measurement.Pos3D = measurement.Now3D;
+        //return;
+        measurementUpdate(measurement);
+        Vector3 newPos = new Vector3();
+        newPos.x = measurement.X.x + (measurement.Transform.position.x - measurement.X.x) * measurement.K.x;
+        newPos.y = measurement.X.y + (measurement.Transform.position.y - measurement.X.y) * measurement.K.y;
+        newPos.z = measurement.X.z + (measurement.Transform.position.z - measurement.X.z) * measurement.K.z;
+        measurement.KalmanPos = newPos;
+        measurement.X = newPos;
+    }
+
+	protected void measurementUpdate(JointPoint measurement)
+    {
+        measurement.K.x = (measurement.P.x + KalmanParamQ) / (measurement.P.x + KalmanParamQ + KalmanParamR);
+        measurement.K.y = (measurement.P.y + KalmanParamQ) / (measurement.P.y + KalmanParamQ + KalmanParamR);
+        measurement.K.z = (measurement.P.z + KalmanParamQ) / (measurement.P.z + KalmanParamQ + KalmanParamR);
+        measurement.P.x = KalmanParamR * (measurement.P.x + KalmanParamQ) / (KalmanParamR + measurement.P.x + KalmanParamQ);
+        measurement.P.y = KalmanParamR * (measurement.P.y + KalmanParamQ) / (KalmanParamR + measurement.P.y + KalmanParamQ);
+        measurement.P.z = KalmanParamR * (measurement.P.z + KalmanParamQ) / (KalmanParamR + measurement.P.z + KalmanParamQ);
     }
 
 }

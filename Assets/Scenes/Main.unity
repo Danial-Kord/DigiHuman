@@ -4075,6 +4075,8 @@ MonoBehaviour:
   character: {fileID: 0}
   debugMode: 0
   debugGameObject: {fileID: 0}
+  KalmanParamQ: 0
+  KalmanParamR: 0
   frameReader: {fileID: 0}
   characterBodyIK:
     nose: {fileID: 0}
@@ -5226,6 +5228,8 @@ MonoBehaviour:
   character: {fileID: 1231570487}
   debugMode: 0
   debugGameObject: {fileID: 0}
+  KalmanParamQ: 0.001
+  KalmanParamR: 0.0015
   frameReader: {fileID: 620901066}
   characterBodyIK:
     nose: {fileID: 0}
@@ -5365,6 +5369,8 @@ MonoBehaviour:
   character: {fileID: 1231570487}
   debugMode: 1
   debugGameObject: {fileID: 888376049}
+  KalmanParamQ: 0
+  KalmanParamR: 0
 --- !u!114 &620901069
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9742,6 +9748,8 @@ MonoBehaviour:
   character: {fileID: 0}
   debugMode: 0
   debugGameObject: {fileID: 0}
+  KalmanParamQ: 0
+  KalmanParamR: 0
   frameReader: {fileID: 0}
   characterBodyIK:
     nose: {fileID: 0}

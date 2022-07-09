@@ -554,7 +554,7 @@ public class FrameReader : MonoBehaviour
             Debug.LogError("Problem occured: " + e.Message);
 
             Console.WriteLine(e);
-            //throw;
+            throw;
         }
 
         try
