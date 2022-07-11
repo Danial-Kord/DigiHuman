@@ -161,7 +161,7 @@ public class HandsPreprocessor : CharacterMapper
             for (int i = 0; i < hand.Length; i++)
             {
                 if (hand[i].Transform != null)
-                    hand[i].FilteredPos = hand[i].WorldPos;
+                    hand[i].FilteredPos = hand[i].LandmarkPose;
             }
         }
 
@@ -288,7 +288,7 @@ public class HandsPreprocessor : CharacterMapper
                 //Method3
                 // bone.Transform.rotation = Quaternion.LookRotation(bone.Transform.position- bone.Child.Transform.position, (wrist.Transform.position - bone.Transform.position)) * bone.InverseRotation;
                 //Method4
-                bone.Transform.rotation = Quaternion.LookRotation(bone.WorldPos- bone.Child.WorldPos, forwardFinger) * bone.InverseRotation;
+                bone.Transform.rotation = Quaternion.LookRotation(bone.FilteredPos- bone.Child.FilteredPos, forwardFinger) * bone.InverseRotation;
 
             }
             /*
@@ -306,8 +306,8 @@ public class HandsPreprocessor : CharacterMapper
         }
         
         //Rotation of the whole hand at the end!
-        Vector3 normal = wrist.LandmarkPose.TriangleNormal(indexFingerFirst.LandmarkPose,pinkyFirstLandmark.LandmarkPose);
-        hand[(int) HandPoints.Wrist].Transform.rotation = Quaternion.LookRotation(-wrist.LandmarkPose + (indexFingerFirst.LandmarkPose + pinkyFirstLandmark.LandmarkPose)/2.0f, normal) * wrist.InverseRotation;
+        // Vector3 normal = wrist.LandmarkPose.TriangleNormal(indexFingerFirst.LandmarkPose,pinkyFirstLandmark.LandmarkPose);
+        // hand[(int) HandPoints.Wrist].Transform.rotation = Quaternion.LookRotation(-wrist.LandmarkPose + (indexFingerFirst.LandmarkPose + pinkyFirstLandmark.LandmarkPose)/2.0f, normal) * wrist.InverseRotation;
 
         //Method2
         // Vector3 normal = wrist.Transform.position.TriangleNormal(indexFingerFirst.Transform.position,pinkyFirstLandmark.Transform.position);
@@ -315,9 +315,9 @@ public class HandsPreprocessor : CharacterMapper
         //     
 
         //Method3
-        // Vector3 normal = wrist.FilteredPos.TriangleNormal(indexFingerFirst.FilteredPos,pinkyFirstLandmark.FilteredPos);
-        // hand[(int) HandPoints.Wrist].Transform.rotation = Quaternion.LookRotation(wrist.FilteredPos - (indexFingerFirst.FilteredPos + pinkyFirstLandmark.FilteredPos)/2.0f, normal) * wrist.InverseRotation;
-        //
+        Vector3 normal = wrist.FilteredPos.TriangleNormal(indexFingerFirst.FilteredPos,pinkyFirstLandmark.FilteredPos);
+        hand[(int) HandPoints.Wrist].Transform.rotation = Quaternion.LookRotation(-wrist.FilteredPos + (indexFingerFirst.FilteredPos + pinkyFirstLandmark.FilteredPos)/2.0f, normal) * wrist.InverseRotation;
+        
         
     }
     
