@@ -164,13 +164,15 @@ public class Pose3DMapper : CharacterMapper
         jointPoints[(int) BodyPoints.RightHip].Child = jointPoints[(int) BodyPoints.RightKnee];
         jointPoints[(int) BodyPoints.RightKnee].Child = jointPoints[(int) BodyPoints.RightAnkle];
         jointPoints[(int) BodyPoints.RightAnkle].Child = jointPoints[(int) BodyPoints.RightFootIndex];
-        jointPoints[(int) BodyPoints.RightAnkle].Parent = jointPoints[(int) BodyPoints.RightHip];
+        // jointPoints[(int) BodyPoints.RightKnee].Parent = jointPoints[(int) BodyPoints.RightHip];
+        jointPoints[(int) BodyPoints.RightAnkle].Parent = jointPoints[(int) BodyPoints.RightKnee];
 
         // Left Leg
         jointPoints[(int) BodyPoints.LeftHip].Child = jointPoints[(int) BodyPoints.LeftKnee];
         jointPoints[(int) BodyPoints.LeftKnee].Child = jointPoints[(int) BodyPoints.LeftAnkle];
         jointPoints[(int) BodyPoints.LeftAnkle].Child = jointPoints[(int) BodyPoints.LeftFootIndex];
-        jointPoints[(int) BodyPoints.LeftAnkle].Parent = jointPoints[(int) BodyPoints.LeftHip];
+        // jointPoints[(int) BodyPoints.LeftKnee].Parent = jointPoints[(int) BodyPoints.LeftHip];
+        jointPoints[(int) BodyPoints.LeftAnkle].Parent = jointPoints[(int) BodyPoints.LeftKnee];
 
         // etc
         // jointPoints[(int) BodyPoints.Spine].Child = jointPoints[(int) BodyPoints.Neck];
@@ -197,6 +199,8 @@ public class Pose3DMapper : CharacterMapper
         hips = jointPoints[(int) BodyPoints.Hips].Transform;
         Vector3 c = jointPoints[(int) BodyPoints.RightHip].Transform.position;
         var forward = b.TriangleNormal(a,c);
+        
+        
         
         foreach (var jointPoint in jointPoints)
         {
@@ -281,7 +285,7 @@ public class Pose3DMapper : CharacterMapper
                     float distance = bone.DistanceFromChild;
                     Vector3 direction = (-bone.LandmarkPose + child.LandmarkPose) / (-bone.LandmarkPose + child.LandmarkPose).magnitude;
                     child.WorldPos = bone.Transform.position + direction * distance;
-                    child.Transform.position = child.WorldPos;
+                    // child.Transform.position = child.WorldPos;
 //                    Debug.Log(distance + "  " + Vector3.Distance(child.Transform.position,bone.Transform.position));
                 }
             }
@@ -318,9 +322,9 @@ public class Pose3DMapper : CharacterMapper
 
         //setting hip rotation
         Vector3 a = bodyPartVectors[(int) BodyPoints.LeftShoulder].position;
-        Vector3 b = jointPoints[(int) BodyPoints.Hips].Transform.position;
+        Vector3 hip = jointPoints[(int) BodyPoints.Hips].Transform.position;
         Vector3 c = bodyPartVectors[(int) BodyPoints.RightShoulder].position;
-        jointPoints[(int) BodyPoints.Hips].Transform.rotation = Quaternion.LookRotation(a.TriangleNormal(b, c)) *
+        jointPoints[(int) BodyPoints.Hips].Transform.rotation = Quaternion.LookRotation(a.TriangleNormal(hip, c)) *
                                                                 jointPoints[(int) BodyPoints.Hips].InverseRotation;
 
         // Head Rotation
@@ -345,6 +349,12 @@ public class Pose3DMapper : CharacterMapper
         
         // rotate each of bones
         Vector3 forward = jointPoints[(int) BodyPoints.Hips].Transform.forward;
+        
+        Vector3 leftHip = jointPoints[(int) BodyPoints.LeftHip].Transform.position;
+        Vector3 rightHip = jointPoints[(int) BodyPoints.RightHip].Transform.position;
+         forward = hip.TriangleNormal(leftHip,rightHip);
+
+        
         foreach (var jointPoint in jointPoints)
         {
             if(jointPoint == null)

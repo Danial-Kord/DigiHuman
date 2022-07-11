@@ -72,9 +72,9 @@ public abstract class CharacterMapper : MonoBehaviour
         //return;
         measurementUpdate(measurement);
         Vector3 newPos = new Vector3();
-        newPos.x = measurement.X.x + (measurement.LandmarkPose.x - measurement.X.x) * measurement.K.x;
-        newPos.y = measurement.X.y + (measurement.LandmarkPose.y - measurement.X.y) * measurement.K.y;
-        newPos.z = measurement.X.z + (measurement.LandmarkPose.z - measurement.X.z) * measurement.K.z;
+        newPos.x = measurement.X.x + (measurement.WorldPos.x - measurement.X.x) * measurement.K.x;
+        newPos.y = measurement.X.y + (measurement.WorldPos.y - measurement.X.y) * measurement.K.y;
+        newPos.z = measurement.X.z + (measurement.WorldPos.z - measurement.X.z) * measurement.K.z;
         measurement.FilteredPos = newPos;
         measurement.X = newPos;
     }
