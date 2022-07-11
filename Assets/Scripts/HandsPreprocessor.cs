@@ -38,6 +38,10 @@ public class HandsPreprocessor : CharacterMapper
     private HandPoints[] rootHandPoints;
     private GameObject[] RHandJointsDebug;
     private GameObject[] LHandJointsDebug;
+    
+    //anomaly denier
+    private JointPoint rightElbow;
+    private JointPoint leftElbow;
     protected override void InitializationHumanoidPose()
     {
         InitializeRightHand();
@@ -89,11 +93,7 @@ public class HandsPreprocessor : CharacterMapper
             hand[i].LandmarkPose = handLandmarks[i].position;
         }
           
-        JointPoint indexFingerFirst = hand[(int) HandPoints.IndexFingerFirst];
-        JointPoint wrist = hand[(int) HandPoints.Wrist];
-        JointPoint pinkyFirstLandmark = hand[(int) HandPoints.PinkyFirst];
-        Vector3 forwardFinger = wrist.Transform.position
-            .TriangleNormal(indexFingerFirst.Transform.position,pinkyFirstLandmark.Transform.position);
+
         // Vector3 forwardFinger = wrist.Transform.position
         //     .TriangleNormal(pinkyFirstLandmark.Transform.position,indexFingerFirst.Transform.position);
         
@@ -164,8 +164,7 @@ public class HandsPreprocessor : CharacterMapper
                     hand[i].FilteredPos = hand[i].WorldPos;
             }
         }
-        
-    
+
             // Low pass filter
             if (useLowPassFilter)
             {
@@ -179,6 +178,30 @@ public class HandsPreprocessor : CharacterMapper
                     jp.FilteredPos = jp.LastPoses[jp.LastPoses.Length - 1];
                 }
             }
+            
+            JointPoint indexFingerFirst = hand[(int) HandPoints.IndexFingerFirst];
+            JointPoint wrist = hand[(int) HandPoints.Wrist];
+            JointPoint pinkyFirstLandmark = hand[(int) HandPoints.PinkyFirst];
+            Vector3 forwardFinger = wrist.FilteredPos
+                .TriangleNormal(indexFingerFirst.FilteredPos,pinkyFirstLandmark.FilteredPos);
+
+
+            
+            //Rotation of the whole hand at First!
+            // Vector3 normal = wrist.LandmarkPose.TriangleNormal(indexFingerFirst.LandmarkPose,pinkyFirstLandmark.LandmarkPose);
+            // hand[(int) HandPoints.Wrist].Transform.rotation = Quaternion.LookRotation(wrist.LandmarkPose - (indexFingerFirst.LandmarkPose + pinkyFirstLandmark.LandmarkPose)/2.0f, normal) * wrist.InverseRotation;
+
+            //Method2
+            // Vector3 normal = wrist.WorldPos.TriangleNormal(indexFingerFirst.WorldPos,pinkyFirstLandmark.WorldPos);
+            // hand[(int) HandPoints.Wrist].Transform.rotation = Quaternion.LookRotation(-wrist.WorldPos + (indexFingerFirst.WorldPos + pinkyFirstLandmark.WorldPos)/2.0f, normal) * wrist.InverseRotation;
+            //
+
+            //Method3
+            // Vector3 normal = wrist.FilteredPos.TriangleNormal(indexFingerFirst.FilteredPos,pinkyFirstLandmark.FilteredPos);
+            // hand[(int) HandPoints.Wrist].Transform.rotation = Quaternion.LookRotation(wrist.FilteredPos - (indexFingerFirst.FilteredPos + pinkyFirstLandmark.FilteredPos)/2.0f, normal) * wrist.InverseRotation;
+            //
+
+            
         //rotation
         
         for (int i = 0; i < hand.Length; i++)
@@ -283,13 +306,18 @@ public class HandsPreprocessor : CharacterMapper
         }
         
         //Rotation of the whole hand at the end!
-        // Vector3 normal = wrist.LandmarkPose.TriangleNormal(indexFingerFirst.LandmarkPose,pinkyFirstLandmark.LandmarkPose);
-        // hand[(int) HandPoints.Wrist].Transform.rotation = Quaternion.LookRotation(indexFingerFirst.LandmarkPose - pinkyFirstLandmark.LandmarkPose, normal) * wrist.InverseRotation;
+        Vector3 normal = wrist.LandmarkPose.TriangleNormal(indexFingerFirst.LandmarkPose,pinkyFirstLandmark.LandmarkPose);
+        hand[(int) HandPoints.Wrist].Transform.rotation = Quaternion.LookRotation(-wrist.LandmarkPose + (indexFingerFirst.LandmarkPose + pinkyFirstLandmark.LandmarkPose)/2.0f, normal) * wrist.InverseRotation;
 
         //Method2
-        Vector3 normal = wrist.WorldPos.TriangleNormal(indexFingerFirst.WorldPos,pinkyFirstLandmark.WorldPos);
-        hand[(int) HandPoints.Wrist].Transform.rotation = Quaternion.LookRotation(indexFingerFirst.WorldPos - pinkyFirstLandmark.WorldPos, normal) * wrist.InverseRotation;
+        // Vector3 normal = wrist.Transform.position.TriangleNormal(indexFingerFirst.Transform.position,pinkyFirstLandmark.Transform.position);
+        // hand[(int) HandPoints.Wrist].Transform.rotation = Quaternion.LookRotation(-wrist.Transform.position + (indexFingerFirst.Transform.position + pinkyFirstLandmark.Transform.position)/2.0f, normal) * wrist.InverseRotation;
+        //     
 
+        //Method3
+        // Vector3 normal = wrist.FilteredPos.TriangleNormal(indexFingerFirst.FilteredPos,pinkyFirstLandmark.FilteredPos);
+        // hand[(int) HandPoints.Wrist].Transform.rotation = Quaternion.LookRotation(wrist.FilteredPos - (indexFingerFirst.FilteredPos + pinkyFirstLandmark.FilteredPos)/2.0f, normal) * wrist.InverseRotation;
+        //
         
     }
     
@@ -303,7 +331,17 @@ public class HandsPreprocessor : CharacterMapper
             if(handR != null)
                 if (handR.Length != 0)
                 {
-                    PredictHandPose(handR, leftHand);
+                    if (!RightHandAnomalyDetector(handR))
+                    {
+                        PredictHandPose(handR, rightHand);
+                    }
+                    else
+                    {
+                        if(handL != null)
+                            if(handL.Length != 0)
+                                PredictHandPose(handL, rightHand);
+                        Debug.Log("Anomaly detected! R");
+                    }
                     if(debugMode)
                         for (int i = 0; i < handR.Length; i++)
                         {
@@ -314,13 +352,24 @@ public class HandsPreprocessor : CharacterMapper
             if(handL != null)
                 if (handL.Length != 0)
                 {
-                    PredictHandPose(handL, rightHand);
+                    if (!LeftHandAnomalyDetector(handL))
+                    {
+                        PredictHandPose(handL, leftHand);
+                    }
+                    else
+                    {
+                        if(handR != null)
+                            if(handR.Length != 0)
+                                PredictHandPose(handR, leftHand);
+                        Debug.Log("Anomaly detected! L");
+                    }
                     if(debugMode)
                         for (int i = 0; i < handL.Length; i++)
                         {
                             LHandJointsDebug[i].transform.position = handL[i].position;
                         }
                 }
+            
         }
         catch (Exception e)
         {
@@ -332,6 +381,37 @@ public class HandsPreprocessor : CharacterMapper
 
     }
 
+    private bool RightHandAnomalyDetector(BodyPartVector[] handLandmarks)
+    {
+        Vector3 rightArmVector = rightHand[(int) HandPoints.Wrist].Transform.position - rightElbow.Transform.position;
+        Vector3 indexFingerFirst = handLandmarks[(int) HandPoints.IndexFingerFirst].position;
+        Vector3 wrist = handLandmarks[(int) HandPoints.Wrist].position;
+        Vector3 pinkyFirstLandmark = handLandmarks[(int) HandPoints.PinkyFirst].position;
+        Vector3 handVector =-wrist + (indexFingerFirst + pinkyFirstLandmark)/2.0f;
+
+        if (Vector3.Angle(rightArmVector, handVector) > 100 || Vector3.Angle(rightArmVector, handVector) < -100)
+        {
+            Debug.Log(Vector3.Angle(rightArmVector, handVector));
+
+            return true;
+        }
+        return false;
+    }
+    private bool LeftHandAnomalyDetector(BodyPartVector[] handLandmarks)
+    {
+        Vector3 leftArmVector = leftHand[(int) HandPoints.Wrist].Transform.position - leftElbow.Transform.position;
+        Vector3 indexFingerFirst = handLandmarks[(int) HandPoints.IndexFingerFirst].position;
+        Vector3 wrist = handLandmarks[(int) HandPoints.Wrist].position;
+        Vector3 pinkyFirstLandmark = handLandmarks[(int) HandPoints.PinkyFirst].position;
+        Vector3 handVector =-wrist + (indexFingerFirst + pinkyFirstLandmark)/2.0f;
+
+        if (Vector3.Angle(leftArmVector, handVector) > 100 || Vector3.Angle(leftArmVector, handVector) < -100)
+        {
+            Debug.Log(Vector3.Angle(leftArmVector, handVector));
+            return true;
+        }
+        return false;
+    }
 
 
     private void SetupInverseAndDistance(JointPoint[] jointPoints)
@@ -428,7 +508,7 @@ public class HandsPreprocessor : CharacterMapper
         wrist.InitRotation = wrist.Transform.rotation;
         var rf = wrist.Transform.position.TriangleNormal(indexFingerFirst,
             pinkyFirst);
-        wrist.Inverse = Quaternion.Inverse(Quaternion.LookRotation(indexFingerFirst - pinkyFirst, rf));
+        wrist.Inverse = Quaternion.Inverse(Quaternion.LookRotation(-wrist.Transform.position +(indexFingerFirst + pinkyFirst)/2.0f, rf));
         wrist.InverseRotation = wrist.Inverse * wrist.InitRotation;
         
     }
@@ -522,6 +602,9 @@ public class HandsPreprocessor : CharacterMapper
         rightHand[(int) HandPoints.PinkySecond].Parent = rightHand[(int) HandPoints.PinkyFirst];
         rightHand[(int) HandPoints.PinkyThird].Parent = rightHand[(int) HandPoints.PinkySecond];
 
+        //elbow
+        rightElbow = new JointPoint();
+        rightElbow.Transform = anim.GetBoneTransform(HumanBodyBones.RightLowerArm);
     }
 
     private void InitializeLeftHand()
@@ -587,5 +670,9 @@ public class HandsPreprocessor : CharacterMapper
         leftHand[(int) HandPoints.PinkyThird].Child = leftHand[(int) HandPoints.PinkyFourth];
         leftHand[(int) HandPoints.PinkySecond].Parent = leftHand[(int) HandPoints.PinkyFirst];
         leftHand[(int) HandPoints.PinkyThird].Parent = leftHand[(int) HandPoints.PinkySecond];
+        
+        //elbow
+        leftElbow = new JointPoint();
+        leftElbow.Transform = anim.GetBoneTransform(HumanBodyBones.LeftLowerArm);
     }
 }

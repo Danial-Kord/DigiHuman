@@ -139,7 +139,7 @@ def calculate_video_hand_pose_estimation(file_name):
 
     json_data = []
     # print("wtf")
-    for i in pose_estimator.Hand_pose_video(file_name):
+    for i in pose_estimator.Complete_pose_Video(file_name):
         hand_pose_video_data[file_name].append(i)
     hand_pose_video_data_statues[file_name] = True #means process is finished
     # return pose_estimator.Pose_Video(file_name)

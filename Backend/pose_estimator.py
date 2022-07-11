@@ -258,7 +258,7 @@ def Complete_pose_Video(video_path):
 
         # To improve performance, optionally mark the image as not writeable to
         # pass by reference.
-        image.flags.writeable = False
+        image.flags.writeable = True
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         results = holistic.process(image)
 
@@ -288,7 +288,7 @@ def Complete_pose_Video(video_path):
         if results.left_hand_landmarks:
             hands_array_L = landmarks_list_to_array(results.left_hand_landmarks)
         if results.right_hand_landmarks:
-            hands_array_L = landmarks_list_to_array(results.right_hand_landmarks)
+            hands_array_R = landmarks_list_to_array(results.right_hand_landmarks)
         hands_pose = {
             'handsR': hands_array_R,
             'handsL': hands_array_L,
@@ -312,7 +312,7 @@ def Complete_pose_Video(video_path):
             'handsPose': hands_pose
         }
         print(json_data)
-        yield json_data
+        yield hands_pose
 
         continue
         # Draw landmark annotation on the image.

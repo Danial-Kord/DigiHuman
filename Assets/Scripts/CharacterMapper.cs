@@ -64,6 +64,8 @@ public abstract class CharacterMapper : MonoBehaviour
         InitializationHumanoidPose();
     }
 
+    
+    
  protected void KalmanUpdate(JointPoint measurement)
     {
         //measurement.Pos3D = measurement.Now3D;
