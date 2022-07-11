@@ -114,9 +114,25 @@ public class HandsPreprocessor : CharacterMapper
 
         }
        */
+
         //setting bone positions
         for (int i = 0; i < hand.Length; i++)
         {
+            
+            JointPoint bone = hand[i];
+
+            if (bone.Transform != null) //fourth finger node is not real!
+            {
+                bone.WorldPos = bone.Transform.position;
+
+            }
+        
+        }
+        
+        //setting bone positions
+        for (int i = 0; i < hand.Length; i++)
+        {
+            
             JointPoint bone = hand[i];
             if (bone.Child != null)
             {
@@ -125,7 +141,10 @@ public class HandsPreprocessor : CharacterMapper
                     JointPoint child = bone.Child;
                     float distance = bone.DistanceFromChild;
                     Vector3 direction = (-bone.LandmarkPose + child.LandmarkPose) / (-bone.LandmarkPose + child.LandmarkPose).magnitude;
-                    child.Transform.position = bone.Transform.position + direction * distance;
+                    child.WorldPos = bone.WorldPos + direction * distance;
+                    // child.Transform.position = child.WorldPos;
+
+                    continue;
                 }
             }
         }
@@ -137,8 +156,29 @@ public class HandsPreprocessor : CharacterMapper
                 if(hand[i].Transform != null)
                     KalmanUpdate(hand[i]);
             }
+        else
+        {
+            for (int i = 0; i < hand.Length; i++)
+            {
+                if (hand[i].Transform != null)
+                    hand[i].FilteredPos = hand[i].WorldPos;
+            }
+        }
         
     
+            // Low pass filter
+            if (useLowPassFilter)
+            {
+                foreach (var jp in hand)
+                {
+                    jp.LastPoses[0] = jp.FilteredPos;
+                    for (var i = 1; i < jp.LastPoses.Length; i++)
+                    {
+                        jp.LastPoses[i] = jp.LastPoses[i] * lowPassParam + jp.LastPoses[i - 1] * (1f - lowPassParam);
+                    }
+                    jp.FilteredPos = jp.LastPoses[jp.LastPoses.Length - 1];
+                }
+            }
         //rotation
         
         for (int i = 0; i < hand.Length; i++)
@@ -183,7 +223,7 @@ public class HandsPreprocessor : CharacterMapper
                     // 1'
                     // bone.Transform.rotation = Quaternion.LookRotation(bone.Transform.position- bone.Child.Transform.position, (forwardFinger + bone.Parent.Transform.right)/2.0f) * bone.InverseRotation;
                     
-                    bone.Transform.rotation = Quaternion.LookRotation(bone.KalmanPos- bone.Child.KalmanPos, forwardFinger) * bone.InverseRotation;
+                    bone.Transform.rotation = Quaternion.LookRotation(bone.FilteredPos- bone.Child.FilteredPos, forwardFinger) * bone.InverseRotation;
                     
                     //2
                     // bone.Transform.rotation = Quaternion.LookRotation(bone.Transform.position- bone.Child.Transform.position, forwardFinger) 
@@ -225,7 +265,7 @@ public class HandsPreprocessor : CharacterMapper
                 //Method3
                 // bone.Transform.rotation = Quaternion.LookRotation(bone.Transform.position- bone.Child.Transform.position, (wrist.Transform.position - bone.Transform.position)) * bone.InverseRotation;
                 //Method4
-                bone.Transform.rotation = Quaternion.LookRotation(bone.Transform.position- bone.Child.Transform.position, forwardFinger) * bone.InverseRotation;
+                bone.Transform.rotation = Quaternion.LookRotation(bone.WorldPos- bone.Child.WorldPos, forwardFinger) * bone.InverseRotation;
 
             }
             /*
@@ -243,9 +283,14 @@ public class HandsPreprocessor : CharacterMapper
         }
         
         //Rotation of the whole hand at the end!
-        Vector3 normal = wrist.LandmarkPose.TriangleNormal(indexFingerFirst.LandmarkPose,pinkyFirstLandmark.LandmarkPose);
-        hand[(int) HandPoints.Wrist].Transform.rotation = Quaternion.LookRotation(indexFingerFirst.LandmarkPose - pinkyFirstLandmark.LandmarkPose, normal) * wrist.InverseRotation;
+        // Vector3 normal = wrist.LandmarkPose.TriangleNormal(indexFingerFirst.LandmarkPose,pinkyFirstLandmark.LandmarkPose);
+        // hand[(int) HandPoints.Wrist].Transform.rotation = Quaternion.LookRotation(indexFingerFirst.LandmarkPose - pinkyFirstLandmark.LandmarkPose, normal) * wrist.InverseRotation;
 
+        //Method2
+        Vector3 normal = wrist.WorldPos.TriangleNormal(indexFingerFirst.WorldPos,pinkyFirstLandmark.WorldPos);
+        hand[(int) HandPoints.Wrist].Transform.rotation = Quaternion.LookRotation(indexFingerFirst.WorldPos - pinkyFirstLandmark.WorldPos, normal) * wrist.InverseRotation;
+
+        
     }
     
     public void Predict3DPose(HandJsonVector poseJsonVector)
