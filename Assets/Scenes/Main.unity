@@ -4078,6 +4078,8 @@ MonoBehaviour:
   enableKalmanFilter: 0
   KalmanParamQ: 0
   KalmanParamR: 0
+  useLowPassFilter: 0
+  lowPassParam: 0.1
   frameReader: {fileID: 0}
   characterBodyIK:
     nose: {fileID: 0}
@@ -5256,6 +5258,8 @@ MonoBehaviour:
   enableKalmanFilter: 1
   KalmanParamQ: 0.001
   KalmanParamR: 0.0015
+  useLowPassFilter: 1
+  lowPassParam: 0.1
   frameReader: {fileID: 620901066}
   characterBodyIK:
     nose: {fileID: 0}
@@ -5398,6 +5402,8 @@ MonoBehaviour:
   enableKalmanFilter: 1
   KalmanParamQ: 0.001
   KalmanParamR: 0.0015
+  useLowPassFilter: 1
+  lowPassParam: 0.1
 --- !u!114 &620901069
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9964,6 +9970,8 @@ MonoBehaviour:
   enableKalmanFilter: 0
   KalmanParamQ: 0
   KalmanParamR: 0
+  useLowPassFilter: 0
+  lowPassParam: 0.1
   frameReader: {fileID: 0}
   characterBodyIK:
     nose: {fileID: 0}
