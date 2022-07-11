@@ -170,7 +170,7 @@ public class UIManager : MonoSingleton<UIManager>
     {
         poseUploadCircleImage.color = Color.white;
         poseUploadCompleteImage.gameObject.SetActive(false);
-        string filePath = FileManager.OpenFileExplorer();
+        string filePath = FileManager.OpenFileVideoExplorer();
         NetworkManager.Instancce.UploadAndEstimatePose(filePath);
     }
 
@@ -185,7 +185,7 @@ public class UIManager : MonoSingleton<UIManager>
     {
         handPoseUploadCircleImage.color = Color.white;
         handPoseUploadCompleteImage.gameObject.SetActive(false);
-        string filePath = FileManager.OpenFileExplorer();
+        string filePath = FileManager.OpenFileVideoExplorer();
         NetworkManager.Instancce.UploadAndEstimateHandPose(filePath);
         
     }
@@ -202,7 +202,7 @@ public class UIManager : MonoSingleton<UIManager>
     {
         faceUploadCircleImage.color = Color.white;
         faceUploadCompleteImage.gameObject.SetActive(false);
-        string filePath = FileManager.OpenFileExplorer();
+        string filePath = FileManager.OpenFileVideoExplorer();
         NetworkManager.Instancce.UploadFaceMoacap(filePath,(() =>
         {
             frameReader.SetFaceOriginalVideo(filePath);

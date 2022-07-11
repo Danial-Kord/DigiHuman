@@ -53,8 +53,14 @@ public class BackgroundImageManager : MonoBehaviour
         return NewSprite;
     }
 
-    
 
+
+    public void SetLocalImageBackground()
+    {
+        string path = FileManager.OpenFileImageExplorer();
+        Sprite sprite = LoadNewSprite(path);
+        SetBackgroundView(true, sprite);
+    }
     
     private void SetBackgroundView(bool show, Sprite chosenGauGanSprite)
     {
