@@ -42,6 +42,9 @@ public class HandsPreprocessor : CharacterMapper
     //anomaly denier
     private JointPoint rightElbow;
     private JointPoint leftElbow;
+
+    public bool flipHands;
+    
     protected override void InitializationHumanoidPose()
     {
         InitializeRightHand();
@@ -328,6 +331,11 @@ public class HandsPreprocessor : CharacterMapper
             //right hand
             BodyPartVector[] handR = poseJsonVector.handsR;
             BodyPartVector[] handL = poseJsonVector.handsL;
+            if (flipHands)
+            {
+                handR = poseJsonVector.handsL;
+                handL = poseJsonVector.handsR;
+            }
             if(handR != null)
                 if (handR.Length != 0)
                 {
