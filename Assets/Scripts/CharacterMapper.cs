@@ -4,10 +4,12 @@ public class JointPoint
 {
     //Landmark data
     public Vector3 LandmarkPose = new Vector3();
+    public Vector3 WorldPos  = new Vector3();
     
     // Bones
     public Transform Transform = null;
-    public Vector3 KalmanPos  = new Vector3();
+    public Vector3 FilteredPos  = new Vector3();
+    public Vector3[] LastPoses = new Vector3[6];
     public Quaternion InitRotation;
     public Quaternion Inverse;
     public Quaternion InverseRotation;
@@ -39,7 +41,11 @@ public abstract class CharacterMapper : MonoBehaviour
     [SerializeField] protected bool enableKalmanFilter;
     [SerializeField] protected float KalmanParamQ;
     [SerializeField] protected float KalmanParamR;
-    
+
+
+    [Header("Low Pass Filter")] 
+    [SerializeField] protected bool useLowPassFilter;
+    [SerializeField] protected float lowPassParam = 0.1f;
     
     
     protected Animator anim;
@@ -64,10 +70,10 @@ public abstract class CharacterMapper : MonoBehaviour
         //return;
         measurementUpdate(measurement);
         Vector3 newPos = new Vector3();
-        newPos.x = measurement.X.x + (measurement.Transform.position.x - measurement.X.x) * measurement.K.x;
-        newPos.y = measurement.X.y + (measurement.Transform.position.y - measurement.X.y) * measurement.K.y;
-        newPos.z = measurement.X.z + (measurement.Transform.position.z - measurement.X.z) * measurement.K.z;
-        measurement.KalmanPos = newPos;
+        newPos.x = measurement.X.x + (measurement.WorldPos.x - measurement.X.x) * measurement.K.x;
+        newPos.y = measurement.X.y + (measurement.WorldPos.y - measurement.X.y) * measurement.K.y;
+        newPos.z = measurement.X.z + (measurement.WorldPos.z - measurement.X.z) * measurement.K.z;
+        measurement.FilteredPos = newPos;
         measurement.X = newPos;
     }
 

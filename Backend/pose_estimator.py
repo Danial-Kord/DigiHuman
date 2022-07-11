@@ -362,7 +362,7 @@ def Hand_pose_video(video_path, debug=False):
     with mp_hands.Hands(
             model_complexity=1,
             max_num_hands=2,
-            min_detection_confidence=0.1,
+            min_detection_confidence=0.6,
             min_tracking_confidence=0.8) as hands:
         while cap.isOpened():
             success, image = cap.read()
@@ -423,11 +423,11 @@ def Hand_pose_video(video_path, debug=False):
     cap.release()
 
 
-if __name__ == '__main__':
-    for i in Complete_pose_Video(video_path="C:\Danial\Projects\Danial\DigiHuman\Backend\Video\\full.mp4"):
-        continue
-#     for i in Hand_pose_video(video_path="C:\Danial\Projects\Danial\DigiHuman\Backend\Video\onegai_darling.mp4", debug=True):
-#         continue
+# if __name__ == '__main__':
+    # for i in Complete_pose_Video(video_path="C:\Danial\Projects\Danial\DigiHuman\Backend\Video\\full.mp4"):
+    #     continue
+    # for i in Hand_pose_video(video_path="C:\Danial\Projects\Danial\DigiHuman\Assets\\video\Body2.mp4", debug=True):
+    #     continue
 
 #     for i in Pose_Video(video_path="C:\Danial\Projects\Danial\DigiHuman\Backend\Video\WIN_20220414_23_51_39_Pro.mp4", debug=True):
 #         continue

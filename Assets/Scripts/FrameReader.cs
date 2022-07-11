@@ -680,6 +680,7 @@ public class FrameReader : MonoBehaviour
     public void SetHandPoseList(List<HandJson> estimated)
     {
         framesLoaded = false;
+        estimatedHandPose.Clear();
         currentHandJsonVector = GetHandsVector(estimated[0]);
         foreach (HandJson poseJson in estimated)
         {
@@ -693,6 +694,7 @@ public class FrameReader : MonoBehaviour
 
     public void SetPoseList(List<PoseJson> estimated)
     {
+        estimatedPoses.Clear();
         framesLoaded = false;
         currentPoseJsonVectorNew = GetBodyPartsVector(estimated[0]);
         foreach (PoseJson poseJson in estimated)

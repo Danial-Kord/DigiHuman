@@ -259,12 +259,20 @@ public class Pose3DMapper : CharacterMapper
         // jointPoints[(int) BodyPoints.Spine].Transform.position = bodyPartVectors[(int) BodyPoints.Spine].position;
         jointPoints[(int) BodyPoints.Hips].Transform.position = bodyPartVectors[(int) BodyPoints.Hips].position;
 
-        
-
-        
         for (int i = 0; i < jointPoints.Length && i < bodyPartVectors.Length; i++)
         {
             JointPoint bone = jointPoints[i];
+
+            if (bone.Transform != null)
+                bone.WorldPos = bone.Transform.position;
+        }
+
+
+
+        for (int i = 0; i < jointPoints.Length && i < bodyPartVectors.Length; i++)
+        {
+            JointPoint bone = jointPoints[i];
+            
             if (bone.Child != null)
             {
                 if (bone.Child.Transform != null) 
@@ -272,7 +280,8 @@ public class Pose3DMapper : CharacterMapper
                     JointPoint child = bone.Child;
                     float distance = bone.DistanceFromChild;
                     Vector3 direction = (-bone.LandmarkPose + child.LandmarkPose) / (-bone.LandmarkPose + child.LandmarkPose).magnitude;
-                    child.Transform.position = bone.Transform.position + direction * distance;
+                    child.WorldPos = bone.Transform.position + direction * distance;
+                    child.Transform.position = child.WorldPos;
 //                    Debug.Log(distance + "  " + Vector3.Distance(child.Transform.position,bone.Transform.position));
                 }
             }
@@ -296,6 +305,14 @@ public class Pose3DMapper : CharacterMapper
                 if(jointPoints[i].Transform != null)
                     KalmanUpdate(jointPoints[i]);
             }
+        else
+        {
+            for (int i = 0; i < jointPoints.Length; i++)
+            {
+                if (jointPoints[i].Transform != null)
+                    jointPoints[i].FilteredPos = jointPoints[i].Transform.position;
+            }
+        }
 
 
 
@@ -335,12 +352,12 @@ public class Pose3DMapper : CharacterMapper
             
             if (jointPoint.Parent != null)
             {
-                Vector3 fv = jointPoint.Parent.KalmanPos - jointPoint.KalmanPos;
-                jointPoint.Transform.rotation = Quaternion.LookRotation(jointPoint.KalmanPos- jointPoint.Child.KalmanPos, fv) * jointPoint.InverseRotation;
+                Vector3 fv = jointPoint.Parent.FilteredPos - jointPoint.FilteredPos;
+                jointPoint.Transform.rotation = Quaternion.LookRotation(jointPoint.FilteredPos- jointPoint.Child.FilteredPos, fv) * jointPoint.InverseRotation;
             }
             else if (jointPoint.Child != null)
             {
-                jointPoint.Transform.rotation = Quaternion.LookRotation(jointPoint.KalmanPos- jointPoint.Child.KalmanPos, forward) * jointPoint.InverseRotation;
+                jointPoint.Transform.rotation = Quaternion.LookRotation(jointPoint.FilteredPos- jointPoint.Child.FilteredPos, forward) * jointPoint.InverseRotation;
             }
             continue;
             
