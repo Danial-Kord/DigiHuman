@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0cf1dab834d4ec34195b920ea7bbf9ec, type: 3}
-  m_Name: DefaultHDRPAsset
+  m_Name: New HDRenderPipelineAsset
   m_EditorClassIdentifier: 
   m_Version: 18
   m_ObsoleteFrameSettings:
@@ -153,11 +153,11 @@ MonoBehaviour:
   m_DefaultVolumeProfile: {fileID: 11400000, guid: f940a8037e6cda542891dc1aac1fa4e8, type: 2}
   m_LensAttenuation: 0
   m_UseRenderGraph: 1
-  m_DefaultLookDevProfile: {fileID: 11400000, guid: 254c4fe87beb7be4fa72e1681edbed02, type: 2}
+  m_DefaultLookDevProfile: {fileID: 0}
   m_RenderingPathDefaultCameraFrameSettings:
     bitDatas:
-      data1: 140666621263709
-      data2: 4539628425463136280
+      data1: 72198262773251917
+      data2: 13763000468760363032
     lodBias: 1
     lodBiasMode: 0
     lodBiasQualityLevel: 0
@@ -170,8 +170,8 @@ MonoBehaviour:
     materialQuality: 0
   m_RenderingPathDefaultBakedOrCustomReflectionFrameSettings:
     bitDatas:
-      data1: 139742655312669
-      data2: 4539628424389459992
+      data1: 135310754214733
+      data2: 4539628428684427288
     lodBias: 1
     lodBiasMode: 0
     lodBiasQualityLevel: 0
@@ -184,8 +184,8 @@ MonoBehaviour:
     materialQuality: 0
   m_RenderingPathDefaultRealtimeReflectionFrameSettings:
     bitDatas:
-      data1: 139716617048837
-      data2: 4539628424389459992
+      data1: 139923391782733
+      data2: 13763000465807638544
     lodBias: 1
     lodBiasMode: 0
     lodBiasQualityLevel: 0
@@ -197,7 +197,7 @@ MonoBehaviour:
     sssCustomSampleBudget: 20
     materialQuality: 0
   m_RenderPipelineSettings:
-    supportShadowMask: 0
+    supportShadowMask: 1
     supportSSR: 0
     supportSSRTransparent: 0
     supportSSAO: 1
@@ -208,12 +208,12 @@ MonoBehaviour:
       m_SchemaId:
         m_Id: With3Levels
     supportVolumetrics: 1
-    supportLightLayers: 1
-    lightLayerName0: Light LayerDefault
-    lightLayerName1: InteriorOnly
-    lightLayerName2: ExteriorOnly
-    lightLayerName3: LampsOnly
-    lightLayerName4: ReflectionsOnly
+    supportLightLayers: 0
+    lightLayerName0: Light Layer default
+    lightLayerName1: Light Layer 1
+    lightLayerName2: Light Layer 2
+    lightLayerName3: Light Layer 3
+    lightLayerName4: Light Layer 4
     lightLayerName5: Light Layer 5
     lightLayerName6: Light Layer 6
     lightLayerName7: Light Layer 7
@@ -224,9 +224,9 @@ MonoBehaviour:
     colorBufferFormat: 74
     supportCustomPass: 1
     customBufferFormat: 12
-    supportedLitShaderMode: 3
+    supportedLitShaderMode: 2
     planarReflectionResolution:
-      m_Values: 000100000004000000040000
+      m_Values: 000100000004000000080000
       m_SchemaId:
         m_Id: With3Levels
     supportDecals: 1
@@ -252,16 +252,16 @@ MonoBehaviour:
       atlasResolution: 128
       atlasOctahedralDepthResolution: 2048
     lightLoopSettings:
-      cookieAtlasSize: 512
+      cookieAtlasSize: 2048
       cookieFormat: 74
       cookieAtlasLastValidMip: 0
-      cookieTexArraySize: 16
+      cookieTexArraySize: 1
       planarReflectionAtlasSize: 1024
-      reflectionProbeCacheSize: 32
+      reflectionProbeCacheSize: 64
       reflectionCubemapSize: 256
-      reflectionCacheCompressed: 1
+      reflectionCacheCompressed: 0
       reflectionProbeFormat: 74
-      skyReflectionSize: 512
+      skyReflectionSize: 256
       skyLightingOverrideLayerMask:
         serializedVersion: 2
         m_Bits: 0
@@ -269,24 +269,24 @@ MonoBehaviour:
       maxDirectionalLightsOnScreen: 16
       maxPunctualLightsOnScreen: 512
       maxAreaLightsOnScreen: 64
-      maxEnvLightsOnScreen: 32
+      maxEnvLightsOnScreen: 64
       maxDecalsOnScreen: 512
       maxPlanarReflectionOnScreen: 16
-      maxLightsPerClusterCell: 16
+      maxLightsPerClusterCell: 8
     hdShadowInitParams:
       maxShadowRequests: 128
-      directionalShadowsDepthBits: 16
+      directionalShadowsDepthBits: 32
       shadowFilteringQuality: 1
       punctualLightShadowAtlas:
         shadowAtlasResolution: 4096
-        shadowAtlasDepthBits: 16
+        shadowAtlasDepthBits: 32
         useDynamicViewportRescale: 1
       areaLightShadowAtlas:
-        shadowAtlasResolution: 2048
-        shadowAtlasDepthBits: 16
-        useDynamicViewportRescale: 0
+        shadowAtlasResolution: 4096
+        shadowAtlasDepthBits: 32
+        useDynamicViewportRescale: 1
       cachedPunctualLightShadowAtlas: 2048
-      cachedAreaLightShadowAtlas: 2048
+      cachedAreaLightShadowAtlas: 1024
       shadowResolutionDirectional:
         m_Values: 00010000000200000004000000080000
         m_SchemaId:
@@ -307,9 +307,9 @@ MonoBehaviour:
       screenSpaceShadowBufferFormat: 48
     decalSettings:
       drawDistance: 1000
-      atlasWidth: 2048
-      atlasHeight: 2048
-      perChannelMask: 1
+      atlasWidth: 4096
+      atlasHeight: 4096
+      perChannelMask: 0
     postProcessSettings:
       m_LutSize: 32
       lutFormat: 48
@@ -331,18 +331,18 @@ MonoBehaviour:
       occlusionMesh: 1
       cameraJitter: 0
     postProcessQualitySettings:
-      NearBlurSampleCount: 030000000400000005000000
+      NearBlurSampleCount: 030000000500000008000000
       NearBlurMaxRadius:
       - 2
-      - 3
       - 4
-      FarBlurSampleCount: 040000000500000007000000
+      - 7
+      FarBlurSampleCount: 04000000070000000e000000
       FarBlurMaxRadius:
       - 5
-      - 6
       - 8
-      DoFResolution: 040000000200000002000000
-      DoFHighQualityFiltering: 000001
+      - 13
+      DoFResolution: 040000000200000001000000
+      DoFHighQualityFiltering: 000101
       DoFPhysicallyBased: 000000
       MotionBlurSampleCount: 04000000080000000c000000
       BloomRes: 040000000200000002000000
@@ -351,9 +351,9 @@ MonoBehaviour:
       ChromaticAberrationMaxSamples: 03000000060000000c000000
     lightSettings:
       useContactShadow:
-        m_Values: 000101
+        m_Values: 000001
         m_SchemaId:
-          m_Id: 
+          m_Id: With3Levels
     maximumLODLevel:
       m_Values: 000000000000000000000000
       m_SchemaId:
@@ -366,13 +366,13 @@ MonoBehaviour:
       m_SchemaId:
         m_Id: With3Levels
     lightingQualitySettings:
-      AOStepCount: 040000000600000006000000
-      AOFullRes: 000000
-      AOMaximumRadiusPixels: 200000002000000028000000
-      AOBilateralUpsample: 000001
-      AODirectionCount: 010000000200000002000000
-      ContactShadowSampleCount: 04000000080000000c000000
-      SSRMaxRaySteps: 0c0000001800000030000000
+      AOStepCount: 040000000600000010000000
+      AOFullRes: 000001
+      AOMaximumRadiusPixels: 200000002800000050000000
+      AOBilateralUpsample: 000101
+      AODirectionCount: 010000000200000004000000
+      ContactShadowSampleCount: 060000000a00000010000000
+      SSRMaxRaySteps: 100000002000000040000000
       RTAORayLength:
       - 0.5
       - 3
@@ -396,9 +396,9 @@ MonoBehaviour:
       RTGIDenoise: 010101
       RTGIHalfResDenoise: 010000
       RTGIDenoiserRadius:
-      - 0.66
-      - 0.66
-      - 1
+      - 0.75
+      - 0.5
+      - 0.25
       RTGISecondDenoise: 010101
       RTGISecondDenoiserRadius:
       - 0
@@ -427,23 +427,19 @@ MonoBehaviour:
       Fog_ControlMode: 000000000000000000000000
       Fog_Budget:
       - 0.166
-      - 0.333
+      - 0.33
       - 0.666
       Fog_DepthRatio:
-      - 0.5
-      - 0.5
+      - 0.666
+      - 0.666
       - 0.5
   allowShaderVariantStripping: 1
   enableSRPBatcher: 1
-  shaderVariantLogLevel: 2
+  shaderVariantLogLevel: 0
   availableMaterialQualityLevels: -1
   m_DefaultMaterialQualityLevel: 4
   diffusionProfileSettings: {fileID: 0}
-  diffusionProfileSettingsList:
-  - {fileID: 11400000, guid: 78322c7f82657514ebe48203160e3f39, type: 2}
-  - {fileID: 11400000, guid: 26bdddf49760c61438938733f07fa2a2, type: 2}
-  - {fileID: 11400000, guid: 5a9a2dc462c7bde4f86d0615a19c2c72, type: 2}
-  - {fileID: 11400000, guid: 2b7005ba3a4d8474b8cdc34141ad766e, type: 2}
+  diffusionProfileSettingsList: []
   beforeTransparentCustomPostProcesses: []
   beforeTAACustomPostProcesses: []
   beforePostProcessCustomPostProcesses: []
