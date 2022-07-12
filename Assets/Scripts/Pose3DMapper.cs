@@ -215,10 +215,16 @@ public class Pose3DMapper : CharacterMapper
                 jointPoint.InverseRotation = jointPoint.Inverse * jointPoint.InitRotation;
             }
         }
+        //Hip and Spine
         var hip = jointPoints[(int) BodyPoints.Hips];
         var spine = jointPoints[(int) BodyPoints.Spine];
         hip.Inverse = Quaternion.Inverse(Quaternion.LookRotation(forward,spine.Transform.position-hip.Transform.position));
         hip.InverseRotation = hip.Inverse * hip.InitRotation;
+        
+        spine.Inverse = Quaternion.Inverse(Quaternion.LookRotation(
+            spine.Transform.position.TriangleNormal(jointPoints[(int) BodyPoints.RightShoulder].Transform.position,jointPoints[(int) BodyPoints.LeftShoulder].Transform.position),
+            jointPoints[(int) BodyPoints.Neck].Transform.position-spine.Transform.position));
+        spine.InverseRotation = spine.Inverse * spine.InitRotation;
 
         // For Head Rotation
         var head = jointPoints[(int) BodyPoints.Head];
@@ -333,15 +339,22 @@ public class Pose3DMapper : CharacterMapper
 
 
 
-        //setting hip rotation
+        //setting hip & spine rotation
         Vector3 a = bodyPartVectors[(int) BodyPoints.RightHip].position;
         Vector3 spine = bodyPartVectors[(int) BodyPoints.Spine].position;
         Vector3 hip = bodyPartVectors[(int) BodyPoints.Hips].position;
         Vector3 c = bodyPartVectors[(int) BodyPoints.LeftHip].position;
+        Vector3 d = bodyPartVectors[(int) BodyPoints.RightShoulder].position;
+        Vector3 e = bodyPartVectors[(int) BodyPoints.LeftShoulder].position;
         jointPoints[(int) BodyPoints.Hips].Transform.rotation = Quaternion.LookRotation(spine.TriangleNormal(c, a),
                                                                    spine - hip ) *
                                                                 jointPoints[(int) BodyPoints.Hips].InverseRotation;
 
+        jointPoints[(int) BodyPoints.Spine].Transform.rotation = Quaternion.LookRotation(spine.TriangleNormal(d, e),
+                                                                     bodyPartVectors[(int) BodyPoints.Neck].position - spine ) *
+                                                                jointPoints[(int) BodyPoints.Spine].InverseRotation;
+
+        
         // Head Rotation
         
         Vector3 mouth = (bodyPartVectors[(int) BodyPoints.LeftMouth].position + bodyPartVectors[(int) BodyPoints.RightMouth].position)/2.0f;
