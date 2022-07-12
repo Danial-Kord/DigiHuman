@@ -21,7 +21,6 @@ public class SlideShow : MonoBehaviour
 
     [Header("rotator")] 
     [SerializeField] private GameObject rotator;
-
     [SerializeField] private bool enableRotator;
     
     private void Awake()
@@ -108,6 +107,7 @@ public class SlideShow : MonoBehaviour
 
     public IEnumerator PlayAnimation(bool isMovingRight)
     {
+        nodes[index].GetComponentInChildren<QualityData>()?.OnApplyQualityData();
         float move = distanceBetweenNodes;
         if (!isMovingRight)
             move = -move;

@@ -802,6 +802,7 @@ public class FrameReader : MonoBehaviour
 
     public void SetNewCharacter(GameObject newCharacter)
     {
+      
         character.SetActive(false);
         character = newCharacter;
         pose3DMapper.SetCharacter(character);
