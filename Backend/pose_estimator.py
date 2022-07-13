@@ -309,10 +309,11 @@ def Complete_pose_Video(video_path):
 
         json_data = {
             'bodyPose': body_pose,
-            'handsPose': hands_pose
+            'handsPose': hands_pose,
+            'frame': frame
         }
         print(json_data)
-        yield hands_pose
+        yield json_data
 
         continue
         # Draw landmark annotation on the image.

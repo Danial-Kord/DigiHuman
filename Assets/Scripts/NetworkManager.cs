@@ -13,6 +13,7 @@ public class NetworkManager : MonoSingleton<NetworkManager>
 
     [Header("Server")]
     [SerializeField] private string serverUploadURL;
+    [SerializeField] private string serverFullPoseEstimatorURL;
     [SerializeField] private string serverFullPoseUploadURL;
     [SerializeField] private string serverPoseUploadURL;
     [SerializeField] private string serverPoseEstimatorURL;
@@ -53,8 +54,18 @@ public class NetworkManager : MonoSingleton<NetworkManager>
         public int index;
     }
 
-    
-    
+    private void Start()
+    {
+        if (enableDebug)
+        {
+            StartCoroutine(Upload(filePath, serverFullPoseUploadURL, (response, bytes) =>
+            {
+                StartCoroutine(GetFullBodyPoseEstimates(response,bytes));
+            }));
+        }
+    }
+
+
     //starting coroutine for sending ASync to server
     public void UploadImageGauGan(string localFileName,Action<UploadResponse,byte[]> onFinished)
     {
@@ -96,6 +107,16 @@ public class NetworkManager : MonoSingleton<NetworkManager>
         StartCoroutine(Upload(localFileName, serverHandUploadURL, (response, bytes) =>
         {
             StartCoroutine(GetHandPoseEstimates(response,bytes));
+            onSuccess?.Invoke();
+        })); //Get estimates }));
+    }
+    
+    //starting coroutine for sending ASync to server
+    public void UploadAndEstimateFullPose(string localFileName, Action onSuccess=null)
+    {
+        StartCoroutine(Upload(localFileName, serverHandUploadURL, (response, bytes) =>
+        {
+            StartCoroutine(GetFullBodyPoseEstimates(response,bytes));
             onSuccess?.Invoke();
         })); //Get estimates }));
     }
@@ -367,6 +388,68 @@ public class NetworkManager : MonoSingleton<NetworkManager>
 
         yield break;
     }
+    
+    
+    //getting estimates for video body & hand poses
+    IEnumerator GetFullBodyPoseEstimates(UploadResponse response, byte[] bytes)
+    {
+        PoseRequest poseRequest = new PoseRequest();
+        poseRequest.index = 0;
+        poseRequest.fileName = response.file;
+        float totalFrames = response.totalFrames;    
+        
+        List<HandJson> handJsons = new List<HandJson>();
+        List<PoseJson> bodyJsons = new List<PoseJson>();
+        UIManager.Instancce.CheckAndEnableWaitingModeUI(WaitingModeUI.ProgressBar,true);
+        UIManager.Instancce.UpdateProgressBar(0);
+
+        while (true)
+        {
+            UnityWebRequest webRequest = new UnityWebRequest(serverFullPoseEstimatorURL, "POST");
+            byte[] encodedPayload = new System.Text.UTF8Encoding().GetBytes(JsonUtility.ToJson(poseRequest));
+            webRequest.uploadHandler = (UploadHandler) new UploadHandlerRaw(encodedPayload);
+            webRequest.downloadHandler = (DownloadHandler) new DownloadHandlerBuffer();
+            webRequest.SetRequestHeader("Content-Type", "application/json");
+            webRequest.SetRequestHeader("cache-control", "no-cache");
+
+            yield return webRequest.SendWebRequest();
+            try
+            {
+                if (webRequest.result != UnityWebRequest.Result.Success)
+                {
+                    Debug.Log(webRequest.error);
+                }
+                else
+                {
+                    if (webRequest.downloadHandler.text.Equals("Done"))
+                        break;
+                    FullPoseJson receivedJson = JsonUtility.FromJson<FullPoseJson>(webRequest.downloadHandler.text);
+                    bodyJsons.Add(receivedJson.bodyPose);
+                    handJsons.Add(receivedJson.handsPose);
+                    Debug.Log(JsonUtility.FromJson<HandJson>(webRequest.downloadHandler.text).frame);
+                    poseRequest.index += 1;
+                    UIManager.Instancce.UpdateProgressBar(receivedJson.frame/totalFrames);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+
+            yield return null;
+        }
+        UIManager.Instancce.UpdateProgressBar(1);
+        yield return null;
+        frameReader.SetHandPoseList(handJsons);
+        frameReader.SetPoseList(bodyJsons);
+        UIManager.Instancce.OnFullPoseDataReceived();
+
+        UIManager.Instancce.CheckAndEnableWaitingModeUI(WaitingModeUI.ProgressBar,false);
+
+        yield break;
+    }
+    
     
     //getting GauGan image from the server
     IEnumerator GetGauGanImage(string serverResponse)

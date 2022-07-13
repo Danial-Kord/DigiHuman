@@ -30,6 +30,15 @@ public class PoseJson
 
 
 [Serializable]
+public class FullPoseJson
+{
+    public PoseJson bodyPose;
+    public HandJson handsPose;
+    public int frame;
+}
+
+
+[Serializable]
 public class FaceJson
 {
     public float leftEyeWid;
