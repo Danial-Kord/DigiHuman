@@ -198,6 +198,29 @@ public class UIManager : MonoSingleton<UIManager>
         frameReader.ArrangeDataFrames();
     }
     
+    
+    public void OnUploadFullPoseClick()
+    {
+        handPoseUploadCircleImage.color = Color.white;
+        poseUploadCircleImage.color = Color.white;
+        handPoseUploadCompleteImage.gameObject.SetActive(false);
+        poseUploadCompleteImage.gameObject.SetActive(false);
+        string filePath = FileManager.OpenFileVideoExplorer();
+        NetworkManager.Instancce.UploadAndEstimateFullPose(filePath);
+        
+    }
+    
+    public void OnFullPoseDataReceived()
+    {
+        ShowSuccessMessage("Full pose data downloaded successfully!");
+        handPoseUploadCircleImage.color = successDownloadColor;
+        poseUploadCircleImage.color = successDownloadColor;
+        handPoseUploadCompleteImage.gameObject.SetActive(true);
+        poseUploadCompleteImage.gameObject.SetActive(true);
+        frameReader.ArrangeDataFrames();
+    }
+    
+    
     public void OnUploadFacialExpressionClick()
     {
         faceUploadCircleImage.color = Color.white;
