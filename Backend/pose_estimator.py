@@ -236,6 +236,66 @@ def Pose_Video(video_path,debug = False):
 
 
 
+def Hands_Full(video_path):
+    mp_drawing = mp.solutions.drawing_utils
+    mp_drawing_styles = mp.solutions.drawing_styles
+    mp_holistic = mp.solutions.holistic
+    mp_hands = mp.solutions.hands
+    json_path = "TestPath"
+    cap = cv2.VideoCapture(video_path)
+    # cap = cv2.VideoCapture(0)
+    with mp_holistic.Holistic(
+        min_detection_confidence=0.5,
+        min_tracking_confidence=0.8,
+        model_complexity=2) as holistic:
+      while cap.isOpened():
+        success, image = cap.read()
+        # current_frame
+        frame = cap.get(cv2.CAP_PROP_POS_FRAMES)
+        if not success:
+          break
+
+        # To improve performance, optionally mark the image as not writeable to
+        # pass by reference.
+        image.flags.writeable = True
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        results = holistic.process(image)
+
+        # ---- Body pose ----
+        rows, cols, _ = image.shape
+        try:
+            pose_landmarks = landmarks_list_to_array(results.pose_world_landmarks)  # also can use results.pose_landmarks
+            # world_pose_landmarks = world_landmarks_list_to_array(results.pose_world_landmarks, image.shape)
+            add_extra_points(pose_landmarks)
+            # add_extra_points(world_pose_landmarks)
+            body_pose = {
+                'predictions': pose_landmarks,
+                'frame': frame,
+                'height': rows,
+                'width': cols
+            }
+        except:
+            body_pose = {
+                'predictions': [],
+                'frame': frame,
+                'height': rows,
+                'width': cols
+            }
+        # ---- Hands ----
+        hands_array_R = []
+        hands_array_L = []
+        if results.left_hand_landmarks:
+            hands_array_L = landmarks_list_to_array(results.left_hand_landmarks)
+        if results.right_hand_landmarks:
+            hands_array_R = landmarks_list_to_array(results.right_hand_landmarks)
+        hands_pose = {
+            'handsR': hands_array_R,
+            'handsL': hands_array_L,
+            'frame': frame
+        }
+        yield hands_pose
+
+
 
 def Complete_pose_Video(video_path):
     mp_drawing = mp.solutions.drawing_utils

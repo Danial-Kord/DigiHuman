@@ -114,7 +114,7 @@ public class NetworkManager : MonoSingleton<NetworkManager>
     //starting coroutine for sending ASync to server
     public void UploadAndEstimateFullPose(string localFileName, Action onSuccess=null)
     {
-        StartCoroutine(Upload(localFileName, serverHandUploadURL, (response, bytes) =>
+        StartCoroutine(Upload(localFileName, serverFullPoseUploadURL, (response, bytes) =>
         {
             StartCoroutine(GetFullBodyPoseEstimates(response,bytes));
             onSuccess?.Invoke();
