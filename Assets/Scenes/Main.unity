@@ -1406,7 +1406,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c89670a4d0765a4ea005a347d2d9e3e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  blinkFunctionSelect: 2
+  blinkFunctionSelect: 1
   leftEyeNum: 0
   rightEyeNum: 1
   mouthWidNum: 4
@@ -1700,7 +1700,6 @@ RectTransform:
   - {fileID: 758774219}
   - {fileID: 141278398}
   - {fileID: 670811404}
-  - {fileID: 492805281}
   m_Father: {fileID: 2118461220}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -3338,7 +3337,7 @@ MonoBehaviour:
   serverFaceUploadURL: http://127.0.0.1:5000/faceUploader
   serverFaceMocapURL: http://127.0.0.1:5000/face
   frameReader: {fileID: 620901066}
-  enableDebug: 1
+  enableDebug: 0
   filePath: C:/Danial/Projects/Danial/DigiHuman/Assets/video/Action_with_wiper_Trim.mp4
 --- !u!4 &203192803
 Transform:
@@ -5804,7 +5803,7 @@ GameObject:
   - component: {fileID: 492805283}
   - component: {fileID: 492805282}
   m_Layer: 5
-  m_Name: UploadButton (1)
+  m_Name: FullPose
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5822,12 +5821,12 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1518736384}
-  m_Father: {fileID: 105361150}
-  m_RootOrder: 4
+  m_Father: {fileID: 2118461220}
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 263, y: -362}
+  m_AnchoredPosition: {x: -274, y: 124}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &492805282
@@ -5989,7 +5988,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 2118461220}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
@@ -8401,7 +8400,7 @@ MonoBehaviour:
   fractionX: 1
   fractionY: 1
   fractionZ: -0.8
-  nextFrameTime: 0.05
+  nextFrameTime: 0.0083
   currentPoseJson:
     predictions: []
     width: 0
@@ -8852,7 +8851,7 @@ VideoPlayer:
   - {fileID: 0}
   m_DirectAudioVolumes:
   - 1
-  m_Url: C:\Danial\Projects\Danial\DigiHuman\Assets\video\Face2.mp4
+  m_Url: file://C:/Danial/Projects/Danial/DigiHuman/Assets/video/C2824 - Copy_Trim.mp4
   m_EnabledAudioTracks: 01
   m_DirectAudioMutes: 00
   m_ControlledAudioTrackCount: 1
@@ -19642,7 +19641,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 2118461220}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -90}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -27184,6 +27183,7 @@ RectTransform:
   - {fileID: 454090784}
   - {fileID: 1546188041}
   - {fileID: 925525513}
+  - {fileID: 492805281}
   - {fileID: 1529891963}
   - {fileID: 496347668}
   m_Father: {fileID: 562632699}
