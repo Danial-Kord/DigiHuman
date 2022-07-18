@@ -138,6 +138,8 @@ public class FrameReader : MonoBehaviour
 
     [Header("3D Character")] 
     [SerializeField] private GameObject character;
+    [SerializeField] private bool enableFace;
+    [SerializeField] private bool enableHands=true;
 
     [Header("PlayController")] 
     public bool pause = true;
@@ -520,7 +522,7 @@ public class FrameReader : MonoBehaviour
             }
 
             //----- Hands -----
-            if (currentHandJsonVector != null)
+            if (currentHandJsonVector != null && enableHands)
             {
                 if (currentHandJsonVectorNew != null)
                 {
@@ -547,7 +549,7 @@ public class FrameReader : MonoBehaviour
             }
 
             //----- Facial Mocap -------
-            if (currentFaceJson != null)
+            if (currentFaceJson != null && enableFace)
             {
                 facialExpressionHandler.UpdateData(currentFaceJson.leftEyeWid, currentFaceJson.rightEyeWid
                     , currentFaceJson.mouthWid, currentFaceJson.mouthLen);
@@ -815,8 +817,26 @@ public class FrameReader : MonoBehaviour
         character.SetActive(false);
         character = newCharacter;
         pose3DMapper.SetCharacter(character);
-        handPose.SetCharacter(character);
-        facialExpressionHandler.SetCharacter(newCharacter);
+        try
+        {
+            enableHands = true;
+            handPose.SetCharacter(character);
+        }
+        catch (Exception e)
+        {
+            enableHands = false;
+            Console.WriteLine(e);
+        }
+        if (character.GetComponentInChildren<BlendShapeController>() != null)
+        {
+            facialExpressionHandler.SetCharacter(newCharacter);
+            enableFace = true;
+        }
+        else
+        {
+            enableFace = false;
+        }
+
         characterRotation = character.transform.rotation;
         HideCharacter();
     }

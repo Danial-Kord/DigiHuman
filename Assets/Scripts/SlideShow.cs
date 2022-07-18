@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -14,8 +15,8 @@ public class SlideShow : MonoBehaviour
     [SerializeField] private float speed;
     [SerializeField] private float distanceBetweenNodes;
     [SerializeField] private Transform centerNodePos;
-    [SerializeField] private List<GameObject> nodes;
-    [SerializeField] private GameObject parent; // parent game object of all nodes
+    public List<GameObject> nodes;
+    public GameObject parent; // parent game object of all nodes
     private int index = 0;
 
 
@@ -132,4 +133,53 @@ public class SlideShow : MonoBehaviour
     {
         onSelection(index,nodes[index]);
     }
+
+    public void ClearNodes()
+    {
+        nodes ??= new List<GameObject>();
+        nodes.Clear();
+    }
+
+    public void SetNodesArray(GameObject[] newNodes)
+    {
+        nodes ??= new List<GameObject>();
+        for (int i = 0; i < newNodes.Length; i++)
+        {
+            nodes.Add(newNodes[i]);
+        }
+    }
+}
+
+[CustomEditor(typeof(SlideShow))]
+[CanEditMultipleObjects]
+public class LookAtPointEditor : Editor
+{
+
+    SerializedProperty nodes;
+    void OnEnable()
+    {
+        nodes = serializedObject.FindProperty("nodes");
+    }
+
+    public override void OnInspectorGUI()
+    {
+        serializedObject.Update();
+        DrawDefaultInspector();
+        if (GUILayout.Button("Set All Nodes"))
+        {
+            ((SlideShow) (target)).ClearNodes();
+            Transform p = ((SlideShow) (target)).parent.transform;
+            GameObject[] t = new GameObject[p.childCount];
+            
+            for (int ID = 0; ID < p.childCount; ID++)
+            {
+                t[ID] = p.GetChild(ID).gameObject;
+            }
+            ((SlideShow) (target)).SetNodesArray(t);
+            
+        }
+        serializedObject.ApplyModifiedProperties();
+    }
+
+
 }
