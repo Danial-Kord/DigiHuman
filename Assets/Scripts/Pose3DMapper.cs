@@ -333,7 +333,7 @@ public class Pose3DMapper : CharacterMapper
             for (int i = 0; i < jointPoints.Length; i++)
             {
                 if (jointPoints[i].Transform != null)
-                    jointPoints[i].FilteredPos = jointPoints[i].Transform.position;
+                    jointPoints[i].FilteredPos = jointPoints[i].WorldPos;
             }
         }
 
