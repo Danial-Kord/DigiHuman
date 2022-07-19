@@ -108,7 +108,11 @@ public class FrameReader : MonoBehaviour
     public float fractionX = 1.2f;
     public float fractionY = 1.2f;
     public float fractionZ = 1.2f;
-
+    [SerializeField] private bool enableVideoAspectRatioEffector;
+    private float videoFractionX = 1;
+    private float videoFractionY = 1;
+    private float videoFractionZ = 1;
+    
     [Header("Frame rate")]
     [SerializeField] private float nextFrameTime;
 
@@ -653,8 +657,8 @@ public class FrameReader : MonoBehaviour
         poseJsonVector.height = poseJson.height;
         for (int i = 0; i < len; i++)
         {
-            poseJsonVector.predictions[i].position = fraction * new Vector3(-poseJson.predictions[i].x*fractionX,
-                -poseJson.predictions[i].y*fractionY,poseJson.predictions[i].z*fractionZ);
+            poseJsonVector.predictions[i].position = fraction * new Vector3(-poseJson.predictions[i].x*fractionX * videoFractionX,
+                -poseJson.predictions[i].y*fractionY*videoFractionY,poseJson.predictions[i].z*fractionZ*videoFractionZ);
             poseJsonVector.predictions[i].visibility = poseJson.predictions[i].visibility;
             
         }
@@ -727,6 +731,15 @@ public class FrameReader : MonoBehaviour
     public void LoadFrames(FrameData[] frameData)
     {
         this.frameData = frameData.ToList<FrameData>();
+        // for (int i = 0; i < frameData.Length; i++)
+        // {
+        //     PoseJsonVector p = frameData[i].poseData;
+        //     if(p!=null)
+        //     for (int j = 0; j < p.predictions.Length; j++)
+        //     {
+        //         p.predictions[j].position.y *= 1.7f;
+        //     }
+        // }
         Debug.Log(frameData.Length);
         MakeSceneReady();
     }
@@ -809,6 +822,18 @@ public class FrameReader : MonoBehaviour
         
         Debug.Log(frameData.ToArray().Length);
         return frameData.ToArray();
+    }
+
+    //set fractions based on video aspect ratio
+    public void SetVideoFractions(float aspectRatio)
+    {
+        if (enableVideoAspectRatioEffector)
+        {
+
+            videoFractionX = 1;
+            videoFractionY = aspectRatio;
+            videoFractionZ = 1;
+        }
     }
 
     public void SetNewCharacter(GameObject newCharacter)

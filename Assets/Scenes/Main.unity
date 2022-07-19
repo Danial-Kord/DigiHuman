@@ -8362,6 +8362,7 @@ MonoBehaviour:
   KalmanParamR: 0
   useLowPassFilter: 0
   lowPassParam: 0.1
+  lowPassFilterChannels: 24
   frameReader: {fileID: 0}
   characterBodyIK:
     nose: {fileID: 0}
@@ -8413,6 +8414,7 @@ MonoBehaviour:
   fractionX: 1.2
   fractionY: 1.2
   fractionZ: 1.2
+  enableVideoAspectRatioEffector: 0
   nextFrameTime: 0
   currentPoseJson:
     predictions: []
@@ -10019,6 +10021,7 @@ MonoBehaviour:
   KalmanParamR: 0.0015
   useLowPassFilter: 1
   lowPassParam: 0.1
+  lowPassFilterChannels: 24
   frameReader: {fileID: 620901066}
   characterBodyIK:
     nose: {fileID: 0}
@@ -10069,7 +10072,8 @@ MonoBehaviour:
   fraction: 1
   fractionX: 1
   fractionY: 1
-  fractionZ: -0.8
+  fractionZ: -1
+  enableVideoAspectRatioEffector: 1
   nextFrameTime: 0.00833
   currentPoseJson:
     predictions: []
@@ -10165,6 +10169,7 @@ MonoBehaviour:
   KalmanParamR: 0.0015
   useLowPassFilter: 1
   lowPassParam: 0.1
+  lowPassFilterChannels: 24
   flipHands: 0
 --- !u!114 &620901069
 MonoBehaviour:
@@ -10648,7 +10653,7 @@ VideoPlayer:
   m_TargetMaterialRenderer: {fileID: 0}
   m_TargetMaterialProperty: _MainTex
   m_RenderMode: 2
-  m_AspectRatio: 2
+  m_AspectRatio: 0
   m_DataSource: 1
   m_PlaybackSpeed: 1
   m_AudioOutputMode: 2
@@ -17204,6 +17209,7 @@ MonoBehaviour:
   KalmanParamR: 0
   useLowPassFilter: 0
   lowPassParam: 0.1
+  lowPassFilterChannels: 24
   frameReader: {fileID: 0}
   characterBodyIK:
     nose: {fileID: 0}
@@ -17255,6 +17261,7 @@ MonoBehaviour:
   fractionX: 1.2
   fractionY: 1.2
   fractionZ: 1.2
+  enableVideoAspectRatioEffector: 0
   nextFrameTime: 0
   currentPoseJson:
     predictions: []
@@ -24868,6 +24875,10 @@ PrefabInstance:
     - target: {fileID: 1031314122523792214, guid: bce30a6cc7e9c834db1091b45a8adf7b, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1031314122523792215, guid: bce30a6cc7e9c834db1091b45a8adf7b, type: 3}
+      propertyPath: speed
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 1031314122523792215, guid: bce30a6cc7e9c834db1091b45a8adf7b, type: 3}
       propertyPath: rotator

@@ -550,7 +550,13 @@ public class HandsPreprocessor : CharacterMapper
     {
         // Right Hand
         rightHand = new JointPoint[21];
-        for (var i = 0; i < rightHand.Length; i++) rightHand[i] = new JointPoint();
+
+        for (var i = 0; i < rightHand.Length; i++)
+        {
+            rightHand[i] = new JointPoint();
+            rightHand[i].LastPoses = new Vector3[lowPassFilterChannels];
+
+        }
         
         //Wrist
         rightHand[(int) HandPoints.Wrist].Transform = anim.GetBoneTransform(HumanBodyBones.RightHand);
@@ -619,7 +625,13 @@ public class HandsPreprocessor : CharacterMapper
     {
         // Right Hand
         leftHand = new JointPoint[21];
-        for (var i = 0; i < leftHand.Length; i++) leftHand[i] = new JointPoint();
+
+        for (var i = 0; i < leftHand.Length; i++)
+        {
+            leftHand[i] = new JointPoint();
+            leftHand[i].LastPoses = new Vector3[lowPassFilterChannels];
+
+        }
         
         //Wrist
         leftHand[(int) HandPoints.Wrist].Transform = anim.GetBoneTransform(HumanBodyBones.LeftHand);

@@ -10,7 +10,7 @@ public static class ExtensionMethods
 
         Vector3 a = v0 - v1;
         Vector3 b = v0 - v2;
-        return Vector3.Cross(a, b).normalized;
+        return Vector3.Cross(a, b);
     }
     public static Quaternion GetInverse(this Vector3 p1, Vector3 p2, Vector3 forward)
     {
