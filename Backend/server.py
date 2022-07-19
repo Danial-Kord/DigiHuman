@@ -319,11 +319,15 @@ def upload_file():
                 print("video type")
                 cap = cv2.VideoCapture(file_name)
                 tframe = cap.get(cv2.CAP_PROP_FRAME_COUNT)  # get total frame count
+                width = cap.get(cv2.CAP_PROP_FRAME_WIDTH)  # float `width`
+                height = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)  # float `height`
+                aspectRatio = width / height
                 cap.release()
 
                 res = {
                     'file' : file_name,
-                    'totalFrames' : int(tframe)
+                    'totalFrames': int(tframe),
+                    'aspectRatio': aspectRatio
                 }
                 return jsonify(res)
 
@@ -369,11 +373,15 @@ def upload_hand_video():
                 print("video type")
                 cap = cv2.VideoCapture(file_name)
                 tframe = cap.get(cv2.CAP_PROP_FRAME_COUNT)  # get total frame count
+                width = cap.get(cv2.CAP_PROP_FRAME_WIDTH)  # float `width`
+                height = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)  # float `height`
+                aspectRatio = width / height
                 cap.release()
 
                 res = {
                     'file' : file_name,
-                    'totalFrames' : int(tframe)
+                    'totalFrames': int(tframe),
+                    'aspectRatio': aspectRatio
                 }
                 return jsonify(res)
             else:
@@ -407,11 +415,15 @@ def upload_holistic_video():
                 print("video type")
                 cap = cv2.VideoCapture(file_name)
                 tframe = cap.get(cv2.CAP_PROP_FRAME_COUNT)  # get total frame count
+                width = cap.get(cv2.CAP_PROP_FRAME_WIDTH)  # float `width`
+                height = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)  # float `height`
+                aspectRatio = width / height
                 cap.release()
 
                 res = {
                     'file' : file_name,
-                    'totalFrames' : int(tframe)
+                    'totalFrames': int(tframe),
+                    'aspectRatio': aspectRatio
                 }
                 return jsonify(res)
             else:
@@ -446,11 +458,15 @@ def upload_face_video():
                 print("video type")
                 cap = cv2.VideoCapture(file_name)
                 tframe = cap.get(cv2.CAP_PROP_FRAME_COUNT)  # get total frame count
+                width = cap.get(cv2.CAP_PROP_FRAME_WIDTH)  # float `width`
+                height = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)  # float `height`
+                aspectRatio = width / height
                 cap.release()
 
                 res = {
                     'file' : file_name,
-                    'totalFrames' : int(tframe)
+                    'totalFrames': int(tframe),
+                    'aspectRatio': aspectRatio
                 }
                 return jsonify(res)
 
