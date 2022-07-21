@@ -731,6 +731,7 @@ public class FrameReader : MonoBehaviour
     public void LoadFrames(FrameData[] frameData)
     {
         this.frameData = frameData.ToList<FrameData>();
+        handPose.DataCleaner(frameData);
         // for (int i = 0; i < frameData.Length; i++)
         // {
         //     PoseJsonVector p = frameData[i].poseData;
