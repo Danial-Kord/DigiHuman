@@ -245,13 +245,16 @@ def Hands_Full(video_path):
     cap = cv2.VideoCapture(video_path)
     # cap = cv2.VideoCapture(0)
     with mp_holistic.Holistic(
-        min_detection_confidence=0.5,
-        min_tracking_confidence=0.8,
+            smooth_landmarks=True,
+        min_detection_confidence=0.9,
+        min_tracking_confidence=0.9,
         model_complexity=2) as holistic:
       while cap.isOpened():
         success, image = cap.read()
         # current_frame
         frame = cap.get(cv2.CAP_PROP_POS_FRAMES)
+        # if(frame < 3600):
+        #     continue
         if not success:
           break
 
@@ -294,7 +297,42 @@ def Hands_Full(video_path):
             'frame': frame
         }
         yield hands_pose
+ # Draw landmark annotation on the image.
+        image.flags.writeable = True
+        image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+        # mp_drawing.draw_landmarks(
+        #     image,
+        #     results.face_landmarks,
+        #     mp_holistic.FACEMESH_CONTOURS,
+        #     landmark_drawing_spec=None,
+        #     connection_drawing_spec=mp_drawing_styles
+        #     .get_default_face_mesh_contours_style())
+        # mp_drawing.draw_landmarks(
+        #     image,
+        #     results.pose_landmarks,
+        #     mp_holistic.POSE_CONNECTIONS,
+        #     landmark_drawing_spec=mp_drawing_styles
+        #     .get_default_pose_landmarks_style())
+        if results.right_hand_landmarks:
+            mp_drawing.draw_landmarks(
+                image,
+                results.right_hand_landmarks,
+                mp_hands.HAND_CONNECTIONS,
+                mp_drawing_styles.get_default_hand_landmarks_style(),
+                mp_drawing_styles.get_default_hand_connections_style())
+        if results.left_hand_landmarks:
+            mp_drawing.draw_landmarks(
+                image,
+                results.left_hand_landmarks,
+                mp_hands.HAND_CONNECTIONS,
+                mp_drawing_styles.get_default_hand_landmarks_style(),
+                mp_drawing_styles.get_default_hand_connections_style())
 
+        # Flip the image horizontally for a selfie-view display.
+        cv2.imshow('MediaPipe Holistic', cv2.flip(image, 1))
+        if cv2.waitKey(5) & 0xFF == 27:
+          break
+    cap.release()
 
 
 def Complete_pose_Video(video_path):
@@ -487,7 +525,7 @@ def Hand_pose_video(video_path, debug=False):
 # if __name__ == '__main__':
     # for i in Complete_pose_Video(video_path="C:\Danial\Projects\Danial\DigiHuman\Backend\Video\\full.mp4"):
     #     continue
-    # for i in Hand_pose_video(video_path="C:\Danial\Projects\Danial\DigiHuman\Assets\\video\Body2.mp4", debug=True):
+    # for i in Hands_Full(video_path="D:\\pose\\New\\2022-07-14\\C2828.MP4"):
     #     continue
 
 #     for i in Pose_Video(video_path="C:\Danial\Projects\Danial\DigiHuman\Backend\Video\WIN_20220414_23_51_39_Pro.mp4", debug=True):
