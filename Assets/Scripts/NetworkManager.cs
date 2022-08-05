@@ -44,6 +44,7 @@ public class NetworkManager : MonoSingleton<NetworkManager>
     {
         public string file;
         public int totalFrames;
+        public float aspectRatio;
     }
     
     
@@ -278,6 +279,8 @@ public class NetworkManager : MonoSingleton<NetworkManager>
         PoseRequest poseRequest = new PoseRequest();
         poseRequest.index = 0;
         poseRequest.fileName = response.file;
+        frameReader.SetVideoFractions(response.aspectRatio);
+
         float totalFrames = response.totalFrames;    
         
         List<HandJson> poseJsons = new List<HandJson>();
@@ -338,6 +341,7 @@ public class NetworkManager : MonoSingleton<NetworkManager>
         PoseRequest poseRequest = new PoseRequest();
         poseRequest.index = 0;
         poseRequest.fileName = response.file;
+        frameReader.SetVideoFractions(response.aspectRatio);
         float totalFrames = response.totalFrames;    
         
         List<PoseJson> poseJsons = new List<PoseJson>();
@@ -396,6 +400,8 @@ public class NetworkManager : MonoSingleton<NetworkManager>
         PoseRequest poseRequest = new PoseRequest();
         poseRequest.index = 0;
         poseRequest.fileName = response.file;
+        frameReader.SetVideoFractions(response.aspectRatio);
+
         float totalFrames = response.totalFrames;    
         
         List<HandJson> handJsons = new List<HandJson>();

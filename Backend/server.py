@@ -237,24 +237,19 @@ def get_frame_full_pose():
 
 #TODO better ending connection "Done!"
 @app.route("/face", methods=["POST"])  # Hard-coded login route
-def get_frame_faccial_expression():
-
+def get_frame_facial_expression():
     global face_pose_video_data
     global face_pose_video_data_statues
-
-
     request_json = request.get_json()  # Get request body (JSON type)
     index = request_json['index']
     file_name = str(request_json['fileName'])
     req = request.data
-    #print(file_name)
     try:
         if face_pose_video_data.keys().__contains__(file_name) is False:
             print("Wrong!")
             return Response("Wrong input!")
         while True:
             if len(face_pose_video_data[file_name]) >= index + 1:
-                # print(face_pose_video_data[file_name][index])
                 return jsonify(face_pose_video_data[file_name][index])
             elif face_pose_video_data_statues[file_name] is False:
                 time.sleep(0.15)
@@ -319,11 +314,15 @@ def upload_file():
                 print("video type")
                 cap = cv2.VideoCapture(file_name)
                 tframe = cap.get(cv2.CAP_PROP_FRAME_COUNT)  # get total frame count
+                width = cap.get(cv2.CAP_PROP_FRAME_WIDTH)  # float `width`
+                height = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)  # float `height`
+                aspectRatio = width / height
                 cap.release()
 
                 res = {
                     'file' : file_name,
-                    'totalFrames' : int(tframe)
+                    'totalFrames': int(tframe),
+                    'aspectRatio': aspectRatio
                 }
                 return jsonify(res)
 
@@ -348,13 +347,11 @@ def upload_file():
 # processing received file
 @app.route('/handUploader', methods=['GET', 'POST'])
 def upload_hand_video():
-
     if request.method == 'POST':
         f = request.files['file']
         postfix = f.filename.split(".")[-1]
         file_name = TEMP_FILE_FOLDER + str(uuid.uuid4()) + "." + postfix
         f.save(file_name)
-
         # checking file type
         mimestart = mimetypes.guess_type(file_name)[0]
         if mimestart != None:
@@ -366,14 +363,16 @@ def upload_hand_video():
                 hand_pose_video_data_statues[file_name] = False
                 thread2 = Thread(target=calculate_video_hand_pose_estimation,args=(file_name,))
                 thread2.start()
-                print("video type")
                 cap = cv2.VideoCapture(file_name)
                 tframe = cap.get(cv2.CAP_PROP_FRAME_COUNT)  # get total frame count
+                width = cap.get(cv2.CAP_PROP_FRAME_WIDTH)  # float `width`
+                height = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)  # float `height`
+                aspectRatio = width / height
                 cap.release()
-
                 res = {
                     'file' : file_name,
-                    'totalFrames' : int(tframe)
+                    'totalFrames': int(tframe),
+                    'aspectRatio': aspectRatio
                 }
                 return jsonify(res)
             else:
@@ -407,11 +406,15 @@ def upload_holistic_video():
                 print("video type")
                 cap = cv2.VideoCapture(file_name)
                 tframe = cap.get(cv2.CAP_PROP_FRAME_COUNT)  # get total frame count
+                width = cap.get(cv2.CAP_PROP_FRAME_WIDTH)  # float `width`
+                height = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)  # float `height`
+                aspectRatio = width / height
                 cap.release()
 
                 res = {
                     'file' : file_name,
-                    'totalFrames' : int(tframe)
+                    'totalFrames': int(tframe),
+                    'aspectRatio': aspectRatio
                 }
                 return jsonify(res)
             else:
@@ -446,11 +449,15 @@ def upload_face_video():
                 print("video type")
                 cap = cv2.VideoCapture(file_name)
                 tframe = cap.get(cv2.CAP_PROP_FRAME_COUNT)  # get total frame count
+                width = cap.get(cv2.CAP_PROP_FRAME_WIDTH)  # float `width`
+                height = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)  # float `height`
+                aspectRatio = width / height
                 cap.release()
 
                 res = {
                     'file' : file_name,
-                    'totalFrames' : int(tframe)
+                    'totalFrames': int(tframe),
+                    'aspectRatio': aspectRatio
                 }
                 return jsonify(res)
 

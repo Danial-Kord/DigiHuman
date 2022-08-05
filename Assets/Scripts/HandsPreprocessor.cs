@@ -38,10 +38,17 @@ public class HandsPreprocessor : CharacterMapper
     private HandPoints[] rootHandPoints;
     private GameObject[] RHandJointsDebug;
     private GameObject[] LHandJointsDebug;
-    
+
+
+
+    [Header("Anomaly Detection")] 
+    [SerializeField] private bool enableAnomalyDetector;
+    [SerializeField] private HandAnomalyDetector handAnomalyDetector;
     //anomaly denier
     private JointPoint rightElbow;
     private JointPoint leftElbow;
+    private Vector3 lastFrameRHandDirection = Vector3.zero;
+    private Vector3 lastFrameLHandDirection = Vector3.zero;
 
     public bool flipHands;
     
@@ -87,6 +94,13 @@ public class HandsPreprocessor : CharacterMapper
     }
 
 
+    public void DataCleaner(FrameData[] frameDatas)
+    {
+        if(enableAnomalyDetector)
+            handAnomalyDetector.WrongLandmarkDetector(frameDatas);
+    }
+        
+
 
     private void PredictHandPose(BodyPartVector[] handLandmarks, JointPoint[] hand)
     {
@@ -131,11 +145,9 @@ public class HandsPreprocessor : CharacterMapper
             }
         
         }
-        
         //setting bone positions
         for (int i = 0; i < hand.Length; i++)
         {
-            
             JointPoint bone = hand[i];
             if (bone.Child != null)
             {
@@ -143,7 +155,8 @@ public class HandsPreprocessor : CharacterMapper
                 {
                     JointPoint child = bone.Child;
                     float distance = bone.DistanceFromChild;
-                    Vector3 direction = (-bone.LandmarkPose + child.LandmarkPose) / (-bone.LandmarkPose + child.LandmarkPose).magnitude;
+                    Vector3 direction = (-bone.LandmarkPose + child.LandmarkPose) 
+                                        / (-bone.LandmarkPose + child.LandmarkPose).magnitude;
                     child.WorldPos = bone.WorldPos + direction * distance;
                     // child.Transform.position = child.WorldPos;
 
@@ -339,11 +352,12 @@ public class HandsPreprocessor : CharacterMapper
             if(handR != null)
                 if (handR.Length != 0)
                 {
-                    if (!RightHandAnomalyDetector(handR))
+                    int rHandStat = RightHandAnomalyDetector(handR);
+                    if (rHandStat == 0)
                     {
                         PredictHandPose(handR, rightHand);
                     }
-                    else
+                    else if(rHandStat != 2)
                     {
                         if(handL != null)
                             if(handL.Length != 0)
@@ -360,11 +374,12 @@ public class HandsPreprocessor : CharacterMapper
             if(handL != null)
                 if (handL.Length != 0)
                 {
-                    if (!LeftHandAnomalyDetector(handL))
+                    int lHandStat = LeftHandAnomalyDetector(handL);
+                    if (lHandStat == 0)
                     {
                         PredictHandPose(handL, leftHand);
                     }
-                    else
+                    else if(lHandStat != 2)
                     {
                         if(handR != null)
                             if(handR.Length != 0)
@@ -389,38 +404,80 @@ public class HandsPreprocessor : CharacterMapper
 
     }
 
-    private bool RightHandAnomalyDetector(BodyPartVector[] handLandmarks)
+    
+    //Anomaly detectors
+    // 0 means its all good
+    // 1 means should flip hands
+    // 2 means should not calculate current frame
+    private int RightHandAnomalyDetector(BodyPartVector[] handLandmarks)
     {
+        return 0;
         Vector3 rightArmVector = rightHand[(int) HandPoints.Wrist].Transform.position - rightElbow.Transform.position;
         Vector3 indexFingerFirst = handLandmarks[(int) HandPoints.IndexFingerFirst].position;
         Vector3 wrist = handLandmarks[(int) HandPoints.Wrist].position;
         Vector3 pinkyFirstLandmark = handLandmarks[(int) HandPoints.PinkyFirst].position;
         Vector3 handVector =-wrist + (indexFingerFirst + pinkyFirstLandmark)/2.0f;
 
+        Vector3 newHandDirection = wrist
+            .TriangleNormal(indexFingerFirst,pinkyFirstLandmark);
+        if (!lastFrameRHandDirection.Equals(Vector3.zero))
+        {
+            if (Vector3.Angle(newHandDirection, lastFrameRHandDirection) > 100 ||
+                Vector3.Angle(newHandDirection, lastFrameRHandDirection) < -100)
+            {
+                Debug.Log("1 frame changed and more than 100 degree rotation!");
+                // lastFrameRHandDirection = newHandDirection;
+                return 2;
+            }
+        }
+        lastFrameRHandDirection = newHandDirection;
         if (Vector3.Angle(rightArmVector, handVector) > 100 || Vector3.Angle(rightArmVector, handVector) < -100)
         {
             Debug.Log(Vector3.Angle(rightArmVector, handVector));
 
-            return true;
+            return 1;
         }
-        return false;
+
+        return 0;
     }
-    private bool LeftHandAnomalyDetector(BodyPartVector[] handLandmarks)
+    private int LeftHandAnomalyDetector(BodyPartVector[] handLandmarks)
     {
+        return 0;
         Vector3 leftArmVector = leftHand[(int) HandPoints.Wrist].Transform.position - leftElbow.Transform.position;
         Vector3 indexFingerFirst = handLandmarks[(int) HandPoints.IndexFingerFirst].position;
         Vector3 wrist = handLandmarks[(int) HandPoints.Wrist].position;
         Vector3 pinkyFirstLandmark = handLandmarks[(int) HandPoints.PinkyFirst].position;
         Vector3 handVector =-wrist + (indexFingerFirst + pinkyFirstLandmark)/2.0f;
 
+        Vector3 newHandDirection = wrist
+            .TriangleNormal(indexFingerFirst,pinkyFirstLandmark);
+        
+        
+        if (!lastFrameLHandDirection.Equals(Vector3.zero))
+        {
+            if (Vector3.Angle(newHandDirection, lastFrameLHandDirection) > 100 ||
+                Vector3.Angle(newHandDirection, lastFrameLHandDirection) < -100)
+            {
+                Debug.Log("1 frame changed and more than 100 degree rotation!");
+                // lastFrameRHandDirection = newHandDirection;
+                return 2;
+            }
+        }
+        lastFrameLHandDirection = newHandDirection;
+
         if (Vector3.Angle(leftArmVector, handVector) > 100 || Vector3.Angle(leftArmVector, handVector) < -100)
         {
             Debug.Log(Vector3.Angle(leftArmVector, handVector));
-            return true;
+            return 1;
         }
-        return false;
+        return 0;
     }
 
+    public void ClearFramesCache()
+    {
+        lastFrameRHandDirection = Vector3.zero;
+        lastFrameLHandDirection = Vector3.zero;
+    }
 
     private void SetupInverseAndDistance(JointPoint[] jointPoints)
     {
@@ -550,7 +607,13 @@ public class HandsPreprocessor : CharacterMapper
     {
         // Right Hand
         rightHand = new JointPoint[21];
-        for (var i = 0; i < rightHand.Length; i++) rightHand[i] = new JointPoint();
+
+        for (var i = 0; i < rightHand.Length; i++)
+        {
+            rightHand[i] = new JointPoint();
+            rightHand[i].LastPoses = new Vector3[lowPassFilterChannels];
+
+        }
         
         //Wrist
         rightHand[(int) HandPoints.Wrist].Transform = anim.GetBoneTransform(HumanBodyBones.RightHand);
@@ -619,7 +682,13 @@ public class HandsPreprocessor : CharacterMapper
     {
         // Right Hand
         leftHand = new JointPoint[21];
-        for (var i = 0; i < leftHand.Length; i++) leftHand[i] = new JointPoint();
+
+        for (var i = 0; i < leftHand.Length; i++)
+        {
+            leftHand[i] = new JointPoint();
+            leftHand[i].LastPoses = new Vector3[lowPassFilterChannels];
+
+        }
         
         //Wrist
         leftHand[(int) HandPoints.Wrist].Transform = anim.GetBoneTransform(HumanBodyBones.LeftHand);

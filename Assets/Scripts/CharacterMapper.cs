@@ -46,7 +46,7 @@ public abstract class CharacterMapper : MonoBehaviour
     [Header("Low Pass Filter")] 
     [SerializeField] protected bool useLowPassFilter;
     [SerializeField] protected float lowPassParam = 0.1f;
-    
+    [SerializeField] protected int lowPassFilterChannels = 24; 
     
     protected Animator anim;
     protected abstract void InitializationHumanoidPose();
