@@ -42,6 +42,7 @@ public class HandsPreprocessor : CharacterMapper
 
 
     [Header("Anomaly Detection")] 
+    [SerializeField] private bool enableAnomalyDetector;
     [SerializeField] private HandAnomalyDetector handAnomalyDetector;
     //anomaly denier
     private JointPoint rightElbow;
@@ -95,7 +96,8 @@ public class HandsPreprocessor : CharacterMapper
 
     public void DataCleaner(FrameData[] frameDatas)
     {
-        handAnomalyDetector.WrongLandmarkDetector(frameDatas);
+        if(enableAnomalyDetector)
+            handAnomalyDetector.WrongLandmarkDetector(frameDatas);
     }
         
 
@@ -143,11 +145,9 @@ public class HandsPreprocessor : CharacterMapper
             }
         
         }
-        
         //setting bone positions
         for (int i = 0; i < hand.Length; i++)
         {
-            
             JointPoint bone = hand[i];
             if (bone.Child != null)
             {
@@ -155,7 +155,8 @@ public class HandsPreprocessor : CharacterMapper
                 {
                     JointPoint child = bone.Child;
                     float distance = bone.DistanceFromChild;
-                    Vector3 direction = (-bone.LandmarkPose + child.LandmarkPose) / (-bone.LandmarkPose + child.LandmarkPose).magnitude;
+                    Vector3 direction = (-bone.LandmarkPose + child.LandmarkPose) 
+                                        / (-bone.LandmarkPose + child.LandmarkPose).magnitude;
                     child.WorldPos = bone.WorldPos + direction * distance;
                     // child.Transform.position = child.WorldPos;
 
