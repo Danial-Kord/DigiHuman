@@ -362,36 +362,30 @@ public class Pose3DMapper : CharacterMapper
         Vector3 c = bodyPartVectors[(int) BodyPoints.LeftHip].position;
         Vector3 d = bodyPartVectors[(int) BodyPoints.RightShoulder].position;
         Vector3 e = bodyPartVectors[(int) BodyPoints.LeftShoulder].position;
-        Vector3 upward = spine - hip;
+        Vector3 hipsUpward = spine - hip;
+        Vector3 spineUpward = bodyPartVectors[(int) BodyPoints.Neck].position - spine;
         jointPoints[(int) BodyPoints.Hips].Transform.rotation = Quaternion.LookRotation(spine.TriangleNormal(c, a),
-                                                                   upward ) *
+                                                                   hipsUpward ) *
                                                                 jointPoints[(int) BodyPoints.Hips].InverseRotation;
 
         jointPoints[(int) BodyPoints.Spine].Transform.rotation = Quaternion.LookRotation(spine.TriangleNormal(d, e),
-                                                                     bodyPartVectors[(int) BodyPoints.Neck].position - spine ) *
+                                                                     spineUpward ) *
                                                                 jointPoints[(int) BodyPoints.Spine].InverseRotation;
 
         
         // Head Rotation
-        
-        Vector3 mouth = (bodyPartVectors[(int) BodyPoints.LeftMouth].position + bodyPartVectors[(int) BodyPoints.RightMouth].position)/2.0f;
+        Vector3 mouth = (bodyPartVectors[(int) BodyPoints.LeftMouth].position +
+                         bodyPartVectors[(int) BodyPoints.RightMouth].position)/2.0f;
         Vector3 lEye = bodyPartVectors[(int) BodyPoints.LeftEye].position;
         Vector3 rEye = bodyPartVectors[(int) BodyPoints.RightEye].position;
                 
         var gaze = lEye.TriangleNormal(mouth, rEye);
-
-        
         
         Vector3 nose = bodyPartVectors[(int) BodyPoints.Nose].position;
         Vector3 rEar = bodyPartVectors[(int) BodyPoints.RightEar].position;
         Vector3 lEar = bodyPartVectors[(int) BodyPoints.LeftEar].position;
-        
-
         var head = jointPoints[(int) BodyPoints.Head];
         Vector3 normal = nose.TriangleNormal(rEar, lEar);
-        // Debug.DrawLine(head.Transform.position,head.Transform.position+20*gaze);
-        // Debug.DrawLine(head.Transform.position,head.Transform.position+60*normal,Color.blue);
-
         head.Transform.rotation = Quaternion.LookRotation(gaze, normal) * head.InverseRotation;
         
         
@@ -411,11 +405,15 @@ public class Pose3DMapper : CharacterMapper
             if (jointPoint.Parent != null)
             {
                 Vector3 fv = jointPoint.Parent.FilteredPos - jointPoint.FilteredPos;
-                jointPoint.Transform.rotation = Quaternion.LookRotation(jointPoint.FilteredPos- jointPoint.Child.FilteredPos, fv) * jointPoint.InverseRotation;
+                jointPoint.Transform.rotation = 
+                    Quaternion.LookRotation(jointPoint.FilteredPos- jointPoint.Child.FilteredPos, fv) 
+                    * jointPoint.InverseRotation;
             }
             else if (jointPoint.Child != null)
             {
-                jointPoint.Transform.rotation = Quaternion.LookRotation((jointPoint.FilteredPos- jointPoint.Child.FilteredPos).normalized, forward) * jointPoint.InverseRotation;
+                jointPoint.Transform.rotation = 
+                    Quaternion.LookRotation((jointPoint.FilteredPos- jointPoint.Child.FilteredPos).normalized, forward)
+                    * jointPoint.InverseRotation;
             }
             continue;
             
@@ -447,7 +445,6 @@ public class Pose3DMapper : CharacterMapper
         Vector3 r_knee = bodyPartVectors[(int) BodyPoints.RightKnee].position;
         
         JointPoint r_ankleT = jointPoints[(int) BodyPoints.RightAnkle];
-
         r_ankleT.Transform.rotation = 
             Quaternion.LookRotation(r_ankle - r_toe, r_knee - r_ankle) 
             * r_ankleT.InverseRotation;
@@ -457,7 +454,6 @@ public class Pose3DMapper : CharacterMapper
         Vector3 l_knee = bodyPartVectors[(int) BodyPoints.LeftKnee].position;
         
         JointPoint l_ankleT = jointPoints[(int) BodyPoints.LeftAnkle];
-
         l_ankleT.Transform.rotation = 
             Quaternion.LookRotation(l_ankle - l_toe, l_knee - l_ankle) 
             * l_ankleT.InverseRotation;
