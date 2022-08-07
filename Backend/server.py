@@ -10,7 +10,8 @@ import cv2
 import uuid
 import mimetypes
 import pose_estimator
-import mocap
+# import mocap
+import mediaPipeFace
 from flask import jsonify , stream_with_context
 from flask import Response
 from threading import Thread
@@ -168,7 +169,7 @@ def calculate_video_mocap_estimation(file_name):
     global face_pose_video_data
     global face_pose_video_data_statues
 
-    for i in mocap.face_mocap_video(file_name):
+    for i in mediaPipeFace.Calculate_Face_Mocap(file_name):
         face_pose_video_data[file_name].append(i)
     face_pose_video_data_statues[file_name] = True #means process is finished
 

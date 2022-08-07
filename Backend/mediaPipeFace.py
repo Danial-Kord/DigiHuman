@@ -44,11 +44,15 @@ def Show_Frame_Landmarks(image,results):
     # Flip the image horizontally for a selfie-view display.
     cv2.imshow('MediaPipe Face Mesh', cv2.flip(image, 1))
 
-def Calculate_Face_Mocap(debug=False):
+def Calculate_Face_Mocap(path=None,debug=False):
     # For webcam input:
     drawing_spec = mp_drawing.DrawingSpec(thickness=1, circle_radius=1)
-    path = "D:\\pose\\New\\2022-07-14\\C2824.MP4"
-    cap = cv2.VideoCapture(0)
+    # path = "D:\\pose\\New\\2022-07-14\\C2824.MP4"
+    if path is None:
+        cap = cv2.VideoCapture(0)
+    else:
+        cap = cv2.VideoCapture(path)
+
     blendshape_calulator = BlendshapeCalculator()
     live_link_face = FaceData(filter_size=4)
     image_height, image_width, channels = (480, 640, 3)
@@ -99,7 +103,7 @@ def Calculate_Face_Mocap(debug=False):
                     )
                     # calculate and set all the blendshapes
                     blendshape_calulator.calculate_blendshapes(live_link_face,metric_landmarks[0:3].T,face_landmarks.landmark)
-                    blends = live_link_face.get_all_blendshapes()
+                    # blends = live_link_face.get_all_blendshapes()
 
                     json_data = {
                         #Eye
@@ -139,8 +143,8 @@ def Calculate_Face_Mocap(debug=False):
                         #Cheek
                         'CheekSquintRight': live_link_face.get_blendshape(FaceBlendShape.CheekSquintRight),
                         'CheekSquintLeft': live_link_face.get_blendshape(FaceBlendShape.CheekSquintLeft),
-
                     }
+                    yield json_data
 
             if debug:
                 Show_Frame_Landmarks(image,results)
@@ -150,4 +154,4 @@ def Calculate_Face_Mocap(debug=False):
     cap.release()
 
 
-Calculate_Face_Mocap(True)
+# Calculate_Face_Mocap(True)
