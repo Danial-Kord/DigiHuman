@@ -73,14 +73,9 @@ class FaceBlendShape(Enum):
     RightEyeRoll = 60
 
 
-class PyLiveLinkFace:
-    """PyLiveLinkFace class
-    Can be used to receive PyLiveLinkFace from the PyLiveLinkFace IPhone app or
-    other PyLiveLinkFace compatible programs like this library.
-    """
+class FaceData:
 
-    def __init__(self,fps=60,
-                 filter_size: int = 5) -> None:
+    def __init__(self,filter_size: int = 5) -> None:
 
         # properties
         self._filter_size = filter_size
@@ -104,6 +99,20 @@ class PyLiveLinkFace:
             The value of the BlendShape.
         """
         return self._blend_shapes[index.value]
+
+
+    def get_all_blendshapes(self) -> list:
+        """ Get the current value of the blend shape.
+        Parameters
+        ----------
+        index : FaceBlendShape
+            Index of the BlendShape to get the value from.
+        Returns
+        -------
+        list of floats
+            array of BlendShape.
+        """
+        return self._blend_shapes
 
     def set_blendshape(self, index: FaceBlendShape, value: float,
                        no_filter: bool = False) -> None:

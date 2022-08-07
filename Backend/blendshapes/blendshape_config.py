@@ -1,12 +1,11 @@
 
-from pylivelinkface.pylivelinkface import FaceBlendShape
+from .facedata import FaceBlendShape
 
 
 class BlendShapeConfig:
-        class CanonicalPpoints:
-
-            # canoncial points mapped from the canoncial face model        
-            # for better understanding of the points, see the canonical face model from mediapipe
+        class CanonicalPoints:
+            # Canonical points mapped from the canonical face model
+            # for better understanding of the points, see the canonical face model from mediaPipe
             # https://github.com/google/mediapipe/blob/master/mediapipe/modules/face_geometry/data/canonical_face_model_uv_visualization.png
 
             eye_right = [33, 133, 160, 159, 158, 144, 145, 153]
