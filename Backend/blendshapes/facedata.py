@@ -136,6 +136,7 @@ class FaceData:
         ----------
         None
         """
+        value *= 100
 
         if no_filter:
             self._blend_shapes[index.value] = value
