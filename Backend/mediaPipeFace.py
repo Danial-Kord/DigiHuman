@@ -2,7 +2,7 @@ import cv2
 import mediapipe as mp
 import numpy as np
 from blendshapes.blendshape_calculator import BlendshapeCalculator
-from blendshapes.pylivelinkface import PyLiveLinkFace, FaceBlendShape
+from blendshapes.facedata import FaceData, FaceBlendShape
 from face_geometry import (
     PCF,
     get_metric_landmarks,
@@ -47,9 +47,10 @@ def Show_Frame_Landmarks(image,results):
 def Calculate_Face_Mocap(debug=False):
     # For webcam input:
     drawing_spec = mp_drawing.DrawingSpec(thickness=1, circle_radius=1)
+    path = "D:\\pose\\New\\2022-07-14\\C2824.MP4"
     cap = cv2.VideoCapture(0)
     blendshape_calulator = BlendshapeCalculator()
-    live_link_face = PyLiveLinkFace(filter_size=4)
+    live_link_face = FaceData(filter_size=4)
     image_height, image_width, channels = (480, 640, 3)
     # pseudo camera internals
     focal_length = image_width
@@ -98,6 +99,48 @@ def Calculate_Face_Mocap(debug=False):
                     )
                     # calculate and set all the blendshapes
                     blendshape_calulator.calculate_blendshapes(live_link_face,metric_landmarks[0:3].T,face_landmarks.landmark)
+                    blends = live_link_face.get_all_blendshapes()
+
+                    json_data = {
+                        #Eye
+                        'EyeBlinkLeft': live_link_face.get_blendshape(FaceBlendShape.EyeBlinkLeft),
+                        'EyeBlinkRight': live_link_face.get_blendshape(FaceBlendShape.EyeBlinkRight),
+
+                        #mouth
+                        'MouthSmileRight': live_link_face.get_blendshape(FaceBlendShape.MouthSmileRight),
+                        'MouthSmileLeft': live_link_face.get_blendshape(FaceBlendShape.MouthSmileLeft),
+
+                        'MouthFrownRight': live_link_face.get_blendshape(FaceBlendShape.MouthFrownRight),
+                        'MouthFrownLeft': live_link_face.get_blendshape(FaceBlendShape.MouthFrownLeft),
+
+                        'MouthLeft': live_link_face.get_blendshape(FaceBlendShape.MouthLeft),
+                        'MouthRight': live_link_face.get_blendshape(FaceBlendShape.MouthRight),
+                        'MouthLowerDownRight': live_link_face.get_blendshape(FaceBlendShape.MouthLowerDownRight),
+                        'MouthLowerDownLeft': live_link_face.get_blendshape(FaceBlendShape.MouthLowerDownLeft),
+
+                        'MouthPressLeft': live_link_face.get_blendshape(FaceBlendShape.MouthPressLeft),
+                        'MouthPressRight': live_link_face.get_blendshape(FaceBlendShape.MouthPressRight),
+
+                        'MouthClose': live_link_face.get_blendshape(FaceBlendShape.MouthClose),
+                        'MouthPucker': live_link_face.get_blendshape(FaceBlendShape.MouthPucker),
+                        'MouthShrugUpper': live_link_face.get_blendshape(FaceBlendShape.MouthShrugUpper),
+
+                        #Jaw
+                        'JawOpen': live_link_face.get_blendshape(FaceBlendShape.JawOpen),
+                        'JawLeft': live_link_face.get_blendshape(FaceBlendShape.JawLeft),
+                        'JawRight': live_link_face.get_blendshape(FaceBlendShape.JawRight),
+
+                        #Brow
+                        'BrowDownLeft': live_link_face.get_blendshape(FaceBlendShape.BrowDownLeft),
+                        'BrowOuterUpLeft': live_link_face.get_blendshape(FaceBlendShape.BrowOuterUpLeft),
+                        'BrowDownRight': live_link_face.get_blendshape(FaceBlendShape.BrowDownRight),
+                        'BrowOuterUpRight': live_link_face.get_blendshape(FaceBlendShape.BrowOuterUpRight),
+
+                        #Cheek
+                        'CheekSquintRight': live_link_face.get_blendshape(FaceBlendShape.CheekSquintRight),
+                        'CheekSquintLeft': live_link_face.get_blendshape(FaceBlendShape.CheekSquintLeft),
+
+                    }
 
             if debug:
                 Show_Frame_Landmarks(image,results)
