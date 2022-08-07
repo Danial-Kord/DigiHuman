@@ -82,6 +82,8 @@ def Calculate_Face_Mocap(path=None,debug=False):
             if not success:
                 print("Ignoring empty camera frame.")
                 # If loading a video, use 'break' instead of 'continue'.
+                if path is not None:
+                    break
                 continue
 
             # To improve performance, optionally mark the image as not writeable to
@@ -144,6 +146,40 @@ def Calculate_Face_Mocap(path=None,debug=False):
                         'CheekSquintRight': live_link_face.get_blendshape(FaceBlendShape.CheekSquintRight),
                         'CheekSquintLeft': live_link_face.get_blendshape(FaceBlendShape.CheekSquintLeft),
                     }
+                    blends = []
+                    blends.append(live_link_face.get_blendshape(FaceBlendShape.EyeBlinkLeft))
+                    blends.append(live_link_face.get_blendshape(FaceBlendShape.EyeBlinkRight))
+                    blends.append(live_link_face.get_blendshape(FaceBlendShape.MouthSmileRight))
+                    blends.append(live_link_face.get_blendshape(FaceBlendShape.MouthSmileLeft))
+                    blends.append(live_link_face.get_blendshape(FaceBlendShape.MouthFrownRight))
+                    blends.append(live_link_face.get_blendshape(FaceBlendShape.MouthFrownLeft))
+                    blends.append(live_link_face.get_blendshape(FaceBlendShape.MouthLeft))
+                    blends.append(live_link_face.get_blendshape(FaceBlendShape.MouthRight))
+                    blends.append(live_link_face.get_blendshape(FaceBlendShape.MouthLowerDownRight))
+                    blends.append(live_link_face.get_blendshape(FaceBlendShape.MouthLowerDownLeft))
+                    blends.append(live_link_face.get_blendshape(FaceBlendShape.MouthPressLeft))
+                    blends.append(live_link_face.get_blendshape(FaceBlendShape.MouthPressRight))
+                    blends.append(live_link_face.get_blendshape(FaceBlendShape.MouthClose))
+                    blends.append(live_link_face.get_blendshape(FaceBlendShape.MouthPucker))
+                    blends.append(live_link_face.get_blendshape(FaceBlendShape.MouthShrugUpper))
+                    blends.append(live_link_face.get_blendshape(FaceBlendShape.JawOpen))
+                    blends.append(live_link_face.get_blendshape(FaceBlendShape.JawLeft))
+                    blends.append(live_link_face.get_blendshape(FaceBlendShape.JawRight))
+                    blends.append(live_link_face.get_blendshape(FaceBlendShape.BrowDownLeft))
+                    blends.append(live_link_face.get_blendshape(FaceBlendShape.BrowOuterUpLeft))
+                    blends.append(live_link_face.get_blendshape(FaceBlendShape.BrowDownRight))
+                    blends.append(live_link_face.get_blendshape(FaceBlendShape.BrowOuterUpRight))
+                    blends.append(live_link_face.get_blendshape(FaceBlendShape.CheekSquintRight))
+                    blends.append(live_link_face.get_blendshape(FaceBlendShape.CheekSquintLeft))
+
+                    frame = cap.get(cv2.CAP_PROP_POS_FRAMES)
+                    currentTime = cap.get(cv2.CAP_PROP_POS_MSEC)
+                    json_data = {
+                        "blendShapes" : blends,
+                        "frame" : frame,
+                        "time" : currentTime
+                    }
+
                     yield json_data
 
             if debug:
