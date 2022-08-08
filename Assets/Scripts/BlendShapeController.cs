@@ -1,128 +1,156 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+[Serializable]
+public struct BlendShape
+{
+    public int num;
+    [HideInInspector]public float weight;
+}
+
 public class BlendShapeController : MonoBehaviour
 {
-    public int blinkFunctionSelect;
-    public int leftEyeNum;
-    public int rightEyeNum;
-    public int mouthWidNum;
-    public int mouthLenNum;
-    public int shockEyeNum;
-
     [SerializeField] private SkinnedMeshRenderer skinnedMeshRenderer;
-    public static Vector3 leftEyeShape;
-    public static Vector3 rightEyeShape;
-    public static Vector3 mouthShape;
 
-    private float leftEyeWeight;
-    private float rightEyeWeight;
-    private float mouthWidWeight;
-    private float mouthLenWeight;
-    private float shockEyeWeight;
     
-    void Start ()
-    {
-    }
+    public int blinkFunctionSelect;
 
+    [Header("Blend Shapes")]
+    public BlendShape EyeBlinkLeft = new BlendShape(){
+        num = -1,
+        weight = 0
+    };
+    public BlendShape EyeBlinkRight = new BlendShape(){
+        num = -1,
+        weight = 0
+    };
+    public BlendShape MouthSmileRight = new BlendShape(){
+        num = -1,
+        weight = 0
+    };
+    public BlendShape MouthSmileLeft = new BlendShape(){
+        num = -1,
+        weight = 0
+    };
+    public BlendShape MouthFrownRight = new BlendShape(){
+        num = -1,
+        weight = 0
+    };
+    public BlendShape MouthFrownLeft = new BlendShape(){
+        num = -1,
+        weight = 0
+    };
+    public BlendShape MouthLeft = new BlendShape(){
+        num = -1,
+        weight = 0
+    };
+    public BlendShape MouthRight = new BlendShape(){
+        num = -1,
+        weight = 0
+    };
+    public BlendShape MouthLowerDownRight = new BlendShape(){
+        num = -1,
+        weight = 0
+    };
+    public BlendShape MouthLowerDownLeft = new BlendShape(){
+        num = -1,
+        weight = 0
+    };
+    public BlendShape MouthPressLeft = new BlendShape(){
+        num = -1,
+        weight = 0
+    };
+    public BlendShape MouthPressRight = new BlendShape(){
+        num = -1,
+        weight = 0
+    };
+    public BlendShape MouthClose = new BlendShape(){
+        num = -1,
+        weight = 0
+    };
+    public BlendShape MouthPucker = new BlendShape(){
+        num = -1,
+        weight = 0
+    };
+    public BlendShape MouthShrugUpper = new BlendShape(){
+        num = -1,
+        weight = 0
+    };
+    public BlendShape JawOpen = new BlendShape(){
+        num = -1,
+        weight = 0
+    };
+    public BlendShape JawLeft = new BlendShape(){
+        num = -1,
+        weight = 0
+    };
+    public BlendShape JawRight = new BlendShape(){
+        num = -1,
+        weight = 0
+    };
+    public BlendShape BrowDownLeft = new BlendShape(){
+        num = -1,
+        weight = 0
+    };
+    public BlendShape BrowOuterUpLeft = new BlendShape(){
+        num = -1,
+        weight = 0
+    };
+    public BlendShape BrowDownRight = new BlendShape(){
+        num = -1,
+        weight = 0
+    };
+    public BlendShape BrowOuterUpRight = new BlendShape(){
+        num = -1,
+        weight = 0
+    };
+    public BlendShape CheekSquintRight = new BlendShape(){
+        num = -1,
+        weight = 0
+    };
+    public BlendShape CheekSquintLeft = new BlendShape(){
+        num = -1,
+        weight = 0
+    }    ;
+    
+    
     public void UpdateBlendShape()
     {
-        // Blinking function
-        switch(blinkFunctionSelect)
-        {
-            case 1:
-            {
-                // Blinking Function version 1 -- Piecewise Function
-                // Set weight for left eye
-                if(leftEyeShape[1]<0.05f)//闭眼 //参数匹配：ParameterServer -> 参数控制!闭眼
-                {
-                    leftEyeWeight = 100;
-                }
-                else if(leftEyeShape[1]<0.1f)
-                {
-                    leftEyeWeight = 5/leftEyeShape[1];  
-                }
-                else if(leftEyeShape[1]<0.2f)
-                {
-                    leftEyeWeight = -500*leftEyeShape[1]+100;
-                }
-                else
-                {
-                    leftEyeWeight = 0;
-                }
-                // Set weight for right eye
-                if(rightEyeShape[1]<0.05f)
-                {
-                    rightEyeWeight = 100;
-                }
-                else if(rightEyeShape[1]<0.1f)
-                {
-                    rightEyeWeight = 5/rightEyeShape[1];  
-                }
-                else if(rightEyeShape[1]<0.2f)
-                {
-                    rightEyeWeight = -500*rightEyeShape[1]+100;
-                }
-                else
-                {
-                    rightEyeWeight = 0;
-                }
-                
-                break;
-            }
-            case 2:
-            {
-                // Blinking Function version 2 -- Sigmoid Function
-                leftEyeWeight = 100 - 100/(1+Mathf.Exp(-500*(leftEyeShape[1]-0.12f)));
-                rightEyeWeight = 100 - 100/(1+Mathf.Exp(-500*(rightEyeShape[1]-0.12f)));
-                break;
-            }
-        }
-        
-        // Shocked function
-        if(rightEyeShape[1]>0.25f)//惊愕 0.25-0.35线性
-        {
-            shockEyeWeight = 500*rightEyeShape[1]-125;
-        }
-        else
-        {
-            shockEyeWeight = 0;
-        }
-
-        // Mouth deformation function
-        if (500*mouthShape[1] < 100f)
-        {
-            mouthWidWeight = 500*mouthShape[1];
-        }
-        else
-        {
-            mouthWidWeight = 100f;
-        }
-
-        if(mouthShape[0] <0.1f)
-        {
-            mouthLenWeight = 50;
-        }
-        else if(mouthShape[0] < 0.4f)
-        {
-            mouthLenWeight = 120f-400*mouthShape[0];
-        }
-        else
-        {
-            // mouthLenWeight = 0;
-        }
-
         // Apply deformation weights
-        if(leftEyeNum != -1)
-            skinnedMeshRenderer.SetBlendShapeWeight(leftEyeNum, leftEyeWeight);
-        if(rightEyeNum != -1)
-            skinnedMeshRenderer.SetBlendShapeWeight(rightEyeNum, rightEyeWeight);
-        // skinnedMeshRenderer.SetBlendShapeWeight (shockEyeNum, shockEyeWeight);
+        UpdateBlendShapeWeight(EyeBlinkLeft.num,EyeBlinkLeft.weight);
+        UpdateBlendShapeWeight(EyeBlinkRight.num,EyeBlinkRight.weight);
+        UpdateBlendShapeWeight(MouthSmileRight.num,MouthSmileRight.weight);
+        UpdateBlendShapeWeight(MouthSmileLeft.num,MouthSmileLeft.weight);
+        UpdateBlendShapeWeight(MouthFrownRight.num,MouthFrownRight.weight);
+        UpdateBlendShapeWeight(MouthFrownLeft.num,MouthFrownLeft.weight);
+        UpdateBlendShapeWeight(MouthLeft.num,MouthLeft.weight);
+        UpdateBlendShapeWeight(MouthRight.num,MouthRight.weight);
+        UpdateBlendShapeWeight(MouthLowerDownRight.num,MouthLowerDownRight.weight);
+        UpdateBlendShapeWeight(MouthLowerDownLeft.num,MouthLowerDownLeft.weight);
+        UpdateBlendShapeWeight(MouthPressLeft.num,MouthPressLeft.weight);
+        UpdateBlendShapeWeight(MouthPressRight.num,MouthPressRight.weight);
+        UpdateBlendShapeWeight(MouthClose.num,MouthClose.weight);
+        UpdateBlendShapeWeight(MouthPucker.num,MouthPucker.weight);
+        UpdateBlendShapeWeight(MouthShrugUpper.num,MouthShrugUpper.weight);
+        UpdateBlendShapeWeight(JawOpen.num,JawOpen.weight);
+        UpdateBlendShapeWeight(JawLeft.num,JawLeft.weight);
+        UpdateBlendShapeWeight(JawRight.num,JawRight.weight);
+        UpdateBlendShapeWeight(BrowDownLeft.num,BrowDownLeft.weight);
+        UpdateBlendShapeWeight(BrowOuterUpLeft.num,BrowOuterUpLeft.weight);
+        UpdateBlendShapeWeight(BrowDownRight.num,BrowDownRight.weight);
+        UpdateBlendShapeWeight(BrowOuterUpRight.num,BrowOuterUpRight.weight);
+        UpdateBlendShapeWeight(CheekSquintRight.num,CheekSquintRight.weight);
+        UpdateBlendShapeWeight(CheekSquintLeft.num,CheekSquintLeft.weight);
+    }
 
-        // skinnedMeshRenderer.SetBlendShapeWeight (mouthWidNum, Mathf.Clamp(mouthWidWeight,0,100));
-        // skinnedMeshRenderer.SetBlendShapeWeight (mouthLenNum, Mathf.Clamp(mouthLenWeight,0,100));
-        skinnedMeshRenderer.SetBlendShapeWeight (mouthWidNum, mouthWidWeight);
-        skinnedMeshRenderer.SetBlendShapeWeight (mouthLenNum, mouthLenWeight);
+    private void UpdateBlendShapeWeight(int blendNum, float blendWeight)
+    {
+        if (blendNum != -1)
+        {
+            skinnedMeshRenderer.SetBlendShapeWeight(blendNum, blendWeight);
+        }
     }
 }
