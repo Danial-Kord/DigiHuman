@@ -23,6 +23,7 @@ class BlendShapeConfig:
             mouth_frown_right = 202
             mouth_left_stretch = 287
             mouth_right_stretch = 57
+            uppest_lip = 0
             lowest_lip = 17
             under_lip = 18
             over_upper_lip = 164
@@ -62,6 +63,7 @@ class BlendShapeConfig:
             FaceBlendShape.JawRight : (0.0, 0.4),
             FaceBlendShape.JawOpen : (0.50, 0.55),
             FaceBlendShape.MouthClose : (3.0, 4.5),
+            FaceBlendShape.MouthOpen : (0.02, 0.9),
             FaceBlendShape.MouthFunnel : (4.0, 4.8),
             FaceBlendShape.MouthPucker : (3.46, 4.92),
             FaceBlendShape.MouthLeft : (-3.4, -2.3),

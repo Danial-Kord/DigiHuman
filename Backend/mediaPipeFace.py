@@ -47,14 +47,13 @@ def Show_Frame_Landmarks(image,results):
 def Calculate_Face_Mocap(path=None,debug=False):
     # For webcam input:
     drawing_spec = mp_drawing.DrawingSpec(thickness=1, circle_radius=1)
-    # path = "D:\\pose\\New\\2022-07-14\\C2824.MP4"
     if path is None:
         cap = cv2.VideoCapture(0)
     else:
         cap = cv2.VideoCapture(path)
 
     blendshape_calulator = BlendshapeCalculator()
-    live_link_face = FaceData(filter_size=4)
+    face_data = FaceData(filter_size=4)
     image_height, image_width, channels = (480, 640, 3)
     # pseudo camera internals
     focal_length = image_width
@@ -104,73 +103,73 @@ def Calculate_Face_Mocap(path=None,debug=False):
                         landmarks.copy(), pcf
                     )
                     # calculate and set all the blendshapes
-                    blendshape_calulator.calculate_blendshapes(live_link_face,metric_landmarks[0:3].T,face_landmarks.landmark)
+                    blendshape_calulator.calculate_blendshapes(face_data,metric_landmarks[0:3].T,face_landmarks.landmark)
                     # blends = live_link_face.get_all_blendshapes()
 
                     json_data = {
                         #Eye
-                        'EyeBlinkLeft': live_link_face.get_blendshape(FaceBlendShape.EyeBlinkLeft),
-                        'EyeBlinkRight': live_link_face.get_blendshape(FaceBlendShape.EyeBlinkRight),
+                        'EyeBlinkLeft': face_data.get_blendshape(FaceBlendShape.EyeBlinkLeft),
+                        'EyeBlinkRight': face_data.get_blendshape(FaceBlendShape.EyeBlinkRight),
 
                         #mouth
-                        'MouthSmileRight': live_link_face.get_blendshape(FaceBlendShape.MouthSmileRight),
-                        'MouthSmileLeft': live_link_face.get_blendshape(FaceBlendShape.MouthSmileLeft),
+                        'MouthSmileRight': face_data.get_blendshape(FaceBlendShape.MouthSmileRight),
+                        'MouthSmileLeft': face_data.get_blendshape(FaceBlendShape.MouthSmileLeft),
 
-                        'MouthFrownRight': live_link_face.get_blendshape(FaceBlendShape.MouthFrownRight),
-                        'MouthFrownLeft': live_link_face.get_blendshape(FaceBlendShape.MouthFrownLeft),
+                        'MouthFrownRight': face_data.get_blendshape(FaceBlendShape.MouthFrownRight),
+                        'MouthFrownLeft': face_data.get_blendshape(FaceBlendShape.MouthFrownLeft),
 
-                        'MouthLeft': live_link_face.get_blendshape(FaceBlendShape.MouthLeft),
-                        'MouthRight': live_link_face.get_blendshape(FaceBlendShape.MouthRight),
-                        'MouthLowerDownRight': live_link_face.get_blendshape(FaceBlendShape.MouthLowerDownRight),
-                        'MouthLowerDownLeft': live_link_face.get_blendshape(FaceBlendShape.MouthLowerDownLeft),
+                        'MouthLeft': face_data.get_blendshape(FaceBlendShape.MouthLeft),
+                        'MouthRight': face_data.get_blendshape(FaceBlendShape.MouthRight),
+                        'MouthLowerDownRight': face_data.get_blendshape(FaceBlendShape.MouthLowerDownRight),
+                        'MouthLowerDownLeft': face_data.get_blendshape(FaceBlendShape.MouthLowerDownLeft),
 
-                        'MouthPressLeft': live_link_face.get_blendshape(FaceBlendShape.MouthPressLeft),
-                        'MouthPressRight': live_link_face.get_blendshape(FaceBlendShape.MouthPressRight),
+                        'MouthPressLeft': face_data.get_blendshape(FaceBlendShape.MouthPressLeft),
+                        'MouthPressRight': face_data.get_blendshape(FaceBlendShape.MouthPressRight),
 
-                        'MouthClose': live_link_face.get_blendshape(FaceBlendShape.MouthClose),
-                        'MouthPucker': live_link_face.get_blendshape(FaceBlendShape.MouthPucker),
-                        'MouthShrugUpper': live_link_face.get_blendshape(FaceBlendShape.MouthShrugUpper),
+                        'MouthOpen': face_data.get_blendshape(FaceBlendShape.MouthOpen),
+                        'MouthPucker': face_data.get_blendshape(FaceBlendShape.MouthPucker),
+                        'MouthShrugUpper': face_data.get_blendshape(FaceBlendShape.MouthShrugUpper),
 
                         #Jaw
-                        'JawOpen': live_link_face.get_blendshape(FaceBlendShape.JawOpen),
-                        'JawLeft': live_link_face.get_blendshape(FaceBlendShape.JawLeft),
-                        'JawRight': live_link_face.get_blendshape(FaceBlendShape.JawRight),
+                        'JawOpen': face_data.get_blendshape(FaceBlendShape.JawOpen),
+                        'JawLeft': face_data.get_blendshape(FaceBlendShape.JawLeft),
+                        'JawRight': face_data.get_blendshape(FaceBlendShape.JawRight),
 
                         #Brow
-                        'BrowDownLeft': live_link_face.get_blendshape(FaceBlendShape.BrowDownLeft),
-                        'BrowOuterUpLeft': live_link_face.get_blendshape(FaceBlendShape.BrowOuterUpLeft),
-                        'BrowDownRight': live_link_face.get_blendshape(FaceBlendShape.BrowDownRight),
-                        'BrowOuterUpRight': live_link_face.get_blendshape(FaceBlendShape.BrowOuterUpRight),
+                        'BrowDownLeft': face_data.get_blendshape(FaceBlendShape.BrowDownLeft),
+                        'BrowOuterUpLeft': face_data.get_blendshape(FaceBlendShape.BrowOuterUpLeft),
+                        'BrowDownRight': face_data.get_blendshape(FaceBlendShape.BrowDownRight),
+                        'BrowOuterUpRight': face_data.get_blendshape(FaceBlendShape.BrowOuterUpRight),
 
                         #Cheek
-                        'CheekSquintRight': live_link_face.get_blendshape(FaceBlendShape.CheekSquintRight),
-                        'CheekSquintLeft': live_link_face.get_blendshape(FaceBlendShape.CheekSquintLeft),
+                        'CheekSquintRight': face_data.get_blendshape(FaceBlendShape.CheekSquintRight),
+                        'CheekSquintLeft': face_data.get_blendshape(FaceBlendShape.CheekSquintLeft),
                     }
                     blends = []
-                    blends.append(live_link_face.get_blendshape(FaceBlendShape.EyeBlinkLeft))
-                    blends.append(live_link_face.get_blendshape(FaceBlendShape.EyeBlinkRight))
-                    blends.append(live_link_face.get_blendshape(FaceBlendShape.MouthSmileRight))
-                    blends.append(live_link_face.get_blendshape(FaceBlendShape.MouthSmileLeft))
-                    blends.append(live_link_face.get_blendshape(FaceBlendShape.MouthFrownRight))
-                    blends.append(live_link_face.get_blendshape(FaceBlendShape.MouthFrownLeft))
-                    blends.append(live_link_face.get_blendshape(FaceBlendShape.MouthLeft))
-                    blends.append(live_link_face.get_blendshape(FaceBlendShape.MouthRight))
-                    blends.append(live_link_face.get_blendshape(FaceBlendShape.MouthLowerDownRight))
-                    blends.append(live_link_face.get_blendshape(FaceBlendShape.MouthLowerDownLeft))
-                    blends.append(live_link_face.get_blendshape(FaceBlendShape.MouthPressLeft))
-                    blends.append(live_link_face.get_blendshape(FaceBlendShape.MouthPressRight))
-                    blends.append(live_link_face.get_blendshape(FaceBlendShape.MouthClose))
-                    blends.append(live_link_face.get_blendshape(FaceBlendShape.MouthPucker))
-                    blends.append(live_link_face.get_blendshape(FaceBlendShape.MouthShrugUpper))
-                    blends.append(live_link_face.get_blendshape(FaceBlendShape.JawOpen))
-                    blends.append(live_link_face.get_blendshape(FaceBlendShape.JawLeft))
-                    blends.append(live_link_face.get_blendshape(FaceBlendShape.JawRight))
-                    blends.append(live_link_face.get_blendshape(FaceBlendShape.BrowDownLeft))
-                    blends.append(live_link_face.get_blendshape(FaceBlendShape.BrowOuterUpLeft))
-                    blends.append(live_link_face.get_blendshape(FaceBlendShape.BrowDownRight))
-                    blends.append(live_link_face.get_blendshape(FaceBlendShape.BrowOuterUpRight))
-                    blends.append(live_link_face.get_blendshape(FaceBlendShape.CheekSquintRight))
-                    blends.append(live_link_face.get_blendshape(FaceBlendShape.CheekSquintLeft))
+                    blends.append(face_data.get_blendshape(FaceBlendShape.EyeBlinkLeft))
+                    blends.append(face_data.get_blendshape(FaceBlendShape.EyeBlinkRight))
+                    blends.append(face_data.get_blendshape(FaceBlendShape.MouthSmileRight))
+                    blends.append(face_data.get_blendshape(FaceBlendShape.MouthSmileLeft))
+                    blends.append(face_data.get_blendshape(FaceBlendShape.MouthFrownRight))
+                    blends.append(face_data.get_blendshape(FaceBlendShape.MouthFrownLeft))
+                    blends.append(face_data.get_blendshape(FaceBlendShape.MouthLeft))
+                    blends.append(face_data.get_blendshape(FaceBlendShape.MouthRight))
+                    blends.append(face_data.get_blendshape(FaceBlendShape.MouthLowerDownRight))
+                    blends.append(face_data.get_blendshape(FaceBlendShape.MouthLowerDownLeft))
+                    blends.append(face_data.get_blendshape(FaceBlendShape.MouthPressLeft))
+                    blends.append(face_data.get_blendshape(FaceBlendShape.MouthPressRight))
+                    blends.append(face_data.get_blendshape(FaceBlendShape.MouthClose))
+                    blends.append(face_data.get_blendshape(FaceBlendShape.MouthPucker))
+                    blends.append(face_data.get_blendshape(FaceBlendShape.MouthShrugUpper))
+                    blends.append(face_data.get_blendshape(FaceBlendShape.JawOpen))
+                    blends.append(face_data.get_blendshape(FaceBlendShape.JawLeft))
+                    blends.append(face_data.get_blendshape(FaceBlendShape.JawRight))
+                    blends.append(face_data.get_blendshape(FaceBlendShape.BrowDownLeft))
+                    blends.append(face_data.get_blendshape(FaceBlendShape.BrowOuterUpLeft))
+                    blends.append(face_data.get_blendshape(FaceBlendShape.BrowDownRight))
+                    blends.append(face_data.get_blendshape(FaceBlendShape.BrowOuterUpRight))
+                    blends.append(face_data.get_blendshape(FaceBlendShape.CheekSquintRight))
+                    blends.append(face_data.get_blendshape(FaceBlendShape.CheekSquintLeft))
 
                     frame = cap.get(cv2.CAP_PROP_POS_FRAMES)
                     currentTime = cap.get(cv2.CAP_PROP_POS_MSEC)
@@ -189,5 +188,10 @@ def Calculate_Face_Mocap(path=None,debug=False):
                 break
     cap.release()
 
+# path = "D:\\pose\\New\\2022-07-14\\C2824.MP4"
 
-# Calculate_Face_Mocap(True)
+
+if __name__ == '__main__':
+    print("dd")
+    for i in Calculate_Face_Mocap(None,True):
+        continue
