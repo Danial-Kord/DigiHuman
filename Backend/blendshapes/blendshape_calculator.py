@@ -112,9 +112,13 @@ class BlendshapeCalculator():
         jaw_open = self._remap_blendshape(FaceBlendShape.JawOpen, jaw_open_ratio)
         self._face_data.set_blendshape(FaceBlendShape.JawOpen, jaw_open)
 
-        #mouth open
-        mouth_open = self._remap_blendshape(FaceBlendShape.MouthClose, mouth_center_nose_dist - mouth_open_dist)
-        self._face_data.set_blendshape(FaceBlendShape.MouthClose, mouth_open)
+        #mouth open/close
+        mouth_close = self._remap_blendshape(FaceBlendShape.MouthClose, mouth_center_nose_dist - mouth_open_dist)
+        self._face_data.set_blendshape(FaceBlendShape.MouthClose, mouth_close)
+
+        mouth_open = self._remap_blendshape(FaceBlendShape.MouthOpen, mouth_open_dist/mouth_width) #mouth aspect ratio
+        self._face_data.set_blendshape(FaceBlendShape.MouthOpen, mouth_open)
+
 
         #Simle
         mouth_smile_left,mouth_smile_right = self.detect_smile(upper_lip,mouth_corner_left,mouth_corner_right)
