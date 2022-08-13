@@ -48,6 +48,7 @@ public class UIManager : MonoSingleton<UIManager>
     [SerializeField] private Sprite pauseImage;
     [SerializeField] private Sprite resumeImage;
     [SerializeField] private Button saveAnimationButton;
+    [SerializeField] private Button recordButton;
 
     
     [Header("Save Animation Panel")] 
@@ -125,6 +126,13 @@ public class UIManager : MonoSingleton<UIManager>
     {
         saveAnimationButton.interactable = true;
         animationPlayButton.interactable = true;
+        recordButton.interactable = true;
+    }
+    public void DeActiveAnimationControlPanel()
+    {
+        saveAnimationButton.interactable = false;
+        animationPlayButton.interactable = false;
+        recordButton.interactable = false;
     }
     public void ShowAnimationSavePanel()
     {
@@ -268,5 +276,11 @@ public class UIManager : MonoSingleton<UIManager>
         frameReader.SetBodyZoomCamera();
     }
 
+    
+    //Recorder
+    public void OnRecorderClick()
+    {
+        frameReader.StartRecording();
+    }
 
 }

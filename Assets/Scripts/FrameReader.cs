@@ -422,7 +422,7 @@ public class FrameReader : MonoBehaviour
 
         if (currentAnimationSlot >= frameData.Count)
         {
-            videoPlayer.Pause();
+            OnAnimationPlayFinish();
             return;
         }
 
@@ -583,6 +583,13 @@ public class FrameReader : MonoBehaviour
     }
 
 
+    private void OnAnimationPlayFinish()
+    {
+        videoPlayer.Pause();
+        if(recording)
+            StopRecording();
+    }
+    
     // private void Update()
     // {
     //     timer += Time.deltaTime;
@@ -903,6 +910,29 @@ public class FrameReader : MonoBehaviour
     
     }
 
+
+    [Header("Recording")] 
+    [SerializeField] private GameObject recorder;
+
+    private bool recording = false;
+    public void StartRecording()
+    {
+        if(!pause)
+            return;
+        UIManager.Instancce.DeActiveAnimationControlPanel();
+        recorder.SetActive(true);
+        recording = true;
+        OnTogglePlay();
+    }
+
+    private void StopRecording()
+    {
+        recording = false;
+        recorder.SetActive(false);
+        UIManager.Instancce.ActiveAnimationControlPanel();
+        UIManager.Instancce.ShowSuccessMessage("Animation Recorded successfully!");
+    }
+    
     private void test()
     {
         
