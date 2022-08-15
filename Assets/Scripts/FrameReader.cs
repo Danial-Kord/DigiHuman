@@ -41,10 +41,7 @@ public class FullPoseJson
 [Serializable]
 public class FaceJson
 {
-    public float leftEyeWid;
-    public float rightEyeWid;
-    public float mouthWid;
-    public float mouthLen;
+    public float[] blendShapes;
     public int frame;
     public float time;
 }
@@ -232,8 +229,7 @@ public class FrameReader : MonoBehaviour
         if (readFromFace)
         {
             FaceJson faceJson = GetBodyParts<FaceJson>(jsonTest);
-            facialExpressionHandler.UpdateData(faceJson.leftEyeWid,faceJson.rightEyeWid
-                ,faceJson.mouthWid,faceJson.mouthLen);
+            facialExpressionHandler.UpdateData(faceJson);
             videoPlayer.frame = faceJson.frame;
             videoPlayer.Play();
             videoPlayer.Pause();
@@ -357,8 +353,7 @@ public class FrameReader : MonoBehaviour
                 //----- Facial Mocap -------
                 if (currentFaceJson != null)
                 {
-                    facialExpressionHandler.UpdateData(currentFaceJson.leftEyeWid, currentFaceJson.rightEyeWid
-                        , currentFaceJson.mouthWid, currentFaceJson.mouthLen);
+                    facialExpressionHandler.UpdateData(currentFaceJson);
                 }
 
                 character.transform.rotation = characterRotation;
@@ -427,7 +422,7 @@ public class FrameReader : MonoBehaviour
 
         if (currentAnimationSlot >= frameData.Count)
         {
-            videoPlayer.Pause();
+            OnAnimationPlayFinish();
             return;
         }
 
@@ -555,8 +550,7 @@ public class FrameReader : MonoBehaviour
             //----- Facial Mocap -------
             if (currentFaceJson != null && enableFace)
             {
-                facialExpressionHandler.UpdateData(currentFaceJson.leftEyeWid, currentFaceJson.rightEyeWid
-                    , currentFaceJson.mouthWid, currentFaceJson.mouthLen);
+                facialExpressionHandler.UpdateData(currentFaceJson);
             }
 
             character.transform.rotation = characterRotation;
@@ -589,6 +583,13 @@ public class FrameReader : MonoBehaviour
     }
 
 
+    private void OnAnimationPlayFinish()
+    {
+        videoPlayer.Pause();
+        if(recording)
+            StopRecording();
+    }
+    
     // private void Update()
     // {
     //     timer += Time.deltaTime;
@@ -909,6 +910,29 @@ public class FrameReader : MonoBehaviour
     
     }
 
+
+    [Header("Recording")] 
+    [SerializeField] private GameObject recorder;
+
+    private bool recording = false;
+    public void StartRecording()
+    {
+        if(!pause)
+            return;
+        UIManager.Instancce.DeActiveAnimationControlPanel();
+        recorder.SetActive(true);
+        recording = true;
+        OnTogglePlay();
+    }
+
+    private void StopRecording()
+    {
+        recording = false;
+        recorder.SetActive(false);
+        UIManager.Instancce.ActiveAnimationControlPanel();
+        UIManager.Instancce.ShowSuccessMessage("Animation Recorded successfully!");
+    }
+    
     private void test()
     {
         
