@@ -1671,12 +1671,28 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   skinnedMeshRenderer: {fileID: 360388170}
-  blinkFunctionSelect: 1
+  enableEyeWide: 0
+  enableDimple: 0
+  eyeWideMethod: 0
+  mouthOpenMethod: 0
+  mouthSmileFrownMethod: 0
   EyeBlinkLeft:
     num: 0
     weight: 0
   EyeBlinkRight:
     num: 1
+    weight: 0
+  EyeSquintLeft:
+    num: -1
+    weight: 0
+  EyeSquintRight:
+    num: -1
+    weight: 0
+  EyeWideLeft:
+    num: -1
+    weight: 0
+  EyeWideRight:
+    num: -1
     weight: 0
   MouthSmileRight:
     num: 0
@@ -1695,6 +1711,12 @@ MonoBehaviour:
     weight: 0
   MouthRight:
     num: 0
+    weight: 0
+  MouthStretchLeft:
+    num: -1
+    weight: 0
+  MouthStretchRight:
+    num: -1
     weight: 0
   MouthLowerDownRight:
     num: 0
@@ -1743,6 +1765,24 @@ MonoBehaviour:
     weight: 0
   CheekSquintLeft:
     num: 0
+    weight: 0
+  MouthDimpleLeft:
+    num: -1
+    weight: 0
+  MouthDimpleRight:
+    num: -1
+    weight: 0
+  MouthRollLower:
+    num: -1
+    weight: 0
+  MouthRollUpper:
+    num: -1
+    weight: 0
+  NoseSneerLeft:
+    num: -1
+    weight: 0
+  NoseSneerRight:
+    num: -1
     weight: 0
 --- !u!114 &80654449
 MonoBehaviour:
@@ -13795,12 +13835,28 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   skinnedMeshRenderer: {fileID: 841088435}
-  blinkFunctionSelect: 2
+  enableEyeWide: 0
+  enableDimple: 0
+  eyeWideMethod: 0
+  mouthOpenMethod: 0
+  mouthSmileFrownMethod: 0
   EyeBlinkLeft:
     num: 0
     weight: 0
   EyeBlinkRight:
     num: 0
+    weight: 0
+  EyeSquintLeft:
+    num: -1
+    weight: 0
+  EyeSquintRight:
+    num: -1
+    weight: 0
+  EyeWideLeft:
+    num: -1
+    weight: 0
+  EyeWideRight:
+    num: -1
     weight: 0
   MouthSmileRight:
     num: 0
@@ -13819,6 +13875,12 @@ MonoBehaviour:
     weight: 0
   MouthRight:
     num: 0
+    weight: 0
+  MouthStretchLeft:
+    num: -1
+    weight: 0
+  MouthStretchRight:
+    num: -1
     weight: 0
   MouthLowerDownRight:
     num: 0
@@ -13867,6 +13929,24 @@ MonoBehaviour:
     weight: 0
   CheekSquintLeft:
     num: 0
+    weight: 0
+  MouthDimpleLeft:
+    num: -1
+    weight: 0
+  MouthDimpleRight:
+    num: -1
+    weight: 0
+  MouthRollLower:
+    num: -1
+    weight: 0
+  MouthRollUpper:
+    num: -1
+    weight: 0
+  NoseSneerLeft:
+    num: -1
+    weight: 0
+  NoseSneerRight:
+    num: -1
     weight: 0
 --- !u!114 &841088530
 MonoBehaviour:
@@ -19860,12 +19940,28 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   skinnedMeshRenderer: {fileID: 1231570491}
-  blinkFunctionSelect: 2
+  enableEyeWide: 0
+  enableDimple: 0
+  eyeWideMethod: 0
+  mouthOpenMethod: 0
+  mouthSmileFrownMethod: 0
   EyeBlinkLeft:
     num: 0
     weight: 0
   EyeBlinkRight:
     num: 0
+    weight: 0
+  EyeSquintLeft:
+    num: -1
+    weight: 0
+  EyeSquintRight:
+    num: -1
+    weight: 0
+  EyeWideLeft:
+    num: -1
+    weight: 0
+  EyeWideRight:
+    num: -1
     weight: 0
   MouthSmileRight:
     num: 0
@@ -19884,6 +19980,12 @@ MonoBehaviour:
     weight: 0
   MouthRight:
     num: 0
+    weight: 0
+  MouthStretchLeft:
+    num: -1
+    weight: 0
+  MouthStretchRight:
+    num: -1
     weight: 0
   MouthLowerDownRight:
     num: 0
@@ -19932,6 +20034,24 @@ MonoBehaviour:
     weight: 0
   CheekSquintLeft:
     num: 0
+    weight: 0
+  MouthDimpleLeft:
+    num: -1
+    weight: 0
+  MouthDimpleRight:
+    num: -1
+    weight: 0
+  MouthRollLower:
+    num: -1
+    weight: 0
+  MouthRollUpper:
+    num: -1
+    weight: 0
+  NoseSneerLeft:
+    num: -1
+    weight: 0
+  NoseSneerRight:
+    num: -1
     weight: 0
 --- !u!137 &1231570491 stripped
 SkinnedMeshRenderer:
@@ -29389,6 +29509,14 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5197118176682910397, guid: de9895e9b8cd7654eaaf0b99f05cf0b5, type: 3}
+      propertyPath: m_BlendShapeWeights.Array.data[8]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5197118176682910397, guid: de9895e9b8cd7654eaaf0b99f05cf0b5, type: 3}
+      propertyPath: m_BlendShapeWeights.Array.data[9]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5197118176682910397, guid: de9895e9b8cd7654eaaf0b99f05cf0b5, type: 3}
       propertyPath: m_BlendShapeWeights.Array.data[10]
       value: 0
       objectReference: {fileID: 0}
@@ -29437,7 +29565,15 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5197118176682910397, guid: de9895e9b8cd7654eaaf0b99f05cf0b5, type: 3}
+      propertyPath: m_BlendShapeWeights.Array.data[22]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5197118176682910397, guid: de9895e9b8cd7654eaaf0b99f05cf0b5, type: 3}
       propertyPath: m_BlendShapeWeights.Array.data[23]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5197118176682910397, guid: de9895e9b8cd7654eaaf0b99f05cf0b5, type: 3}
+      propertyPath: m_BlendShapeWeights.Array.data[24]
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5197118176682910397, guid: de9895e9b8cd7654eaaf0b99f05cf0b5, type: 3}
@@ -29446,6 +29582,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5197118176682910397, guid: de9895e9b8cd7654eaaf0b99f05cf0b5, type: 3}
       propertyPath: m_BlendShapeWeights.Array.data[27]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5197118176682910397, guid: de9895e9b8cd7654eaaf0b99f05cf0b5, type: 3}
+      propertyPath: m_BlendShapeWeights.Array.data[28]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5197118176682910397, guid: de9895e9b8cd7654eaaf0b99f05cf0b5, type: 3}
+      propertyPath: m_BlendShapeWeights.Array.data[30]
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5197118176682910397, guid: de9895e9b8cd7654eaaf0b99f05cf0b5, type: 3}
@@ -29462,6 +29606,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5197118176682910397, guid: de9895e9b8cd7654eaaf0b99f05cf0b5, type: 3}
       propertyPath: m_BlendShapeWeights.Array.data[41]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5197118176682910397, guid: de9895e9b8cd7654eaaf0b99f05cf0b5, type: 3}
+      propertyPath: m_BlendShapeWeights.Array.data[42]
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5197118176682910397, guid: de9895e9b8cd7654eaaf0b99f05cf0b5, type: 3}
@@ -29489,7 +29637,31 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5197118176682910397, guid: de9895e9b8cd7654eaaf0b99f05cf0b5, type: 3}
+      propertyPath: m_BlendShapeWeights.Array.data[51]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5197118176682910397, guid: de9895e9b8cd7654eaaf0b99f05cf0b5, type: 3}
+      propertyPath: m_BlendShapeWeights.Array.data[52]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5197118176682910397, guid: de9895e9b8cd7654eaaf0b99f05cf0b5, type: 3}
+      propertyPath: m_BlendShapeWeights.Array.data[53]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5197118176682910397, guid: de9895e9b8cd7654eaaf0b99f05cf0b5, type: 3}
       propertyPath: m_BlendShapeWeights.Array.data[54]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5197118176682910397, guid: de9895e9b8cd7654eaaf0b99f05cf0b5, type: 3}
+      propertyPath: m_BlendShapeWeights.Array.data[55]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5197118176682910397, guid: de9895e9b8cd7654eaaf0b99f05cf0b5, type: 3}
+      propertyPath: m_BlendShapeWeights.Array.data[56]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5197118176682910397, guid: de9895e9b8cd7654eaaf0b99f05cf0b5, type: 3}
+      propertyPath: m_BlendShapeWeights.Array.data[57]
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5197118176682910397, guid: de9895e9b8cd7654eaaf0b99f05cf0b5, type: 3}
@@ -29498,6 +29670,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5197118176682910397, guid: de9895e9b8cd7654eaaf0b99f05cf0b5, type: 3}
       propertyPath: m_BlendShapeWeights.Array.data[60]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5197118176682910397, guid: de9895e9b8cd7654eaaf0b99f05cf0b5, type: 3}
+      propertyPath: m_BlendShapeWeights.Array.data[61]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5197118176682910397, guid: de9895e9b8cd7654eaaf0b99f05cf0b5, type: 3}
+      propertyPath: m_BlendShapeWeights.Array.data[62]
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5197118176682910397, guid: de9895e9b8cd7654eaaf0b99f05cf0b5, type: 3}
@@ -29580,12 +29760,28 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   skinnedMeshRenderer: {fileID: 1183533708}
-  blinkFunctionSelect: 0
+  enableEyeWide: 1
+  enableDimple: 0
+  eyeWideMethod: 1
+  mouthOpenMethod: 1
+  mouthSmileFrownMethod: 1
   EyeBlinkLeft:
     num: 17
     weight: 0
   EyeBlinkRight:
     num: 18
+    weight: 0
+  EyeSquintLeft:
+    num: 21
+    weight: 0
+  EyeSquintRight:
+    num: 22
+    weight: 0
+  EyeWideLeft:
+    num: 19
+    weight: 0
+  EyeWideRight:
+    num: 20
     weight: 0
   MouthSmileRight:
     num: 35
@@ -29605,6 +29801,12 @@ MonoBehaviour:
   MouthRight:
     num: 63
     weight: 0
+  MouthStretchLeft:
+    num: -1
+    weight: 0
+  MouthStretchRight:
+    num: -1
+    weight: 0
   MouthLowerDownRight:
     num: -1
     weight: 0
@@ -29621,7 +29823,7 @@ MonoBehaviour:
     num: 67
     weight: 0
   MouthPucker:
-    num: 40
+    num: 41
     weight: 0
   MouthShrugUpper:
     num: -1
@@ -29652,6 +29854,24 @@ MonoBehaviour:
     weight: 0
   CheekSquintLeft:
     num: -1
+    weight: 0
+  MouthDimpleLeft:
+    num: 44
+    weight: 0
+  MouthDimpleRight:
+    num: 45
+    weight: 0
+  MouthRollLower:
+    num: 53
+    weight: 0
+  MouthRollUpper:
+    num: 54
+    weight: 0
+  NoseSneerLeft:
+    num: 28
+    weight: 0
+  NoseSneerRight:
+    num: 29
     weight: 0
 --- !u!114 &1956862359
 MonoBehaviour:
