@@ -171,7 +171,9 @@ public class FrameReader : MonoBehaviour
     [SerializeField] private string path = "C:\\Danial\\Projects\\Danial\\DigiHuman\\Backend\\hand_json\\";
     [SerializeField] private bool onlyCurrentIndex;
 
-
+    [Header("Recording")] 
+    [SerializeField] private GameObject recorder;
+    
     private Quaternion characterRotation;
     private void Start()
     {
@@ -883,6 +885,7 @@ public class FrameReader : MonoBehaviour
 
     public void HideCharacter()
     {
+        
         character.SetActive(false);
     }
     
@@ -911,8 +914,7 @@ public class FrameReader : MonoBehaviour
     }
 
 
-    [Header("Recording")] 
-    [SerializeField] private GameObject recorder;
+
 
     private bool recording = false;
     public void StartRecording()
@@ -959,11 +961,15 @@ public class FrameReader : MonoBehaviour
     {
         camera.transform.position = faceZoomCameraPlace.position;
         camera.transform.rotation = faceZoomCameraPlace.rotation;
+        recorder.transform.position = faceZoomCameraPlace.position;
+        recorder.transform.rotation = faceZoomCameraPlace.rotation;
     }
     
     public void SetBodyZoomCamera()
     {
         camera.transform.position = bodyZoomCameraPlace.position;
         camera.transform.rotation = bodyZoomCameraPlace.rotation;
+        recorder.transform.position = bodyZoomCameraPlace.position;
+        recorder.transform.rotation = bodyZoomCameraPlace.rotation;
     }
 }
