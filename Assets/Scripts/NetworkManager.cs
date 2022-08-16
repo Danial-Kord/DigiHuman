@@ -256,6 +256,8 @@ public class NetworkManager : MonoSingleton<NetworkManager>
             catch (Exception e)
             {
                 Console.WriteLine(e);
+                UIManager.Instancce.CheckAndEnableWaitingModeUI(WaitingModeUI.ProgressBar,false);
+                UIManager.Instancce.ShowErrorMessage("Error in downloading Facial Data!");
                 throw;
             }
 
@@ -317,6 +319,8 @@ public class NetworkManager : MonoSingleton<NetworkManager>
             catch (Exception e)
             {
                 Console.WriteLine(e);
+                UIManager.Instancce.CheckAndEnableWaitingModeUI(WaitingModeUI.ProgressBar,false);
+                UIManager.Instancce.ShowErrorMessage("Error in downloading Pose Data!");
                 throw;
             }
 
@@ -378,6 +382,8 @@ public class NetworkManager : MonoSingleton<NetworkManager>
             catch (Exception e)
             {
                 Console.WriteLine(e);
+                UIManager.Instancce.CheckAndEnableWaitingModeUI(WaitingModeUI.ProgressBar,false);
+                UIManager.Instancce.ShowErrorMessage("Error in downloading Pose Data!");
                 throw;
             }
 
@@ -440,6 +446,8 @@ public class NetworkManager : MonoSingleton<NetworkManager>
             catch (Exception e)
             {
                 Console.WriteLine(e);
+                UIManager.Instancce.CheckAndEnableWaitingModeUI(WaitingModeUI.ProgressBar,false);
+                UIManager.Instancce.ShowErrorMessage("Error in downloading Full Body Pose Data!");
                 throw;
             }
 

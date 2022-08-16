@@ -162,6 +162,7 @@ public class UIManager : MonoSingleton<UIManager>
     {
         panel.SetActive(true);
         canvas.gameObject.SetActive(false);
+        OnFullBodyZoomClicked();
         frameReader.HideCharacter();
     }
     public void OnSlideShowExit(GameObject panel)
