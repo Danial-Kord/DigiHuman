@@ -19,6 +19,10 @@ public enum BlendShapes : int
    MouthDimpleRight,
    MouthFrownRight,
    MouthFrownLeft,
+   LipLowerDownLeft,
+   LipLowerDownRight,
+   LipUpperUpLeft,
+   LipUpperUpRight,
    MouthLeft,
    MouthRight,
    MouthStretchLeft,
@@ -80,7 +84,7 @@ public class FacialExpressionHandler : MonoBehaviour
     {
         BlendShapeController = character.GetComponentInChildren<BlendShapeController>();
         
-        faceBlendNodes = new FaceBlendData[36];//number of current processable nodes
+        faceBlendNodes = new FaceBlendData[40];//number of current processable nodes
         for (int i = 0; i < faceBlendNodes.Length; i++)
         {
             faceBlendNodes[i] = new FaceBlendData();
@@ -132,6 +136,10 @@ public class FacialExpressionHandler : MonoBehaviour
         BlendShapeController.MouthSmileLeft.weight = faceBlendNodes[(int) BlendShapes.MouthSmileLeft].weight;
         BlendShapeController.MouthFrownRight.weight = faceBlendNodes[(int) BlendShapes.MouthFrownRight].weight;
         BlendShapeController.MouthFrownLeft.weight = faceBlendNodes[(int) BlendShapes.MouthFrownLeft].weight;
+        BlendShapeController.LipLowerDownLeft.weight = faceBlendNodes[(int) BlendShapes.LipLowerDownLeft].weight;
+        BlendShapeController.LipLowerDownRight.weight = faceBlendNodes[(int) BlendShapes.LipLowerDownRight].weight;
+        BlendShapeController.LipUpperUpLeft.weight = faceBlendNodes[(int) BlendShapes.LipUpperUpLeft].weight;
+        BlendShapeController.LipUpperUpRight.weight = faceBlendNodes[(int) BlendShapes.LipUpperUpRight].weight;
         BlendShapeController.MouthLeft.weight = faceBlendNodes[(int) BlendShapes.MouthLeft].weight;
         BlendShapeController.MouthRight.weight = faceBlendNodes[(int) BlendShapes.MouthRight].weight;
         BlendShapeController.MouthStretchLeft.weight = faceBlendNodes[(int) BlendShapes.MouthStretchLeft].weight;

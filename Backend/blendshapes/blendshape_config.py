@@ -106,7 +106,11 @@ class BlendShapeConfig:
             # FaceBlendShape.LeftEyeRoll : (-0.4, 0.0),
             # FaceBlendShape.RightEyeYaw : (-0.4, 0.0),
             # FaceBlendShape.RightEyePitch : (-0.4, 0.0),
-            # FaceBlendShape.RightEyeRoll : (-0.4, 0.0), 
+            # FaceBlendShape.RightEyeRoll : (-0.4, 0.0),
+            FaceBlendShape.LipLowerDownLeft: (2.7, 3.15),
+            FaceBlendShape.LipLowerDownRight: (2.6, 3.15),
+            FaceBlendShape.LipUpperUpLeft: (2.5, 3.05),
+            FaceBlendShape.LipUpperUpRight: (2.5, 3.05),
         }
 
        

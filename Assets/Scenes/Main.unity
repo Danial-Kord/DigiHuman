@@ -1706,6 +1706,18 @@ MonoBehaviour:
   MouthFrownLeft:
     num: 0
     weight: 0
+  LipLowerDownLeft:
+    num: -1
+    weight: 0
+  LipLowerDownRight:
+    num: -1
+    weight: 0
+  LipUpperUpLeft:
+    num: -1
+    weight: 0
+  LipUpperUpRight:
+    num: -1
+    weight: 0
   MouthLeft:
     num: 0
     weight: 0
@@ -8740,8 +8752,8 @@ MonoBehaviour:
   enableFileSeriesReader: 0
   path: C:\Danial\Projects\Danial\DigiHuman\Backend\json\
   onlyCurrentIndex: 0
-  fileIndex: 1
   recorder: {fileID: 0}
+  fileIndex: 1
 --- !u!4 &547913706
 Transform:
   m_ObjectHideFlags: 0
@@ -10403,8 +10415,8 @@ MonoBehaviour:
   enableFileSeriesReader: 0
   path: C:\Danial\Projects\Danial\DigiHuman\Backend\hand_json\
   onlyCurrentIndex: 0
-  fileIndex: 96
   recorder: {fileID: 1408916457}
+  fileIndex: 96
 --- !u!4 &620901067
 Transform:
   m_ObjectHideFlags: 0
@@ -13869,6 +13881,18 @@ MonoBehaviour:
     weight: 0
   MouthFrownLeft:
     num: 0
+    weight: 0
+  LipLowerDownLeft:
+    num: -1
+    weight: 0
+  LipLowerDownRight:
+    num: -1
+    weight: 0
+  LipUpperUpLeft:
+    num: -1
+    weight: 0
+  LipUpperUpRight:
+    num: -1
     weight: 0
   MouthLeft:
     num: 0
@@ -17692,8 +17716,8 @@ MonoBehaviour:
   enableFileSeriesReader: 0
   path: C:\Danial\Projects\Danial\DigiHuman\Backend\json\
   onlyCurrentIndex: 0
-  fileIndex: 1
   recorder: {fileID: 0}
+  fileIndex: 1
 --- !u!4 &1135277943
 Transform:
   m_ObjectHideFlags: 0
@@ -19974,6 +19998,18 @@ MonoBehaviour:
     weight: 0
   MouthFrownLeft:
     num: 0
+    weight: 0
+  LipLowerDownLeft:
+    num: -1
+    weight: 0
+  LipLowerDownRight:
+    num: -1
+    weight: 0
+  LipUpperUpLeft:
+    num: -1
+    weight: 0
+  LipUpperUpRight:
+    num: -1
     weight: 0
   MouthLeft:
     num: 0
@@ -29593,11 +29629,23 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5197118176682910397, guid: de9895e9b8cd7654eaaf0b99f05cf0b5, type: 3}
+      propertyPath: m_BlendShapeWeights.Array.data[31]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5197118176682910397, guid: de9895e9b8cd7654eaaf0b99f05cf0b5, type: 3}
       propertyPath: m_BlendShapeWeights.Array.data[32]
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5197118176682910397, guid: de9895e9b8cd7654eaaf0b99f05cf0b5, type: 3}
       propertyPath: m_BlendShapeWeights.Array.data[36]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5197118176682910397, guid: de9895e9b8cd7654eaaf0b99f05cf0b5, type: 3}
+      propertyPath: m_BlendShapeWeights.Array.data[37]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5197118176682910397, guid: de9895e9b8cd7654eaaf0b99f05cf0b5, type: 3}
+      propertyPath: m_BlendShapeWeights.Array.data[39]
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5197118176682910397, guid: de9895e9b8cd7654eaaf0b99f05cf0b5, type: 3}
@@ -29613,7 +29661,15 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5197118176682910397, guid: de9895e9b8cd7654eaaf0b99f05cf0b5, type: 3}
+      propertyPath: m_BlendShapeWeights.Array.data[43]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5197118176682910397, guid: de9895e9b8cd7654eaaf0b99f05cf0b5, type: 3}
       propertyPath: m_BlendShapeWeights.Array.data[44]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5197118176682910397, guid: de9895e9b8cd7654eaaf0b99f05cf0b5, type: 3}
+      propertyPath: m_BlendShapeWeights.Array.data[45]
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5197118176682910397, guid: de9895e9b8cd7654eaaf0b99f05cf0b5, type: 3}
@@ -29678,6 +29734,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5197118176682910397, guid: de9895e9b8cd7654eaaf0b99f05cf0b5, type: 3}
       propertyPath: m_BlendShapeWeights.Array.data[62]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5197118176682910397, guid: de9895e9b8cd7654eaaf0b99f05cf0b5, type: 3}
+      propertyPath: m_BlendShapeWeights.Array.data[63]
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5197118176682910397, guid: de9895e9b8cd7654eaaf0b99f05cf0b5, type: 3}
@@ -29795,6 +29855,18 @@ MonoBehaviour:
   MouthFrownLeft:
     num: 37
     weight: 0
+  LipLowerDownLeft:
+    num: 57
+    weight: 0
+  LipLowerDownRight:
+    num: 58
+    weight: 0
+  LipUpperUpLeft:
+    num: 55
+    weight: 0
+  LipUpperUpRight:
+    num: 56
+    weight: 0
   MouthLeft:
     num: 62
     weight: 0
@@ -29862,10 +29934,10 @@ MonoBehaviour:
     num: 45
     weight: 0
   MouthRollLower:
-    num: 53
+    num: 54
     weight: 0
   MouthRollUpper:
-    num: 54
+    num: 53
     weight: 0
   NoseSneerLeft:
     num: 28

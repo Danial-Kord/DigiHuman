@@ -138,6 +138,7 @@ def Calculate_Face_Mocap(path=None,debug=False):
                         'MouthPucker': face_data.get_blendshape(FaceBlendShape.MouthPucker),
                         'MouthShrugUpper': face_data.get_blendshape(FaceBlendShape.MouthShrugUpper),
 
+
                         #Jaw
                         'JawOpen': face_data.get_blendshape(FaceBlendShape.JawOpen),
                         'JawLeft': face_data.get_blendshape(FaceBlendShape.JawLeft),
@@ -168,6 +169,12 @@ def Calculate_Face_Mocap(path=None,debug=False):
 
                     blends.append(face_data.get_blendshape(FaceBlendShape.MouthFrownRight))
                     blends.append(face_data.get_blendshape(FaceBlendShape.MouthFrownLeft))
+
+                    #Lips
+                    blends.append(face_data.get_blendshape(FaceBlendShape.LipLowerDownLeft))
+                    blends.append(face_data.get_blendshape(FaceBlendShape.LipLowerDownRight))
+                    blends.append(face_data.get_blendshape(FaceBlendShape.LipUpperUpLeft))
+                    blends.append(face_data.get_blendshape(FaceBlendShape.LipUpperUpRight))
 
                     #not good for now
                     blends.append(face_data.get_blendshape(FaceBlendShape.MouthLeft))
@@ -404,5 +411,5 @@ def face_holistic(video_path,debug=False):
 # if __name__ == '__main__':
 #     print("dd")
 #     path = "D:\\pose\\New\\2022-07-14\\C2824.MP4"
-#     for i in Calculate_Face_Mocap(path,True):
+#     for i in Calculate_Face_Mocap(None,True):
 #         continue

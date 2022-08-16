@@ -51,11 +51,11 @@ class FaceBlendShape(Enum):
     MouthLowerDownRight = 38
     MouthUpperUpLeft = 39
     MouthUpperUpRight = 40
-    BrowDownLeft = 41
-    BrowDownRight = 42
-    BrowInnerUp = 43
-    BrowOuterUpLeft = 44
-    BrowOuterUpRight = 45
+    MouthClose = 41
+    LipLowerDownLeft = 42
+    LipLowerDownRight = 43
+    LipUpperUpLeft = 44
+    LipUpperUpRight = 45
     CheekPuff = 46
     CheekSquintLeft = 47
     CheekSquintRight = 48
@@ -71,17 +71,20 @@ class FaceBlendShape(Enum):
     RightEyeYaw = 58
     RightEyePitch = 59
     RightEyeRoll = 60
-    MouthClose = 61
-
+    BrowDownLeft = 61
+    BrowDownRight = 62
+    BrowInnerUp = 63
+    BrowOuterUpLeft = 64
+    BrowOuterUpRight = 65
 class FaceData:
 
     def __init__(self,filter_size: int = 5) -> None:
 
         # properties
         self._filter_size = filter_size
-        self._blend_shapes = [0.000] * 62
+        self._blend_shapes = [0.000] * 66
         self._old_blend_shapes = []  # used for filtering
-        for i in range(62):
+        for i in range(66):
             self._old_blend_shapes.append(deque([0.0], maxlen=self._filter_size))
 
 
