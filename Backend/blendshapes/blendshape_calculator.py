@@ -88,6 +88,8 @@ class BlendshapeCalculator():
 
     def dist(self,p, q):
         return math.sqrt(sum((px - qx) ** 2.0 for px, qx in zip(p, q)))
+    def dist2(self,p, q,o):
+        return math.sqrt(sum((px - ox) ** 2.0 + (px - qx) ** 2.0 for px, qx,ox in zip(p, q,o)))
     def _calculate_mouth_landmarks(self):
         upper_lip = self._get_landmark(self.blend_shape_config.CanonicalPoints.upper_lip)
         upper_outer_lip = self._get_landmark(self.blend_shape_config.CanonicalPoints.upper_outer_lip)
@@ -126,7 +128,7 @@ class BlendshapeCalculator():
         self.detect_mouth_frown(mouth_corner_left,mouth_corner_right)
 
         #mouth is stretched left or right
-        self.detect_mouth_Stretch(mouth_center,mouth_corner_left,mouth_corner_right,mouth_smile_left,mouth_smile_right)
+        mouth_left, mouth_right = self.detect_mouth_Stretch(mouth_center,mouth_corner_left,mouth_corner_right,mouth_smile_left,mouth_smile_right)
 
 
 
@@ -150,6 +152,41 @@ class BlendshapeCalculator():
         #When whole mouth is lower down left or right
         self.detect_mouth_lower_direction(mouth_open_dist)
 
+        #detect corners lip direction
+        # self.detect_lip_direction(mouth_open,mouth_left,mouth_right)
+        #lower lip
+        lower_down_left = self.dist(self._get_landmark(
+            321), self._get_landmark(395))
+        lower_down_left2 = self.dist(self._get_landmark(
+            321), self._get_landmark(364))
+
+        lower_down_right = self.dist(self._get_landmark(
+            91), self._get_landmark(170))
+        lower_down_right2 = self.dist(self._get_landmark(
+            91), self._get_landmark(135))
+
+
+        lower_down_left_lip = 1 - self._remap_blendshape(FaceBlendShape.LipLowerDownLeft, (lower_down_left + lower_down_left2)/2.0)
+        lower_down_right_final = 1 - self._remap_blendshape(FaceBlendShape.LipLowerDownRight,(lower_down_right + lower_down_right2)/2.0)
+        self._face_data.set_blendshape(FaceBlendShape.LipLowerDownLeft, lower_down_left_lip)
+        self._face_data.set_blendshape(FaceBlendShape.LipLowerDownRight, lower_down_right_final)
+
+        # upper lip
+        upper_up_left = self.dist(self._get_landmark(
+            270), self._get_landmark(425))
+        upper_up_left2 = self.dist(self._get_landmark(
+            270), self._get_landmark(266))
+
+        upper_up_right = self.dist(self._get_landmark(
+            40), self._get_landmark(205))
+        upper_up_right2 = self.dist(self._get_landmark(
+            40), self._get_landmark(36))
+
+        upper_up_left_lip = 1 - self._remap_blendshape(FaceBlendShape.LipUpperUpLeft, (upper_up_left + upper_up_left2)/2.0)
+        upper_up_right_final = 1 - self._remap_blendshape(FaceBlendShape.LipUpperUpRight,(upper_up_right + upper_up_right2)/2.0)
+        self._face_data.set_blendshape(FaceBlendShape.LipUpperUpLeft, upper_up_left_lip)
+        self._face_data.set_blendshape(FaceBlendShape.LipUpperUpRight, upper_up_right_final)
+
         #Mouth press
         self.detect_mouth_press()
 
@@ -172,7 +209,7 @@ class BlendshapeCalculator():
         mouth_smile_right = 1 - \
                             self._remap_blendshape(FaceBlendShape.MouthSmileRight, smile_right)
 
-        print(mouth_smile_right)
+        # print(mouth_smile_right)
         self._face_data.set_blendshape(
             FaceBlendShape.MouthSmileLeft, mouth_smile_left)
         self._face_data.set_blendshape(
@@ -227,6 +264,7 @@ class BlendshapeCalculator():
         self._face_data.set_blendshape(
             FaceBlendShape.MouthRight, mouth_right)
 
+        # print(mouth_right)
 
         # self._live_link_face.set_blendshape(ARKitFace.MouthRight, 1 - remap(mouth_left_right, -1.5, 0.0))
         #-------------------------------------------------------
@@ -249,6 +287,7 @@ class BlendshapeCalculator():
         mouth_right_stretch_final = self._remap(mouth_right_stretch, stretch_normal_right, stretch_max_right)
         self._face_data.set_blendshape(FaceBlendShape.MouthStretchRight, mouth_right_stretch_final)
 
+        return mouth_left, mouth_right
 
     # when your mouth roll and shrink this will be near to 1
     def detect_Mouth_Roll(self,lower_lip,upper_lip,upper_outer_lip,lowest_lip):
@@ -318,9 +357,23 @@ class BlendshapeCalculator():
 
         lower_down_left_final = 1 - self._remap_blendshape(FaceBlendShape.MouthLowerDownLeft, lower_down_left)
         lower_down_right_final = 1 -self._remap_blendshape(FaceBlendShape.MouthLowerDownRight,lower_down_right)
-        # print(lower_down_right_final)
+        # print(self.dist(self._get_landmark(
+        #     424), self._get_landmark(319)))
         self._face_data.set_blendshape(FaceBlendShape.MouthLowerDownLeft, lower_down_left_final)
         self._face_data.set_blendshape(FaceBlendShape.MouthLowerDownRight, lower_down_right_final)
+
+    #will appear when your quarter of your mouth(left_up_lip, left _down_lip,right_up_lip,right_down_lip) turns more to its corner
+    def detect_lip_direction(self,mouth_open_dist,mouth_left,mouth_right):
+        lower_down_left = self.dist(self._get_landmark(
+            424), self._get_landmark(319))
+        lower_down_right = self.dist(self._get_landmark(
+            204), self._get_landmark(89))
+
+        lower_down_left_lip = 1 - self._remap_blendshape(FaceBlendShape.LipLowerDownLeft, lower_down_left)
+        lower_down_right_final = 1 -self._remap_blendshape(FaceBlendShape.LipLowerDownRight,lower_down_right)
+        print(lower_down_left + (mouth_open_dist - mouth_left))
+        self._face_data.set_blendshape(FaceBlendShape.LipLowerDownLeft, lower_down_left_lip)
+        self._face_data.set_blendshape(FaceBlendShape.LipLowerDownRight, lower_down_right_final)
 
     def detect_mouth_shrug(self,nose_tip,uppest_lip,lowest_lip):
         #mouth shrug up will be near 1 if upper mouth is near nose!

@@ -74,6 +74,25 @@ public class BlendShapeController : MonoBehaviour
     weight = 0
     };
 
+    public BlendShape LipLowerDownLeft = new BlendShape() {
+    num = -1,
+    weight = 0
+    };
+    public BlendShape LipLowerDownRight = new BlendShape() {
+    num = -1,
+    weight = 0
+    };
+    
+    public BlendShape LipUpperUpLeft = new BlendShape() {
+    num = -1,
+    weight = 0
+    };
+    
+    public BlendShape LipUpperUpRight = new BlendShape() {
+    num = -1,
+    weight = 0
+    };
+    
     public BlendShape MouthLeft = new BlendShape(){
     num = -1,
     weight = 0
