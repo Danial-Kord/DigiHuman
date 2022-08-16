@@ -67,8 +67,10 @@ class BlendShapeConfig:
             FaceBlendShape.MouthFunnel : (4.0, 4.8),
             # FaceBlendShape.MouthPucker : (3.46, 4.92),
             FaceBlendShape.MouthPucker : (0, 1.2),
-            FaceBlendShape.MouthLeft : (-3.4, -2.3),
-            FaceBlendShape.MouthRight : ( 1.5, 3.0),
+            # FaceBlendShape.MouthLeft : (-3.4, -2.3),
+            # FaceBlendShape.MouthRight : ( 1.5, 3.0),
+            FaceBlendShape.MouthLeft: (0.4, 1.2),
+            FaceBlendShape.MouthRight: (-1.2, -0.4),
             FaceBlendShape.MouthSmileLeft : (-0.25, 0.0),
             FaceBlendShape.MouthSmileRight : (-0.25, 0.0),
             FaceBlendShape.MouthFrownLeft : (0.4, 0.9),
@@ -110,7 +112,7 @@ class BlendShapeConfig:
             FaceBlendShape.LipLowerDownLeft: (2.7, 3.15),
             FaceBlendShape.LipLowerDownRight: (2.6, 3.15),
             FaceBlendShape.LipUpperUpLeft: (2.5, 3.05),
-            FaceBlendShape.LipUpperUpRight: (2.5, 3.05),
+            FaceBlendShape.LipUpperUpRight: (2.45, 3.05),
         }
 
        

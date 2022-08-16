@@ -408,8 +408,8 @@ def face_holistic(video_path,debug=False):
     cap.release()
 
 
-# if __name__ == '__main__':
-#     print("dd")
-#     path = "D:\\pose\\New\\2022-07-14\\C2824.MP4"
-#     for i in Calculate_Face_Mocap(None,True):
-#         continue
+if __name__ == '__main__':
+    print("dd")
+    path = "D:\\pose\\New\\2022-07-14\\C2824.MP4"
+    for i in Calculate_Face_Mocap(None,True):
+        continue

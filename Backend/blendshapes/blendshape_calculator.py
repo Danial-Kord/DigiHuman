@@ -245,31 +245,40 @@ class BlendshapeCalculator():
         #mouth is stretched left or right
 
         # todo: also strech when laughing, need to be fixed
+
+
+        upper_nose = self._get_landmark(self.blend_shape_config.CanonicalPoints.upper_nose)
+
+        # only interested in the axis coordinates here
+
+        # mouth_center_left_stretch = mouth_center[0] - mouth_left_stretch_point[0]
+        # mouth_center_right_stretch = mouth_center[0] - mouth_right_stretch_point[0]
+
+        stretch = mouth_center[0] - upper_nose[0]
+
+        mouth_left = self._remap_blendshape(
+            FaceBlendShape.MouthLeft, stretch)
+        mouth_right = 1 - \
+                      self._remap_blendshape(FaceBlendShape.MouthRight,
+                                             stretch)
+        self._face_data.set_blendshape(
+            FaceBlendShape.MouthLeft, mouth_left)
+        self._face_data.set_blendshape(
+            FaceBlendShape.MouthRight, mouth_right)
+
+        print(mouth_left)
+
+        # self._live_link_face.set_blendshape(ARKitFace.MouthRight, 1 - remap(mouth_left_right, -1.5, 0.0))
+        #-------------------------------------------------------
+
+        #Extra
         mouth_left_stretch_point = self._get_landmark(self.blend_shape_config.CanonicalPoints.mouth_left_stretch)
         mouth_right_stretch_point = self._get_landmark(self.blend_shape_config.CanonicalPoints.mouth_right_stretch)
 
         # only interested in the axis coordinates here
         mouth_left_stretch = mouth_corner_left[0] - mouth_left_stretch_point[0]
         mouth_right_stretch = mouth_right_stretch_point[0] - mouth_corner_right[0]
-        mouth_center_left_stretch = mouth_center[0] - mouth_left_stretch_point[0]
-        mouth_center_right_stretch = mouth_center[0] - mouth_right_stretch_point[0]
 
-        mouth_left = self._remap_blendshape(
-            FaceBlendShape.MouthLeft, mouth_center_left_stretch)
-        mouth_right = 1 - \
-                      self._remap_blendshape(FaceBlendShape.MouthRight,
-                                             mouth_center_right_stretch)
-        self._face_data.set_blendshape(
-            FaceBlendShape.MouthLeft, mouth_left)
-        self._face_data.set_blendshape(
-            FaceBlendShape.MouthRight, mouth_right)
-
-        # print(mouth_right)
-
-        # self._live_link_face.set_blendshape(ARKitFace.MouthRight, 1 - remap(mouth_left_right, -1.5, 0.0))
-        #-------------------------------------------------------
-
-        #Extra
         stretch_normal_left = -0.7 + \
                               (0.42 * mouth_smile_left) + (0.36 * mouth_left)
         stretch_max_left = -0.45 + \
@@ -371,7 +380,7 @@ class BlendshapeCalculator():
 
         lower_down_left_lip = 1 - self._remap_blendshape(FaceBlendShape.LipLowerDownLeft, lower_down_left)
         lower_down_right_final = 1 -self._remap_blendshape(FaceBlendShape.LipLowerDownRight,lower_down_right)
-        print(lower_down_left + (mouth_open_dist - mouth_left))
+        # print(lower_down_left + (mouth_open_dist - mouth_left))
         self._face_data.set_blendshape(FaceBlendShape.LipLowerDownLeft, lower_down_left_lip)
         self._face_data.set_blendshape(FaceBlendShape.LipLowerDownRight, lower_down_right_final)
 
