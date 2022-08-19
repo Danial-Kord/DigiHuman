@@ -51,12 +51,15 @@ Install Unity3D and its requirements by the following guide lines. (Skip if you 
 You can add your own characters to the project!
 Characters should have standard Humanoid rig to show kinematic animations. For rendering face animations, hcaracters should have blendmesh for their face.
 Follow these steps to add your character:
-1. Drag and drop your 3D charcter model to the Unity Scene(You can download them from websites like [Mixamo](mixamo.com/))
+1. Find a 3D character model from [Unity asset store](http://assetstore.unity.com/) or download a free one.(You can download them from websites like [Mixamo](http://mixamo.com/))
 2. Open the character setting and set the rig to humanoid
-3. Place your new character under Character slideshow and add it to the slideshow items.
-4. Add BlendshapeController and QualityData component to your model
-5. Set character skinmesh renderer pointer to BlendshapeController.
-6. 
+3. Drag and drop your 3D charcter model to `CharacterChooser/CharacterSlideshow/Parent` object in Unity main Scene like the image below
+4. Add `BlendShapeController` and `QualityData` components to character object in scene(which is dragged inside Parent object in last step).
+5. Open `CharacterSlideshow` Object at `CharacterChooser/CharacterSlideshow` path inside scene hierachy, then add new dragged character to the `nodes` property(all characters should be refrenced inside `nodes`).
+6. Set `BlendShapeController` values
+- Set character `SkinnedMeshRenderer` component to `BlendShapeController` component.
+- Find each blnedshape weight number under `SkinnedMeshRenderer` and set those numbers in `BlendShapes` field inside `BlendShapeController` (for specifying each blendshape value to the `BlendShapeController` component so animation would be shown on character face by modification on these blendhape values)
+7. Run the application and you can now select your character for showing animation!
 
 
 ## License & Citation
