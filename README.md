@@ -1,4 +1,5 @@
 # DigiHuman
+
 Digihuman is a project which aims to automatically generate <b>whole body pose animation + facial animation</b> on 3D Character models based on the camera input.
 <br/>
 This project is my B.Sc thesis of Computer Engineering at Amikabir University of Technology(AUT).
@@ -13,6 +14,14 @@ This project is done with **MediaPipe** and **Unity3D**.
 MediaPipe generates 3D landmarks for the human whole body and face, and Unity3D is used to render the final animation after processing the generated landmarks from MediaPipe.
 
 
+
+## Sample Outputs of the project
+### Hands animations demo
+
+### Full body animation
+
+### Face animation
+
 <!-- GETTING STARTED -->
 ## Installatiom
 Follow the instruction to run the program!
@@ -22,7 +31,7 @@ Follow the instruction to run the program!
   ```py
    pip install -r requirements.txt
    ```
-3. You'll need to [download](https://drive.google.com/file/d/15VSa2m2F6Ch0NpewDR7mkKAcXlMgDi5F/view?usp=sharing) the pretrained generator model for the COCO dataset into `backend/checkpoints/coco_pretrained/`.
+3. You'll need to [download](https://drive.google.com/file/d/15VSa2m2F6Ch0NpewDR7mkKAcXlMgDi5F/view?usp=sharing) the pretrained generator model for the COCO dataset and place it into `backend/checkpoints/coco_pretrained/`.
 
 ### Unity3D Installation
 Install Unity3D and its requirements by the following guide lines. (Skip if you have Unity3D Installed)
@@ -45,24 +54,59 @@ Install Unity3D and its requirements by the following guide lines. (Skip if you 
    python server.py
    ```
 - Run Unity Project and open the main scene at `Assets\Scenes\Main.unity`
-- Test the program by uploading videos to backend from Unity project.
+- Test the program by uploading videos to backend from Unity project. (You can test the application by selecting provided animations from the right side menu!)
 
 ## Adding new 3D characters
 You can add your own characters to the project!
-Characters should have standard Humanoid rig to show kinematic animations. For rendering face animations, hcaracters should have blendmesh for their face.
+Characters should have standard Humanoid rig to show kinematic animations. For rendering face animations, characters should have blendmesh in their face.</br>
 Follow these steps to add your character:
-1. Find a 3D character model from [Unity asset store](http://assetstore.unity.com/) or download a free one.(You can download them from websites like [Mixamo](http://mixamo.com/))
+1. Find a 3D character model from [Unity asset store](http://assetstore.unity.com/) or download a free one. (You can download them from websites like [Mixamo](http://mixamo.com/))
 2. Open the character setting and set the rig to humanoid
+
+<div align="left">
+  <a href="https://github.com/Danial-Kord/DigiHuman/blob/images/images/3.png">
+    <img src="https://github.com/Danial-Kord/DigiHuman/blob/images/images/3.png?raw=true" alt="Logo" width="300" height="150">
+  </a>
+</div>
+
 3. Drag and drop your 3D charcter model to `CharacterChooser/CharacterSlideshow/Parent` object in Unity main Scene like the image below
+
+<div align="left">
+  <a href="https://github.com/Danial-Kord/DigiHuman/blob/images/images/1.png">
+    <img src="https://github.com/Danial-Kord/DigiHuman/blob/images/images/1.png?raw=true" alt="Logo" width="300" height="400">
+  </a>
+</div>
+
 4. Add `BlendShapeController` and `QualityData` components to character object in scene(which is dragged inside Parent object in last step).
-5. Open `CharacterSlideshow` Object at `CharacterChooser/CharacterSlideshow` path inside scene hierachy, then add new dragged character to the `nodes` property(all characters should be refrenced inside `nodes`).
-6. Set `BlendShapeController` values
+5. Set `BlendShapeController` values
 - Set character `SkinnedMeshRenderer` component to `BlendShapeController` component.
+
+<div align="left">
+  <a href="https://github.com/Danial-Kord/DigiHuman/blob/images/images/5.png">
+    <img src="https://github.com/Danial-Kord/DigiHuman/blob/images/images/5.png?raw=true" alt="Logo" >
+  </a>
+</div>
+
 - Find each blnedshape weight number under `SkinnedMeshRenderer` and set those numbers in `BlendShapes` field inside `BlendShapeController` (for specifying each blendshape value to the `BlendShapeController` component so animation would be shown on character face by modification on these blendhape values)
+
+<div align="left">
+  <a href="https://github.com/Danial-Kord/DigiHuman/blob/images/images/6.png">
+    <img src="https://github.com/Danial-Kord/DigiHuman/blob/images/images/6.png?raw=true" alt="Logo" width="300" height="400">
+  </a>
+</div>
+
+6. Open `CharacterSlideshow` Object at `CharacterChooser/CharacterSlideshow` path inside scene hierachy, then add new dragged character to the `nodes` property(all characters should be refrenced inside `nodes`).
+
+<div align="left">
+  <a href="https://github.com/Danial-Kord/DigiHuman/blob/images/images/8.jpg">
+    <img src="https://github.com/Danial-Kord/DigiHuman/blob/images/images/8.jpg?raw=true" alt="Logo" width="500" height="300">
+  </a>
+</div>
+
 7. Run the application and you can now select your character for showing animation!
 
 
-## License & Citation
+## Licences & Citations
 ### DigiHuman Licence
   
 ### FFmpeg</br>
@@ -70,7 +114,7 @@ Follow these steps to add your character:
 - Unity FFmpeg packages are licenced under [Keijiro Takahashi MIT](https://github.com/keijiro/FFmpegOut/blob/master/LICENSE.md)
 
 ### GauGan
-- Used [SPADE](https://github.com/NVlabs/SPADE) repository developed by NVIDIA
+- Used [SPADE](https://github.com/NVlabs/SPADE) repository developed by NVIDIA and the customization is addapted from [Smart-Sketch](https://github.com/noyoshi/smart-sketch) with [GNU V 3.0](https://github.com/noyoshi/smart-sketch/blob/master/LICENSE) licence
 ```
 @inproceedings{park2019SPADE,
   title={Semantic Image Synthesis with Spatially-Adaptive Normalization},
