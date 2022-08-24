@@ -10,7 +10,7 @@ This project is my B.Sc thesis of Computer Engineering at Amikabir University of
 DigiHuman is a system for bringing automation in animation generation on 3D virtual characters.
 It uses Pose estimation and facial landmarks generator models to create entire body and face animation on 3D characters.
 <br/>
-This project is done with **MediaPipe** and **Unity3D**.
+This project is done with [**MediaPipe**](https://github.com/google/mediapipe) and **Unity3D**.
 MediaPipe generates 3D landmarks for the human whole body and face, and Unity3D is used to render the final animation after processing the generated landmarks from MediaPipe.
 
 
@@ -111,10 +111,10 @@ Follow these steps to add your character:
 <!-- ## Available features -->
 - [x] Making full body animation
 - [x] Animating multiple blendshapes on 3D character (upto 40 blendshape animations is supported currently)
-- [x] Supporting any Humanoid T-Pose 3D models
+- [x] Supporting any 3D models with Humanoid T-Pose
 - [x] Exporting animation in a video file
 - [x] Saving animation data and re-rendering it in future usages
-- [x] Filtering mediapipe outputs in order to detect and remove noises and better smoothness 
+- [x] Filtering mediapipe outputs in order to detect and remove noises and better smoothness (Low Pass Filtering is used currently) 
 
 <!-- ## TODO -->
 
