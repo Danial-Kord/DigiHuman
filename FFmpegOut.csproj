@@ -315,6 +315,9 @@
  <Reference Include="Newtonsoft.Json">
  <HintPath>C:/Danial/Projects/Danial/DigiHuman/Library/PackageCache/com.unity.nuget.newtonsoft-json@2.0.0/Runtime/Newtonsoft.Json.dll</HintPath>
  </Reference>
+ <Reference Include="CC_and_IC_Auto_Setup_for_3D">
+ <HintPath>C:/Danial/Projects/Danial/DigiHuman/Assets/Editor/CC_and_IC_Auto_Setup_for_3D.dll</HintPath>
+ </Reference>
  <Reference Include="netstandard">
  <HintPath>C:/Program Files/Unity/Hub/Editor/2020.3.25f1/Editor/Data/NetStandard/ref/2.0.0/netstandard.dll</HintPath>
  </Reference>

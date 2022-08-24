@@ -225,11 +225,15 @@ public class Pose3DMapper : CharacterMapper
         var spine = jointPoints[(int) BodyPoints.Spine];
         hip.Inverse = Quaternion.Inverse(Quaternion.LookRotation(forward,spine.Transform.position-hip.Transform.position));
         hip.InverseRotation = hip.Inverse * hip.InitRotation;
-        
-        spine.Inverse = Quaternion.Inverse(Quaternion.LookRotation(
-            spine.Transform.position.TriangleNormal(jointPoints[(int) BodyPoints.RightShoulder].Transform.position,jointPoints[(int) BodyPoints.LeftShoulder].Transform.position),
-            jointPoints[(int) BodyPoints.Neck].Transform.position-spine.Transform.position));
-        spine.InverseRotation = spine.Inverse * spine.InitRotation;
+
+        if (spine.Transform != null)
+        {
+            spine.Inverse = Quaternion.Inverse(Quaternion.LookRotation(
+                spine.Transform.position.TriangleNormal(jointPoints[(int) BodyPoints.RightShoulder].Transform.position,
+                    jointPoints[(int) BodyPoints.LeftShoulder].Transform.position),
+                jointPoints[(int) BodyPoints.Neck].Transform.position - spine.Transform.position));
+            spine.InverseRotation = spine.Inverse * spine.InitRotation;
+        }
 
         // For Head Rotation
         var head = jointPoints[(int) BodyPoints.Head];
