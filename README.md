@@ -105,6 +105,28 @@ Follow these steps to add your character:
 
 7. Run the application and you can now select your character for showing animation!
 
+# Features
+<!-- ROADMAP -->
+
+<!-- ## Available features -->
+- [x] Making full body animation
+- [x] Animating multiple blendshapes on 3D character (upto 40 blendshape animations is supported currently)
+- [x] Supporting any Humanoid T-Pose 3D models
+- [x] Exporting animation in a video file
+- [x] Saving animation data and re-rendering it in future usages
+- [x] Filtering mediapipe outputs in order to detect and remove noises and better smoothness 
+
+<!-- ## TODO -->
+
+- [ ] Animating character face in high details
+    - [ ] Training a regression model with deep learning for generating Blendmesh weights by feeding the output data of mediaPipe FaceMesh(468 points)
+    - [ ] Using StyleGan techniques to replace whole character face mesh
+- [ ] Automatic rigging for 3D models without humanoid rig (Using deep neural network models like RigNet)
+- [ ] Generating complete character mesh automatically using models like PIFuHD (in progress!)
+- [ ] Animating 3D character mouth in high details using audio signal or natural language processing methods
+- [ ] Generating complete environment in 3D
+
+
 
 ## Licences & Citations
 ### DigiHuman Licence
