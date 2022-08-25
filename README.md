@@ -169,7 +169,7 @@ Follow these steps to add your character:
 
 ## Licenses & Citations
 ### DigiHuman Licence
-  [License](https://github.com/Danial-Kord/DigiHuman/blob/main/LICENSE.md)  
+   Application License: [GPL-3.0 license](https://github.com/Danial-Kord/DigiHuman/blob/main/LICENSE.md)  
 
 
 ### FFmpeg</br>
