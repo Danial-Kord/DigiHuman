@@ -92,7 +92,7 @@ Install Unity3D and its requirements by the following guide lines(Skip 1-3 Unity
   ```
    python server.py
    ```
-- Run Unity Project and open the main scene at `Assets\Scenes\Main.unity`
+- Run Unity Project and open the main scene at `Assets\Scenes\MainScene.unity`
 - Test the program by uploading videos to backend from Unity project. (You can test the application by selecting provided animations from the right side menu!)
 
 ## Adding new 3D characters
