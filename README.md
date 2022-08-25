@@ -19,6 +19,15 @@ MediaPipe generates 3D landmarks for the human whole body and face, and Unity3D 
 ### Hands animations demo
 
 ### Full body animation
+<div align="center">
+  <a href="https://github.com/Danial-Kord/DigiHuman/blob/images/images/figure_headphone.gif">
+    <img src="https://github.com/Danial-Kord/DigiHuman/blob/images/images/figure_headphone.gif?raw=true" alt="Logo">
+  </a>
+    <a href="https://github.com/Danial-Kord/DigiHuman/blob/images/images/hands_greek.gif">
+    <img src="https://github.com/Danial-Kord/DigiHuman/blob/images/images/hands_greek.gif?raw=true" alt="Logo">
+  </a>
+</div>
+
 
 ### Face animation
 
@@ -26,12 +35,19 @@ MediaPipe generates 3D landmarks for the human whole body and face, and Unity3D 
 ## Installatiom
 Follow the instruction to run the program!
 ### Backend server installtion
-1. Install MediaPipe and its dependencies based on your Operating System: [link](https://google.github.io/mediapipe/getting_started/install.html)
-2. Go to `backend` directory and install GauGan requirements:
+1. Install MediaPipe python.
+  ```py
+   pip install mediapipe
+   ```
+3. Install OpenCV python.
+  ```py
+   pip install opencv-python
+   ```
+5. Go to `backend` directory and install other requirements:
   ```py
    pip install -r requirements.txt
    ```
-3. You'll need to [download](https://drive.google.com/file/d/15VSa2m2F6Ch0NpewDR7mkKAcXlMgDi5F/view?usp=sharing) the pretrained generator model for the COCO dataset and place it into `backend/checkpoints/coco_pretrained/`.
+6. You'll need to [download](https://drive.google.com/file/d/15VSa2m2F6Ch0NpewDR7mkKAcXlMgDi5F/view?usp=sharing) the pretrained generator model for the COCO dataset and place it into `backend/checkpoints/coco_pretrained/`.
 
 ### Unity3D Installation
 Install Unity3D and its requirements by the following guide lines(Skip 1-3 Unity3D is already installed).
