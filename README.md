@@ -187,4 +187,4 @@ Follow these steps to add your character:
 }
 ```
 ### Unity chan 3D model
-[Lincese](https://unity-chan.com/contents/license_en/)
+[License](https://unity-chan.com/contents/license_en/)
