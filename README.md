@@ -177,7 +177,7 @@ Follow these steps to add your character:
 - Unity FFmpeg packages are licensed under [Keijiro Takahashi MIT](https://github.com/keijiro/FFmpegOut/blob/master/LICENSE.md)
 
 ### GauGan
-- Used [SPADE](https://github.com/NVlabs/SPADE) repository developed by NVIDIA and the customization is addapted from [Smart-Sketch](https://github.com/noyoshi/smart-sketch) with [GNU V 3.0](https://github.com/noyoshi/smart-sketch/blob/master/LICENSE) licence
+- Used [SPADE](https://github.com/NVlabs/SPADE) repository developed by NVIDIA and the customization is addapted from [Smart-Sketch](https://github.com/noyoshi/smart-sketch) with [GPL V 3.0](https://github.com/noyoshi/smart-sketch/blob/master/LICENSE) licence
 ```
 @inproceedings{park2019SPADE,
   title={Semantic Image Synthesis with Spatially-Adaptive Normalization},
