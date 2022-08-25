@@ -185,5 +185,5 @@ Follow these steps to add your character:
   year={2019}
 }
 ```
-### Unity chan 3D model
-[License](https://unity-chan.com/contents/license_en/)
+### 3D Characters
+[Unity-chan model](https://unity-chan.com/contents/license_en/) & [mixamo models](https://www.mixamo.com)
