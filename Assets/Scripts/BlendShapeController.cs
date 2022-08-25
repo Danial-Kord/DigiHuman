@@ -18,6 +18,9 @@ public class BlendShapeController : MonoBehaviour
     [Header("Enable | Disable options")]
     [SerializeField] private bool enableEyeWide;
     [SerializeField] private bool enableDimple;
+    [SerializeField] private bool enableCheekSquint;
+    [SerializeField] private bool enableNose;
+
     
     [Header("Methods")][Tooltip("How to deal with each blend weights")]
     [SerializeField] private int eyeWideMethod;
@@ -229,11 +232,15 @@ public class BlendShapeController : MonoBehaviour
     {
         // Apply deformation weights
         
-        //Apply Eye values
+        // Apply Eye values
         UpdateEyes();
 
-        //Apply mouth smile and frown values
+        // Apply mouth smile and frown values
         UpdateMouthSmileFrownWeights();
+        
+        // Lips
+        LipsDirection();
+        
         
         UpdateBlendShapeWeight(MouthLeft.num,MouthLeft.weight);
         UpdateBlendShapeWeight(MouthRight.num,MouthRight.weight);
@@ -272,15 +279,22 @@ public class BlendShapeController : MonoBehaviour
         UpdateBlendShapeWeight(BrowOuterUpLeft.num,BrowOuterUpLeft.weight);
         UpdateBlendShapeWeight(BrowDownRight.num,BrowDownRight.weight);
         UpdateBlendShapeWeight(BrowOuterUpRight.num,BrowOuterUpRight.weight);
-        
-        UpdateBlendShapeWeight(CheekSquintRight.num,CheekSquintRight.weight);
-        UpdateBlendShapeWeight(CheekSquintLeft.num,CheekSquintLeft.weight);
+
+        if (enableCheekSquint)
+        {
+            UpdateBlendShapeWeight(CheekSquintRight.num, CheekSquintRight.weight);
+            UpdateBlendShapeWeight(CheekSquintLeft.num, CheekSquintLeft.weight);
+        }
 
         UpdateBlendShapeWeight(MouthRollLower.num,MouthRollLower.weight);
         UpdateBlendShapeWeight(MouthRollUpper.num,MouthRollUpper.weight);
-        UpdateBlendShapeWeight(NoseSneerLeft.num,NoseSneerLeft.weight);
-        UpdateBlendShapeWeight(NoseSneerRight.num,NoseSneerRight.weight);
-        
+
+        if (enableNose)
+        {
+            UpdateBlendShapeWeight(NoseSneerLeft.num, NoseSneerLeft.weight);
+            UpdateBlendShapeWeight(NoseSneerRight.num, NoseSneerRight.weight);
+        }
+
     }
 
     private void UpdateEyes()
@@ -315,6 +329,16 @@ public class BlendShapeController : MonoBehaviour
             UpdateBlendShapeWeight(EyeWideRight.num, EyeWideRight.weight);
         }
     }
+
+    private void LipsDirection()
+    {
+        UpdateBlendShapeWeight(LipLowerDownLeft.num, LipLowerDownLeft.weight);
+        UpdateBlendShapeWeight(LipLowerDownRight.num, LipLowerDownRight.weight);
+        UpdateBlendShapeWeight(LipUpperUpLeft.num, LipUpperUpLeft.weight);
+        UpdateBlendShapeWeight(LipUpperUpRight.num, LipUpperUpRight.weight);
+
+    }
+    
     
     private void UpdateMouthSmileFrownWeights()
     {
