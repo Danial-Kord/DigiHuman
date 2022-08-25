@@ -172,6 +172,17 @@ def Pose_Video(video_path,debug = False):
     cap = cv2.VideoCapture(video_path)
     frame = 0
     out_put = []
+
+    if debug:
+        frame_width = int(cap.get(3))
+        frame_height = int(cap.get(4))
+
+        size = (frame_width, frame_height)
+
+        result = cv2.VideoWriter('debug.avi',
+                                 cv2.VideoWriter_fourcc(*'MJPG'),
+                                 10, size)
+
     with mp_pose.Pose(
         min_detection_confidence=0.5,
         min_tracking_confidence=0.8) as pose:
@@ -229,11 +240,13 @@ def Pose_Video(video_path,debug = False):
                 landmark_drawing_spec=mp_drawing_styles.get_default_pose_landmarks_style())
             # Flip the image horizontally for a selfie-view display.
             cv2.imshow('MediaPipe Pose', cv2.flip(image, 1))
-
+            result.write(image)
             if cv2.waitKey(5) & 0xFF == 27:
               break
+
     cap.release()
-    # return json.dumps(out_put)
+
+
 
 
 
@@ -526,13 +539,13 @@ def Hand_pose_video(video_path, debug=False):
     cap.release()
 
 
-# if __name__ == '__main__':
+if __name__ == '__main__':
     # for i in Complete_pose_Video(video_path="D:\\pose\\New\\2022-07-14\\C2828.MP4",debug=True):
     #     continue
     # for i in Hands_Full(video_path="C:\Danial\Projects\Danial\DigiHuman\Backend\Video\WIN_20220414_23_51_39_Pro.mp4"):
     #     continue
 
-    # for i in Pose_Video(video_path="D:\\pose\\New\\2022-07-14\\C2828.MP4", debug=True):
-    #     continue
+    for i in Pose_Video(video_path="D:\\pose\\New\\2022-07-14\\C2831.MP4", debug=True):
+        continue
 #
 #     print("finished")
