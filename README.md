@@ -167,12 +167,14 @@ Follow these steps to add your character:
 
 
 
-## Licences & Citations
+## Licenses & Citations
 ### DigiHuman Licence
-  
+  [License](https://github.com/Danial-Kord/DigiHuman/blob/main/LICENSE.md)  
+
+
 ### FFmpeg</br>
 - FFmpeg is licensed under the [GNU Lesser General Public License (LGPL) version 2.1](http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html) or later. However, FFmpeg incorporates several optional parts and optimizations that are covered by the [GNU General Public License (GPL) version 2](http://www.gnu.org/licenses/old-licenses/gpl-2.0.html) or later. If those parts get used the GPL applies to all of FFmpeg. 
-- Unity FFmpeg packages are licenced under [Keijiro Takahashi MIT](https://github.com/keijiro/FFmpegOut/blob/master/LICENSE.md)
+- Unity FFmpeg packages are licensed under [Keijiro Takahashi MIT](https://github.com/keijiro/FFmpegOut/blob/master/LICENSE.md)
 
 ### GauGan
 - Used [SPADE](https://github.com/NVlabs/SPADE) repository developed by NVIDIA and the customization is addapted from [Smart-Sketch](https://github.com/noyoshi/smart-sketch) with [GNU V 3.0](https://github.com/noyoshi/smart-sketch/blob/master/LICENSE) licence
