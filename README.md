@@ -77,8 +77,7 @@ Install Unity3D and its requirements by the following guide lines(Skip 1-3 Unity
 1. Download and install  [UnityHub](https://unity.com/download)
 2. Add a new licence in UnityHub and register it on Unity website
 3. Install a Unity Editor inside UnityHub(Better to be `LTS` and a version higher than `2020.3.25f1`.
-4. Download [default 3D character](link.com) and place it under `Assets\Models` directory(build this directory first, if it does not exist).
-5. Download and import the following packages into your project for making recording option available with FFmpeg(Download `.unitypackage` files and drag them to your project).
+4. Download and import the following packages into your project for making recording option available with FFmpeg(Download `.unitypackage` files and drag them to your project).
 
 - [FFmpegOut package] (MIT license)
 - [FFmpegOutBinaries package] (GPL)
