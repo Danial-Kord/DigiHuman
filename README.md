@@ -64,7 +64,7 @@ MediaPipe generates 3D landmarks for the human whole body and face, and Unity3D 
 
 <!-- GETTING STARTED -->
 ## Installatiom
-Follow the instruction to run the program!
+Follow the instructions to run the program!
 ### Backend server installtion
 1. Install MediaPipe python.
   ```py
@@ -173,6 +173,15 @@ Follow these steps to add your character:
 - [ ] Generating complete environment in 3D
 
 
+## Resources
+- Body Pose Estimation: BlazePose model
+  - Paper: [BlazePose: On-device Real-time Body Pose Tracking](https://arxiv.org/abs/2006.10204)
+- Hands Pose Estimation: MediaPipe Hands model
+  - Paper: [MediaPipe Hands: On-device Real-time Hand Tracking](https://arxiv.org/abs/2006.10214)
+- Face Detection: BlazeFace model
+  - Paper: [BlazeFace: Sub-millisecond Neural Face Detection on Mobile GPUs](https://arxiv.org/abs/1907.05047)
+- Face Landmark Generator: MediaPipe Face Landmark Model 
+  - Paper: [Real-time Facial Surface Geometry from Monocular Video on Mobile GPUs](https://arxiv.org/abs/1907.06724)
 
 ## Licenses & Citations
 ### DigiHuman Licence
