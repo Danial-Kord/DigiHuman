@@ -539,13 +539,13 @@ def Hand_pose_video(video_path, debug=False):
     cap.release()
 
 
-if __name__ == '__main__':
+# if __name__ == '__main__':
     # for i in Complete_pose_Video(video_path="D:\\pose\\New\\2022-07-14\\C2828.MP4",debug=True):
     #     continue
     # for i in Hands_Full(video_path="C:\Danial\Projects\Danial\DigiHuman\Backend\Video\WIN_20220414_23_51_39_Pro.mp4"):
     #     continue
 
-    for i in Pose_Video(video_path="D:\\pose\\New\\2022-07-14\\C2831.MP4", debug=True):
-        continue
+    # for i in Pose_Video(video_path="D:\\pose\\New\\2022-07-14\\C2831.MP4", debug=True):
+    #     continue
 #
 #     print("finished")

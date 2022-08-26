@@ -43,6 +43,7 @@ def Show_Frame_Landmarks(image,results):
                     .get_default_face_mesh_iris_connections_style())
     # Flip the image horizontally for a selfie-view display.
     cv2.imshow('MediaPipe Face Mesh', cv2.flip(image, 1))
+    return image
 
 def Calculate_Face_Mocap(path=None,debug=False):
     # For webcam input:
@@ -54,6 +55,15 @@ def Calculate_Face_Mocap(path=None,debug=False):
         cap = cv2.VideoCapture(path)
         image_height, image_width, channels = (cap.get(cv2.CAP_PROP_FRAME_HEIGHT),cap.get(cv2.CAP_PROP_FRAME_WIDTH), 3)
 
+    if debug:
+        frame_width = int(cap.get(3))
+        frame_height = int(cap.get(4))
+
+        size = (frame_width, frame_height)
+
+        result = cv2.VideoWriter('debug.avi',
+                                 cv2.VideoWriter_fourcc(*'MJPG'),
+                                 10, size)
 
     blendshape_calulator = BlendshapeCalculator()
     face_data = FaceData(filter_size=4)
@@ -114,46 +124,6 @@ def Calculate_Face_Mocap(path=None,debug=False):
                     blendshape_calulator.calculate_blendshapes(face_data,metric_landmarks[0:3].T,face_landmarks.landmark)
                     # blends = live_link_face.get_all_blendshapes()
 
-                    json_data = {
-                        #Eye
-                        'EyeBlinkLeft': face_data.get_blendshape(FaceBlendShape.EyeBlinkLeft),
-                        'EyeBlinkRight': face_data.get_blendshape(FaceBlendShape.EyeBlinkRight),
-
-                        #mouth
-                        'MouthSmileRight': face_data.get_blendshape(FaceBlendShape.MouthSmileRight),
-                        'MouthSmileLeft': face_data.get_blendshape(FaceBlendShape.MouthSmileLeft),
-
-                        'MouthFrownRight': face_data.get_blendshape(FaceBlendShape.MouthFrownRight),
-                        'MouthFrownLeft': face_data.get_blendshape(FaceBlendShape.MouthFrownLeft),
-
-                        'MouthLeft': face_data.get_blendshape(FaceBlendShape.MouthLeft),
-                        'MouthRight': face_data.get_blendshape(FaceBlendShape.MouthRight),
-                        'MouthLowerDownRight': face_data.get_blendshape(FaceBlendShape.MouthLowerDownRight),
-                        'MouthLowerDownLeft': face_data.get_blendshape(FaceBlendShape.MouthLowerDownLeft),
-
-                        'MouthPressLeft': face_data.get_blendshape(FaceBlendShape.MouthPressLeft),
-                        'MouthPressRight': face_data.get_blendshape(FaceBlendShape.MouthPressRight),
-
-                        'MouthOpen': face_data.get_blendshape(FaceBlendShape.MouthOpen),
-                        'MouthPucker': face_data.get_blendshape(FaceBlendShape.MouthPucker),
-                        'MouthShrugUpper': face_data.get_blendshape(FaceBlendShape.MouthShrugUpper),
-
-
-                        #Jaw
-                        'JawOpen': face_data.get_blendshape(FaceBlendShape.JawOpen),
-                        'JawLeft': face_data.get_blendshape(FaceBlendShape.JawLeft),
-                        'JawRight': face_data.get_blendshape(FaceBlendShape.JawRight),
-
-                        #Brow
-                        'BrowDownLeft': face_data.get_blendshape(FaceBlendShape.BrowDownLeft),
-                        'BrowOuterUpLeft': face_data.get_blendshape(FaceBlendShape.BrowOuterUpLeft),
-                        'BrowDownRight': face_data.get_blendshape(FaceBlendShape.BrowDownRight),
-                        'BrowOuterUpRight': face_data.get_blendshape(FaceBlendShape.BrowOuterUpRight),
-
-                        #Cheek
-                        'CheekSquintRight': face_data.get_blendshape(FaceBlendShape.CheekSquintRight),
-                        'CheekSquintLeft': face_data.get_blendshape(FaceBlendShape.CheekSquintLeft),
-                    }
                     blends = []
                     blends.append(face_data.get_blendshape(FaceBlendShape.EyeBlinkLeft))
                     blends.append(face_data.get_blendshape(FaceBlendShape.EyeBlinkRight))
@@ -225,8 +195,8 @@ def Calculate_Face_Mocap(path=None,debug=False):
                     yield json_data
 
             if debug:
-                Show_Frame_Landmarks(image,results)
-
+                image = Show_Frame_Landmarks(image,results)
+                result.write(image)
             if cv2.waitKey(5) & 0xFF == 27:
                 break
     cap.release()
@@ -249,6 +219,16 @@ def face_holistic(video_path,debug=False):
         cap = cv2.VideoCapture(0)
     else:
         cap = cv2.VideoCapture(video_path)
+
+    if debug:
+        frame_width = int(cap.get(3))
+        frame_height = int(cap.get(4))
+
+        size = (frame_width, frame_height)
+
+        result = cv2.VideoWriter('debug.mp4',
+                                 cv2.VideoWriter_fourcc(*'MJPG'),
+                                 10, size)
 
     blendshape_calulator = BlendshapeCalculator()
     face_data = FaceData(filter_size=4)
@@ -301,45 +281,6 @@ def face_holistic(video_path,debug=False):
             blendshape_calulator.calculate_blendshapes(face_data, metric_landmarks[0:3].T, face_landmarks.landmark)
             # blends = live_link_face.get_all_blendshapes()
 
-            json_data = {
-                # Eye
-                'EyeBlinkLeft': face_data.get_blendshape(FaceBlendShape.EyeBlinkLeft),
-                'EyeBlinkRight': face_data.get_blendshape(FaceBlendShape.EyeBlinkRight),
-
-                # mouth
-                'MouthSmileRight': face_data.get_blendshape(FaceBlendShape.MouthSmileRight),
-                'MouthSmileLeft': face_data.get_blendshape(FaceBlendShape.MouthSmileLeft),
-
-                'MouthFrownRight': face_data.get_blendshape(FaceBlendShape.MouthFrownRight),
-                'MouthFrownLeft': face_data.get_blendshape(FaceBlendShape.MouthFrownLeft),
-
-                'MouthLeft': face_data.get_blendshape(FaceBlendShape.MouthLeft),
-                'MouthRight': face_data.get_blendshape(FaceBlendShape.MouthRight),
-                'MouthLowerDownRight': face_data.get_blendshape(FaceBlendShape.MouthLowerDownRight),
-                'MouthLowerDownLeft': face_data.get_blendshape(FaceBlendShape.MouthLowerDownLeft),
-
-                'MouthPressLeft': face_data.get_blendshape(FaceBlendShape.MouthPressLeft),
-                'MouthPressRight': face_data.get_blendshape(FaceBlendShape.MouthPressRight),
-
-                'MouthOpen': face_data.get_blendshape(FaceBlendShape.MouthOpen),
-                'MouthPucker': face_data.get_blendshape(FaceBlendShape.MouthPucker),
-                'MouthShrugUpper': face_data.get_blendshape(FaceBlendShape.MouthShrugUpper),
-
-                # Jaw
-                'JawOpen': face_data.get_blendshape(FaceBlendShape.JawOpen),
-                'JawLeft': face_data.get_blendshape(FaceBlendShape.JawLeft),
-                'JawRight': face_data.get_blendshape(FaceBlendShape.JawRight),
-
-                # Brow
-                'BrowDownLeft': face_data.get_blendshape(FaceBlendShape.BrowDownLeft),
-                'BrowOuterUpLeft': face_data.get_blendshape(FaceBlendShape.BrowOuterUpLeft),
-                'BrowDownRight': face_data.get_blendshape(FaceBlendShape.BrowDownRight),
-                'BrowOuterUpRight': face_data.get_blendshape(FaceBlendShape.BrowOuterUpRight),
-
-                # Cheek
-                'CheekSquintRight': face_data.get_blendshape(FaceBlendShape.CheekSquintRight),
-                'CheekSquintLeft': face_data.get_blendshape(FaceBlendShape.CheekSquintLeft),
-            }
             blends = []
             blends.append(face_data.get_blendshape(FaceBlendShape.EyeBlinkLeft))
             blends.append(face_data.get_blendshape(FaceBlendShape.EyeBlinkRight))
@@ -403,6 +344,7 @@ def face_holistic(video_path,debug=False):
 
             # Flip the image horizontally for a selfie-view display.
             cv2.imshow('MediaPipe Holistic', cv2.flip(image, 1))
+            result.write(image)
             if cv2.waitKey(5) & 0xFF == 27:
               break
     cap.release()
@@ -410,6 +352,6 @@ def face_holistic(video_path,debug=False):
 
 if __name__ == '__main__':
     print("dd")
-    path = "D:\\pose\\New\\2022-07-14\\C2824.MP4"
-    for i in Calculate_Face_Mocap(None,True):
+    path = "D:\\pose\\New\\final\\1.mp4"
+    for i in Calculate_Face_Mocap(path,True):
         continue
