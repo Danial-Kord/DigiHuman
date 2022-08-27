@@ -491,6 +491,11 @@ def exit_handler():
 
 
 if __name__ == '__main__':
+    isExist = os.path.exists(TEMP_FILE_FOLDER)
+
+    if not isExist:
+        # Create a new directory because it does not exist
+        os.makedirs(TEMP_FILE_FOLDER)
     atexit.register(exit_handler)
     run_server()
     # app.run(debug=True)
