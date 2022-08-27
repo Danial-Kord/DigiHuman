@@ -63,7 +63,7 @@ MediaPipe generates 3D landmarks for the human whole body and face, and Unity3D 
 </div>
 
 <!-- GETTING STARTED -->
-## Installatiom
+## Installation
 Follow the instructions to run the program!
 ### Backend server installtion
 1. Install MediaPipe python.
@@ -81,11 +81,11 @@ Follow the instructions to run the program!
 6. You'll need to [download](https://drive.google.com/file/d/15VSa2m2F6Ch0NpewDR7mkKAcXlMgDi5F/view?usp=sharing) the pretrained generator model for the COCO dataset and place it into `backend/checkpoints/coco_pretrained/`.
 
 ### Unity3D Installation
-Install Unity3D and its requirements by the following guide lines(Skip 1-3 Unity3D is already installed).
+Install Unity3D and its requirements by the following guide lines(Skip 1-3 if Unity3D is already installed).
 1. Download and install  [UnityHub](https://unity.com/download)
-2. Add a new licence in UnityHub and register it on Unity website
-3. Install a Unity Editor inside UnityHub(Better to be `LTS` and a version higher than `2020.3.25f1`.
-4. Download and import the following packages into your project for making recording option available with FFmpeg(Download `.unitypackage` files and drag them to your project).
+2. Add a new licence in UnityHub and register it
+3. Install a Unity Editor inside UnityHub(`LTS` versions and a version higher than `2020.3.25f1` are recommended).
+4. Download and import the following packages into your project to enable recording option available with FFmpeg(Download `.unitypackage` files and drag them to your project).
 
 - [FFmpegOut package] (MIT license)
 - [FFmpegOutBinaries package] (GPL)
@@ -100,13 +100,13 @@ Install Unity3D and its requirements by the following guide lines(Skip 1-3 Unity
    python server.py
    ```
 - Run Unity Project and open the main scene at `Assets\Scenes\MainScene.unity`
-- Test the program by uploading videos to backend from Unity project. (You can test the application by selecting provided animations from the right side menu!)
+- Test the program by uploading videos to backend from Unity project(You can test the application by selecting provided animations from the right side menu!).
 
 ## Adding new 3D characters
 You can add your own characters to the project!
-Characters should have standard Humanoid rig to show kinematic animations. For rendering face animations, characters should have blendmesh in their face.</br>
+Characters should have standard Humanoid rig to show kinematic animations. For rendering face animations, characters should have facial rig(Blendmesh).</br>
 Follow these steps to add your character:
-1. Find a 3D character model from [Unity asset store](http://assetstore.unity.com/) or download a free one. (You can download them from websites like [Mixamo](http://mixamo.com/))
+1. Find a 3D character model from [Unity asset store](http://assetstore.unity.com/) or download a free one(You can download them from websites like [Mixamo](http://mixamo.com/)).
 2. Open the character setting and set the rig to humanoid
 
 <div align="left">
@@ -125,7 +125,7 @@ Follow these steps to add your character:
 
 4. Add `BlendShapeController` and `QualityData` components to character object in scene(which is dragged inside Parent object in last step).
 5. Set `BlendShapeController` values
-- Set character `SkinnedMeshRenderer` component to `BlendShapeController` component.
+- Add character `SkinnedMeshRenderer` component to `BlendShapeController` component.
 
 <div align="left">
   <a href="https://github.com/Danial-Kord/DigiHuman/blob/images/images/5.png">
@@ -141,7 +141,7 @@ Follow these steps to add your character:
   </a>
 </div>
 
-6. Open `CharacterSlideshow` Object at `CharacterChooser/CharacterSlideshow` path inside scene hierachy, then add new dragged character to the `nodes` property(all characters should be refrenced inside `nodes`).
+6. Open `CharacterSlideshow` Object on `CharacterChooser/CharacterSlideshow` path inside scene hierachy, then add new dragged character to the `nodes` property(all characters should be refrenced inside `nodes`).
 
 <div align="left">
   <a href="https://github.com/Danial-Kord/DigiHuman/blob/images/images/8.jpg">
@@ -149,7 +149,7 @@ Follow these steps to add your character:
   </a>
 </div>
 
-7. Run the application and you can now select your character for showing animation!
+7. Run the application and you can now select your character for rendering animation!
 
 # Features
 <!-- ROADMAP -->
@@ -157,7 +157,7 @@ Follow these steps to add your character:
 <!-- ## Available features -->
 - [x] Making full body animation
 - [x] Animating multiple blendshapes on 3D character (upto 40 blendshape animations is supported currently)
-- [x] Supporting any 3D models with Humanoid T-Pose
+- [x] Supporting any 3D models with Humanoid T-Pose rig
 - [x] Exporting animation in a video file
 - [x] Saving animation data and re-rendering it in future usages
 - [x] Filtering mediapipe outputs in order to detect and remove noises and better smoothness (Low Pass Filtering is used currently) 
@@ -165,7 +165,7 @@ Follow these steps to add your character:
 <!-- ## TODO -->
 
 - [ ] Animating character face in high details
-    - [ ] Training a regression model with deep learning for generating Blendmesh weights by feeding the output data of mediaPipe FaceMesh(468 points)
+    - [ ] Training a regression model to generate Blendmesh weights by feeding the output data of mediaPipe FaceMesh(468 points)
     - [ ] Using StyleGan techniques to replace whole character face mesh
 - [ ] Automatic rigging for 3D models without humanoid rig (Using deep neural network models like RigNet)
 - [ ] Generating complete character mesh automatically using models like PIFuHD (in progress!)
