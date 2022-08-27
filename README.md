@@ -85,7 +85,16 @@ Install Unity3D and its requirements by the following guide lines(Skip 1-3 if Un
 1. Download and install  [UnityHub](https://unity.com/download)
 2. Add a new licence in UnityHub and register it
 3. Install a Unity Editor inside UnityHub(`LTS` versions and a version higher than `2020.3.25f1` are recommended).
-4. Download and import the following packages into your project to enable recording option available with FFmpeg(Download `.unitypackage` files and drag them to your project).
+4. In the Unity project setting, allow HTTP connections in player setting.
+ 
+ <div align="center">
+  <a href="https://github.com/Danial-Kord/DigiHuman/blob/images/images/http.png">
+    <img src="https://github.com/Danial-Kord/DigiHuman/blob/images/images/http.png?raw=true" alt="Logo">
+  </a>
+  
+</div>
+ 
+5. Download and import the following packages into your project to enable recording option available with FFmpeg(Download `.unitypackage` files and drag them to your project).
 
 - [FFmpegOut package] (MIT license)
 - [FFmpegOutBinaries package] (GPL)
@@ -93,6 +102,7 @@ Install Unity3D and its requirements by the following guide lines(Skip 1-3 if Un
 [FFmpegOut package]: https://github.com/keijiro/FFmpegOut/releases
 [FFmpegOutBinaries package]:
     https://github.com/keijiro/FFmpegOutBinaries/releases
+
 
 # Usage
 - Run backend server at `backend` directory with the following command:
