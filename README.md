@@ -24,7 +24,7 @@ MediaPipe generates 3D landmarks for the human whole body and face, and Unity3D 
   </a>
   
   <a href="https://thumbs.gfycat.com/VibrantDearestKomododragon-size_restricted.gif">
-    <img src="https://thumbs.gfycat.com/VibrantDearestKomododragon-size_restricted.gif" alt="Logo">
+    <img src="https://github.com/Danial-Kord/DigiHuman/blob/images/images/2828_1t05.gif" alt="Logo">
   </a>
   
 </div>
@@ -33,10 +33,10 @@ MediaPipe generates 3D landmarks for the human whole body and face, and Unity3D 
 ### Full body animation
 <div align="center">
   <a href="https://github.com/Danial-Kord/DigiHuman/blob/images/images/figure_headphone.gif">
-    <img src="https://gfycat.com/evilanxiousacornwoodpecker-size_restricted.gif" alt="Logo">
+    <img src="https://github.com/Danial-Kord/DigiHuman/blob/images/images/figure_headphone.gif" alt="Logo">
   </a>
     <a href="https://gfycat.com/braveglumguanaco">
-    <img src="https://gfycat.com/braveglumguanaco-size_restricted.gif" alt="Logo">
+    <img src="https://github.com/Danial-Kord/DigiHuman/blob/images/images/hands_greek.gif" alt="Logo">
   </a>
 </div>
 
