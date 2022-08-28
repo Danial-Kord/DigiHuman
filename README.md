@@ -35,8 +35,8 @@ MediaPipe generates 3D landmarks for the human whole body and face, and Unity3D 
   <a href="https://github.com/Danial-Kord/DigiHuman/blob/images/images/figure_headphone.gif">
     <img src="https://github.com/Danial-Kord/DigiHuman/blob/images/images/figure_headphone.gif?raw=true" alt="Logo">
   </a>
-    <a href="https://github.com/Danial-Kord/DigiHuman/blob/images/images/hands_greek.gif">
-    <img src="https://github.com/Danial-Kord/DigiHuman/blob/images/images/hands_greek.gif?raw=true" alt="Logo">
+    <a href="https://gfycat.com/vibrantdearestkomododragon">
+    <img src="https://gfycat.com/vibrantdearestkomododragon?raw=true" alt="Logo">
   </a>
 </div>
 
