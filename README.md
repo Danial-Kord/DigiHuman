@@ -20,11 +20,11 @@ MediaPipe generates 3D landmarks for the human whole body and face, and Unity3D 
 
 <div align="center">
   <a href="https://github.com/Danial-Kord/DigiHuman/blob/images/images/2828_ok.gif">
-    <img src="https://github.com/Danial-Kord/DigiHuman/blob/images/images/2828_ok.gif?raw=true" alt="Logo">
+    <img src="https://gfycat.com/gratefulvapidhorseshoecrab-size_restricted.gif" alt="Logo">
   </a>
   
   <a href="https://thumbs.gfycat.com/VibrantDearestKomododragon-size_restricted.gif">
-    <img src="https://thumbs.gfycat.com/VibrantDearestKomododragon-size_restricted.gife" alt="Logo">
+    <img src="https://thumbs.gfycat.com/VibrantDearestKomododragon-size_restricted.gif" alt="Logo">
   </a>
   
 </div>
@@ -33,10 +33,10 @@ MediaPipe generates 3D landmarks for the human whole body and face, and Unity3D 
 ### Full body animation
 <div align="center">
   <a href="https://github.com/Danial-Kord/DigiHuman/blob/images/images/figure_headphone.gif">
-    <img src="https://github.com/Danial-Kord/DigiHuman/blob/images/images/figure_headphone.gif?raw=true" alt="Logo">
+    <img src="https://gfycat.com/evilanxiousacornwoodpecker-size_restricted.gif" alt="Logo">
   </a>
-    <a href="https://gfycat.com/vibrantdearestkomododragon">
-    <img src="https://gfycat.com/vibrantdearestkomododragon?raw=true" alt="Logo">
+    <a href="https://gfycat.com/braveglumguanaco">
+    <img src="https://gfycat.com/braveglumguanaco-size_restricted.gif" alt="Logo">
   </a>
 </div>
 
