@@ -2,13 +2,13 @@
 
 Digihuman is a project which aims to automatically generate <b>whole body pose animation + facial animation</b> on 3D Character models based on the camera input.
 <br/>
-This project is my B.Sc thesis of Computer Engineering at Amikabir University of Technology(AUT).
+This project is my B.Sc thesis of Computer Engineering at Amirkabir University of Technology(AUT).
 
 
 
 ## About DigiHuman
 DigiHuman is a system for bringing automation in animation generation on 3D virtual characters.
-It uses Pose estimation and facial landmarks generator models to create entire body and face animation on 3D characters.
+It uses Pose estimation and facial landmark generator models to create entire body and face animation on 3D characters.
 <br/>
 This project is done with [**MediaPipe**](https://github.com/google/mediapipe) and **Unity3D**.
 MediaPipe generates 3D landmarks for the human whole body and face, and Unity3D is used to render the final animation after processing the generated landmarks from MediaPipe.
