@@ -2,7 +2,7 @@
 
 Digihuman is a project which aims to automatically generate <b>whole body pose animation + facial animation</b> on 3D Character models based on the camera input.
 <br/>
-This project is my B.Sc thesis of Computer Engineering at Amikabir University of Technology(AUT).
+This project is my B.Sc thesis of Computer Engineering at Amirkabir University of Technology(AUT).
 
 
 
