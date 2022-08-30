@@ -225,3 +225,13 @@ Follow these steps to add your character:
 ```
 ### 3D Characters
 [Unity-chan model](https://unity-chan.com/contents/license_en/) & [mixamo models](https://www.mixamo.com)
+
+
+
+<!-- CONTACT -->
+# Contact
+Danial Kordmodanlou - [kordmodanloo@gmail.com](mailto:kordmodanloo@gmail.com)
+
+Website : [danial-kord.me/](https://danial-kord.me/) 
+
+Project Link: [github.com/Danial-Kord/DigiHuman](https://github.com/Danial-Kord/DigiHuman)
