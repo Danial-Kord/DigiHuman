@@ -235,3 +235,5 @@ Danial Kordmodanlou - [kordmodanloo@gmail.com](mailto:kordmodanloo@gmail.com)
 Website : [danial-kord.me/](https://danial-kord.me/) 
 
 Project Link: [github.com/Danial-Kord/DigiHuman](https://github.com/Danial-Kord/DigiHuman)
+
+Telegram ID: [@Danial_km](https://t.me/Danial_km)
