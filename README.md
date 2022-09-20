@@ -11,7 +11,10 @@ DigiHuman is a system for bringing automation in animation generation on 3D virt
 It uses Pose estimation and facial landmark generator models to create entire body and face animation on 3D virtual characters.
 <br/>
 DigiHuman is developed with [**MediaPipe**](https://github.com/google/mediapipe) and **Unity3D**.
-MediaPipe generates 3D landmarks for the human whole body and face, and Unity3D is used to render the final animation after processing the generated landmarks from MediaPipe.
+MediaPipe generates 3D landmarks for the human whole body and face, and Unity3D is used to render the final animation after processing the generated landmarks from MediaPipe. The diagram below, shows the whole architucture of the application.
+<div align="center">
+    <img src="https://github.com/Danial-Kord/DigiHuman/blob/images/images/dataFlow.png?raw=true" alt="Logo">
+</div>
 
 
 
