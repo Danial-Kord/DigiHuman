@@ -145,10 +145,8 @@ def Pose_Images():
         mp_drawing.plot_landmarks(
             results.pose_world_landmarks, mp_pose.POSE_CONNECTIONS)
 
-        new_pose = world_landmarks_list_to_array(
-                results.pose_world_landmarks)
-        pose_landmarks = landmarks_list_to_array(results.pose_landmarks,
-                                                       image.shape)
+        new_pose = world_landmarks_list_to_array(results.pose_world_landmarks, image.shape)
+        pose_landmarks = landmarks_list_to_array(results.pose_landmarks)
         print(results.pose_landmarks)
         print(pose_landmarks)
 
