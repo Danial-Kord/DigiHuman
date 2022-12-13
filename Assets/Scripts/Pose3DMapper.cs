@@ -271,9 +271,17 @@ public class Pose3DMapper : CharacterMapper
         // rHand.InverseRotation = rHand.Inverse * rHand.InitRotation;
         
         // distanceOffset = character.transform.position
+
+        for (int i = 0; i < jointPoints.Length; i++)
+        {
+            if(jointPoints[i].Transform != null)
+                jointPoints[i].LandmarkPose = jointPoints[i].Transform.position;
+        }
+        
         Debug.Log("wtf");
         character.transform.rotation = characterPlacement.rotation;
         hips.position = characterPlacement.position;
+
     }
     
     
@@ -284,7 +292,8 @@ public class Pose3DMapper : CharacterMapper
 
         for (int i = 0; i < bodyPartVectors.Length; i++)
         {
-            jointPoints[i].LandmarkPose = bodyPartVectors[i].position;
+            if(bodyPartVectors[i].visibility > 0.2f)
+                jointPoints[i].LandmarkPose = bodyPartVectors[i].position;
         }
         
         //setting position of each bone
