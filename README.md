@@ -2,28 +2,31 @@
 
 Digihuman is a project which aims to automatically generate <b>whole body pose animation + facial animation</b> on 3D Character models based on the camera input.
 <br/>
-This project is my B.Sc thesis of Computer Engineering at Amikabir University of Technology(AUT).
+This project is my B.Sc thesis of Computer Engineering at Amirkabir University of Technology(AUT).
 
 
 
 ## About DigiHuman
 DigiHuman is a system for bringing automation in animation generation on 3D virtual characters.
-It uses Pose estimation and facial landmarks generator models to create entire body and face animation on 3D characters.
+It uses Pose estimation and facial landmark generator models to create entire body and face animation on 3D virtual characters.
 <br/>
-This project is done with [**MediaPipe**](https://github.com/google/mediapipe) and **Unity3D**.
-MediaPipe generates 3D landmarks for the human whole body and face, and Unity3D is used to render the final animation after processing the generated landmarks from MediaPipe.
+DigiHuman is developed with [**MediaPipe**](https://github.com/google/mediapipe) and **Unity3D**.
+MediaPipe generates 3D landmarks for the human whole body and face, and Unity3D is used to render the final animation after processing the generated landmarks from MediaPipe. The diagram below, shows the whole architucture of the application.
+<div align="center">
+    <img src="https://github.com/Danial-Kord/DigiHuman/blob/images/images/dataFlow.png?raw=true" alt="Logo">
+</div>
 
 
 
 ## Sample Outputs of the project
-### Hands animations demo
+### Hands animations
 
 <div align="center">
   <a href="https://github.com/Danial-Kord/DigiHuman/blob/images/images/2828_ok.gif">
     <img src="https://github.com/Danial-Kord/DigiHuman/blob/images/images/2828_ok.gif?raw=true" alt="Logo">
   </a>
   
-  <a href="https://github.com/Danial-Kord/DigiHuman/blob/images/images/2828_1t05.gif">
+  <a href="https://thumbs.gfycat.com/VibrantDearestKomododragon-size_restricted.gif">
     <img src="https://github.com/Danial-Kord/DigiHuman/blob/images/images/2828_1t05.gif?raw=true" alt="Logo">
   </a>
   
@@ -33,10 +36,10 @@ MediaPipe generates 3D landmarks for the human whole body and face, and Unity3D 
 ### Full body animation
 <div align="center">
   <a href="https://github.com/Danial-Kord/DigiHuman/blob/images/images/figure_headphone.gif">
-    <img src="https://github.com/Danial-Kord/DigiHuman/blob/images/images/figure_headphone.gif?raw=true" alt="Logo">
+    <img src="https://github.com/Danial-Kord/DigiHuman/blob/images/images/figure_headphone.gif" alt="Logo">
   </a>
-    <a href="https://github.com/Danial-Kord/DigiHuman/blob/images/images/hands_greek.gif">
-    <img src="https://github.com/Danial-Kord/DigiHuman/blob/images/images/hands_greek.gif?raw=true" alt="Logo">
+    <a href="https://gfycat.com/braveglumguanaco">
+    <img src="https://github.com/Danial-Kord/DigiHuman/blob/images/images/hands_greek.gif" alt="Logo">
   </a>
 </div>
 
@@ -62,6 +65,17 @@ MediaPipe generates 3D landmarks for the human whole body and face, and Unity3D 
   
 </div>
 
+
+# Donation
+Do you want to support me in this project? :D
+
+<p align="left">
+  <a href="https://ko-fi.com/danialkord">
+  <img src="https://raw.githubusercontent.com/SMotlaq/LoRa/master/bmc.png" width="200" alt="Buy me a Coffee"/>
+  </a>
+</p>
+
+
 <!-- GETTING STARTED -->
 ## Installation
 Follow the instructions to run the program!
@@ -78,14 +92,23 @@ Follow the instructions to run the program!
   ```py
    pip install -r requirements.txt
    ```
-6. You'll need to [download](https://drive.google.com/file/d/15VSa2m2F6Ch0NpewDR7mkKAcXlMgDi5F/view?usp=sharing) the pretrained generator model for the COCO dataset and place it into `backend/checkpoints/coco_pretrained/`.
+6. You'll need to [download](https://drive.google.com/file/d/15VSa2m2F6Ch0NpewDR7mkKAcXlMgDi5F/view?usp=sharing) the pre-trained generator model for the COCO dataset and place it into `backend/checkpoints/coco_pretrained/`.
 
 ### Unity3D Installation
-Install Unity3D and its requirements by the following guide lines(Skip 1-3 if Unity3D is already installed).
+Install Unity3D and its requirements by the following guidelines(Skip 1-3 if Unity3D is already installed).
 1. Download and install  [UnityHub](https://unity.com/download)
-2. Add a new licence in UnityHub and register it
+2. Add a new license in UnityHub and register it
 3. Install a Unity Editor inside UnityHub(`LTS` versions and a version higher than `2020.3.25f1` are recommended).
-4. Download and import the following packages into your project to enable recording option available with FFmpeg(Download `.unitypackage` files and drag them to your project).
+4. In the Unity project setting, allow HTTP connections in the player setting.
+ 
+ <div align="center">
+  <a href="https://github.com/Danial-Kord/DigiHuman/blob/images/images/http.png">
+    <img src="https://github.com/Danial-Kord/DigiHuman/blob/images/images/http.png?raw=true" alt="Logo">
+  </a>
+  
+</div>
+ 
+5. Download and import the following packages into your project to enable the recording option available with FFmpeg(Download `.unitypackage` files and drag them to your project).
 
 - [FFmpegOut package] (MIT license)
 - [FFmpegOutBinaries package] (GPL)
@@ -94,17 +117,18 @@ Install Unity3D and its requirements by the following guide lines(Skip 1-3 if Un
 [FFmpegOutBinaries package]:
     https://github.com/keijiro/FFmpegOutBinaries/releases
 
+
 # Usage
 - Run backend server at `backend` directory with the following command:
   ```
    python server.py
    ```
 - Run Unity Project and open the main scene at `Assets\Scenes\MainScene.unity`
-- Test the program by uploading videos to backend from Unity project(You can test the application by selecting provided animations from the right side menu!).
+- Test the program by uploading videos to backend from the Unity project(You can test the application by selecting provided animations from the right side menu!).
 
 ## Adding new 3D characters
-You can add your own characters to the project!
-Characters should have standard Humanoid rig to show kinematic animations. For rendering face animations, characters should have facial rig(Blendmesh).</br>
+You can add your characters to the project!
+Characters should have a standard Humanoid rig to show kinematic animations. For rendering face animations, characters should have a facial rig(Blendmesh).</br>
 Follow these steps to add your character:
 1. Find a 3D character model from [Unity asset store](http://assetstore.unity.com/) or download a free one(You can download them from websites like [Mixamo](http://mixamo.com/)).
 2. Open the character setting and set the rig to humanoid
@@ -115,7 +139,7 @@ Follow these steps to add your character:
   </a>
 </div>
 
-3. Drag and drop your 3D charcter model to `CharacterChooser/CharacterSlideshow/Parent` object in Unity main Scene like the image below
+3. Drag and drop your 3D character model to `CharacterChooser/CharacterSlideshow/Parent` object in Unity main Scene like the image below
 
 <div align="left">
   <a href="https://github.com/Danial-Kord/DigiHuman/blob/images/images/1.png">
@@ -123,7 +147,7 @@ Follow these steps to add your character:
   </a>
 </div>
 
-4. Add `BlendShapeController` and `QualityData` components to character object in scene(which is dragged inside Parent object in last step).
+4. Add `BlendShapeController` and `QualityData` components to the character object in the scene(which is dragged inside the Parent object in the last step).
 5. Set `BlendShapeController` values
 - Add character `SkinnedMeshRenderer` component to `BlendShapeController` component.
 
@@ -133,7 +157,7 @@ Follow these steps to add your character:
   </a>
 </div>
 
-- Find each blnedshape weight number under `SkinnedMeshRenderer` and set those numbers in `BlendShapes` field inside `BlendShapeController` (for specifying each blendshape value to the `BlendShapeController` component so animation would be shown on character face by modification on these blendhape values)
+- Find each blnedShape weight number under `SkinnedMeshRenderer` and set those numbers in `BlendShapes` field inside `BlendShapeController` (for specifying each blendshape value to the `BlendShapeController` component so the animation would be shown on character face by modification on these blnedShape values)
 
 <div align="left">
   <a href="https://github.com/Danial-Kord/DigiHuman/blob/images/images/6.png">
@@ -141,7 +165,7 @@ Follow these steps to add your character:
   </a>
 </div>
 
-6. Open `CharacterSlideshow` Object on `CharacterChooser/CharacterSlideshow` path inside scene hierachy, then add new dragged character to the `nodes` property(all characters should be refrenced inside `nodes`).
+6. Open `CharacterSlideshow` Object on `CharacterChooser/CharacterSlideshow` path inside the scene hierarchy, then add a new dragged character to the `nodes` property(all characters should be referenced inside `nodes`).
 
 <div align="left">
   <a href="https://github.com/Danial-Kord/DigiHuman/blob/images/images/8.jpg">
@@ -156,20 +180,20 @@ Follow these steps to add your character:
 
 <!-- ## Available features -->
 - [x] Making full body animation
-- [x] Animating multiple blendshapes on 3D character (upto 40 blendshape animations is supported currently)
+- [x] Animating multiple blendShapes on 3D character (up to 40 blendshape animations is supported currently)
 - [x] Supporting any 3D models with Humanoid T-Pose rig
 - [x] Exporting animation in a video file
-- [x] Saving animation data and re-rendering it in future usages
-- [x] Filtering mediapipe outputs in order to detect and remove noises and better smoothness (Low Pass Filtering is used currently) 
+- [x] Saving animation data and re-rendering it for future usage
+- [x] Filtering mediaPipe outputs in order to detect and remove noises and better smoothness (Low Pass Filtering is used currently) 
 
 <!-- ## TODO -->
 
-- [ ] Animating character face in high details
+- [ ] Animating the character's face in great details
     - [ ] Training a regression model to generate Blendmesh weights by feeding the output data of mediaPipe FaceMesh(468 points)
     - [ ] Using StyleGan techniques to replace whole character face mesh
 - [ ] Automatic rigging for 3D models without humanoid rig (Using deep neural network models like RigNet)
 - [ ] Generating complete character mesh automatically using models like PIFuHD (in progress!)
-- [ ] Animating 3D character mouth in high details using audio signal or natural language processing methods
+- [ ] Animating 3D character mouth in great detail using audio signal or natural language processing methods
 - [ ] Generating complete environment in 3D
 
 
@@ -204,3 +228,15 @@ Follow these steps to add your character:
 ```
 ### 3D Characters
 [Unity-chan model](https://unity-chan.com/contents/license_en/) & [mixamo models](https://www.mixamo.com)
+
+
+
+<!-- CONTACT -->
+# Contact
+Danial Kordmodanlou - [kordmodanloo@gmail.com](mailto:kordmodanloo@gmail.com)
+
+Website : [danial-kord.me/](https://danial-kord.me/) 
+
+Project Link: [github.com/Danial-Kord/DigiHuman](https://github.com/Danial-Kord/DigiHuman)
+
+Telegram ID: [@Danial_km](https://t.me/Danial_km)
