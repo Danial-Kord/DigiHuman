@@ -9,22 +9,29 @@ public struct BlendShape
 {
     public int num;
     [HideInInspector]public float weight;
+    [Tooltip("Which skinned mesh should be affected")] public int skinnedMeshIndex;
 }
 
 public class BlendShapeController : MonoBehaviour
 {
-    [SerializeField] private SkinnedMeshRenderer skinnedMeshRenderer;
+    [SerializeField] private SkinnedMeshRenderer[] skinnedMeshRenderers;
 
     [Header("Enable | Disable options")]
     [SerializeField] private bool enableEyeWide;
     [SerializeField] private bool enableDimple;
     [SerializeField] private bool enableCheekSquint;
     [SerializeField] private bool enableNose;
+    [Tooltip("Enabling this option will open and close eyes together(you can not blink!)")]
+    [SerializeField] private bool enableSimultaneouslyEyesOpenClose;
+    [Tooltip("Enabling this option will frown your mouth together(you can not frown one side)")]
+    [SerializeField] private bool enableSimultaneouslyFrown;
+
+    
 
     
     [Header("Methods")][Tooltip("How to deal with each blend weights")]
     [SerializeField] private int eyeWideMethod;
-    [SerializeField] private int mouthOpenMethod; 
+    [SerializeField] private int mouthOpenMethod = 1; 
     [SerializeField] private int mouthSmileFrownMethod;
 
     [Header("Blend Shapes")]
@@ -242,17 +249,17 @@ public class BlendShapeController : MonoBehaviour
         LipsDirection();
         
         
-        UpdateBlendShapeWeight(MouthLeft.num,MouthLeft.weight);
-        UpdateBlendShapeWeight(MouthRight.num,MouthRight.weight);
+        UpdateBlendShapeWeight(MouthLeft);
+        UpdateBlendShapeWeight(MouthRight);
         
-        UpdateBlendShapeWeight(MouthStretchLeft.num,MouthStretchLeft.weight);
-        UpdateBlendShapeWeight(MouthStretchRight.num,MouthStretchRight.weight);
+        UpdateBlendShapeWeight(MouthStretchLeft);
+        UpdateBlendShapeWeight(MouthStretchRight);
         
-        UpdateBlendShapeWeight(MouthLowerDownRight.num,MouthLowerDownRight.weight);
-        UpdateBlendShapeWeight(MouthLowerDownLeft.num,MouthLowerDownLeft.weight);
+        UpdateBlendShapeWeight(MouthLowerDownRight);
+        UpdateBlendShapeWeight(MouthLowerDownLeft);
         
-        UpdateBlendShapeWeight(MouthPressLeft.num,MouthPressLeft.weight);
-        UpdateBlendShapeWeight(MouthPressRight.num,MouthPressRight.weight);
+        UpdateBlendShapeWeight(MouthPressLeft);
+        UpdateBlendShapeWeight(MouthPressRight);
 
         if (mouthOpenMethod == 1)
         {
@@ -267,42 +274,47 @@ public class BlendShapeController : MonoBehaviour
                 MouthOpen.weight = MappingEffect(MouthOpen.weight, 80, 120, 0);
             }
         }
-        UpdateBlendShapeWeight(MouthOpen.num,MouthOpen.weight);
-        UpdateBlendShapeWeight(MouthPucker.num,MouthPucker.weight);
+        UpdateBlendShapeWeight(MouthOpen);
+        UpdateBlendShapeWeight(MouthPucker);
         
-        UpdateBlendShapeWeight(MouthShrugUpper.num,MouthShrugUpper.weight);
-        UpdateBlendShapeWeight(JawOpen.num,JawOpen.weight);
-        UpdateBlendShapeWeight(JawLeft.num,JawLeft.weight);
-        UpdateBlendShapeWeight(JawRight.num,JawRight.weight);
+        UpdateBlendShapeWeight(MouthShrugUpper);
+        UpdateBlendShapeWeight(JawOpen);
+        UpdateBlendShapeWeight(JawLeft);
+        UpdateBlendShapeWeight(JawRight);
         
-        UpdateBlendShapeWeight(BrowDownLeft.num,BrowDownLeft.weight);
-        UpdateBlendShapeWeight(BrowOuterUpLeft.num,BrowOuterUpLeft.weight);
-        UpdateBlendShapeWeight(BrowDownRight.num,BrowDownRight.weight);
-        UpdateBlendShapeWeight(BrowOuterUpRight.num,BrowOuterUpRight.weight);
+        UpdateBlendShapeWeight(BrowDownLeft);
+        UpdateBlendShapeWeight(BrowOuterUpLeft);
+        UpdateBlendShapeWeight(BrowDownRight);
+        UpdateBlendShapeWeight(BrowOuterUpRight);
 
         if (enableCheekSquint)
         {
-            UpdateBlendShapeWeight(CheekSquintRight.num, CheekSquintRight.weight);
-            UpdateBlendShapeWeight(CheekSquintLeft.num, CheekSquintLeft.weight);
+            UpdateBlendShapeWeight(CheekSquintRight);
+            UpdateBlendShapeWeight(CheekSquintLeft);
         }
 
-        UpdateBlendShapeWeight(MouthRollLower.num,MouthRollLower.weight);
-        UpdateBlendShapeWeight(MouthRollUpper.num,MouthRollUpper.weight);
+        UpdateBlendShapeWeight(MouthRollLower);
+        UpdateBlendShapeWeight(MouthRollUpper);
 
         if (enableNose)
         {
-            UpdateBlendShapeWeight(NoseSneerLeft.num, NoseSneerLeft.weight);
-            UpdateBlendShapeWeight(NoseSneerRight.num, NoseSneerRight.weight);
+            UpdateBlendShapeWeight(NoseSneerLeft);
+            UpdateBlendShapeWeight(NoseSneerRight);
         }
 
     }
 
     private void UpdateEyes()
     {
-        UpdateBlendShapeWeight(EyeBlinkLeft.num,EyeBlinkLeft.weight);
-        UpdateBlendShapeWeight(EyeBlinkRight.num,EyeBlinkRight.weight);
-        UpdateBlendShapeWeight(EyeSquintLeft.num,EyeSquintLeft.weight);
-        UpdateBlendShapeWeight(EyeSquintRight.num,EyeSquintRight.weight);
+        if (enableSimultaneouslyEyesOpenClose)
+        {
+            EyeBlinkLeft.weight = (EyeBlinkLeft.weight + EyeBlinkRight.weight) / 2.0f;
+            EyeBlinkRight.weight = EyeBlinkLeft.weight;
+        }
+        UpdateBlendShapeWeight(EyeBlinkLeft);
+        UpdateBlendShapeWeight(EyeBlinkRight);
+        UpdateBlendShapeWeight(EyeSquintLeft);
+        UpdateBlendShapeWeight(EyeSquintRight);
 
         if (enableEyeWide)
         {
@@ -325,17 +337,17 @@ public class BlendShapeController : MonoBehaviour
             }
 
 
-            UpdateBlendShapeWeight(EyeWideLeft.num, EyeWideLeft.weight);
-            UpdateBlendShapeWeight(EyeWideRight.num, EyeWideRight.weight);
+            UpdateBlendShapeWeight(EyeWideLeft);
+            UpdateBlendShapeWeight(EyeWideRight);
         }
     }
 
     private void LipsDirection()
     {
-        UpdateBlendShapeWeight(LipLowerDownLeft.num, LipLowerDownLeft.weight);
-        UpdateBlendShapeWeight(LipLowerDownRight.num, LipLowerDownRight.weight);
-        UpdateBlendShapeWeight(LipUpperUpLeft.num, LipUpperUpLeft.weight);
-        UpdateBlendShapeWeight(LipUpperUpRight.num, LipUpperUpRight.weight);
+        UpdateBlendShapeWeight(LipLowerDownLeft);
+        UpdateBlendShapeWeight(LipLowerDownRight);
+        UpdateBlendShapeWeight(LipUpperUpLeft);
+        UpdateBlendShapeWeight(LipUpperUpRight);
 
     }
     
@@ -350,27 +362,39 @@ public class BlendShapeController : MonoBehaviour
             MouthDimpleRight.weight = MappingEffect(MouthDimpleRight.weight - 40,60,100,0);
             
         }
-        UpdateBlendShapeWeight(MouthSmileRight.num,MouthSmileRight.weight);
-        UpdateBlendShapeWeight(MouthSmileLeft.num,MouthSmileLeft.weight);
+
+        if (enableSimultaneouslyFrown)
+        {
+            MouthFrownRight.weight = (MouthFrownLeft.weight + MouthFrownRight.weight) / 2.0f;
+            MouthFrownLeft.weight = MouthFrownRight.weight;
+        }
+        
+        UpdateBlendShapeWeight(MouthSmileRight);
+        UpdateBlendShapeWeight(MouthSmileLeft);
         if (enableDimple)
         {
-            UpdateBlendShapeWeight(MouthDimpleLeft.num, MouthDimpleLeft.weight);
-            UpdateBlendShapeWeight(MouthDimpleRight.num, MouthDimpleRight.weight);
+            UpdateBlendShapeWeight(MouthDimpleLeft);
+            UpdateBlendShapeWeight(MouthDimpleRight);
         }
 
-        UpdateBlendShapeWeight(MouthFrownRight.num,MouthFrownRight.weight);
-        UpdateBlendShapeWeight(MouthFrownLeft.num,MouthFrownLeft.weight);
+        UpdateBlendShapeWeight(MouthFrownRight);
+        UpdateBlendShapeWeight(MouthFrownLeft);
     }
     
     
     
-    private void UpdateBlendShapeWeight(int blendNum, float blendWeight)
+    private void UpdateBlendShapeWeight(BlendShape blend)
+    {
+        UpdateBlendShapeWeight(blend.skinnedMeshIndex,blend.num,blend.weight);
+    }
+    private void UpdateBlendShapeWeight(int skinnedMeshIndex, int blendNum, float blendWeight)
     {
         if (blendNum != -1)
         {
-            skinnedMeshRenderer.SetBlendShapeWeight(blendNum, Mathf.Clamp(blendWeight,0,100));
+            skinnedMeshRenderers[skinnedMeshIndex].SetBlendShapeWeight(blendNum, Mathf.Clamp(blendWeight,0,100));
         }
     }
+    
 
     //change the value between 0 upto effectOrder
     private float MappingEffect(float value, float maxValue, float effectOrder, float offset)
