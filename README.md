@@ -19,6 +19,10 @@ MediaPipe generates 3D landmarks for the human whole body and face, and Unity3D 
 
 
 ## Sample Outputs of the project
+<div align="center">
+<a href="https://youtu.be/maUUXfe_EcU">Project demo</a> | <a href="https://youtu.be/L62w5AMaFOk">Tutorial</a>
+</div>
+
 ### Hands animations
 
 <div align="center">
