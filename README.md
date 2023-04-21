@@ -70,14 +70,14 @@ MediaPipe generates 3D landmarks for the human whole body and face, and Unity3D 
 </div>
 
 
-# Donation
+<!-- # Donation
 Do you want to support me in this project? :D
 
 <p align="left">
   <a href="https://ko-fi.com/danialkord">
   <img src="https://raw.githubusercontent.com/SMotlaq/LoRa/master/bmc.png" width="200" alt="Buy me a Coffee"/>
   </a>
-</p>
+</p> -->
 
 
 <!-- GETTING STARTED -->
