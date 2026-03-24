@@ -27,7 +27,7 @@ public class BlendShapeController : MonoBehaviour
     [SerializeField] private bool enableSimultaneouslyFrown;
 
     
-
+    [SerializeField] private float maxBlendShapeValue = 100;
     
     [Header("Methods")][Tooltip("How to deal with each blend weights")]
     [SerializeField] private int eyeWideMethod;
@@ -389,10 +389,24 @@ public class BlendShapeController : MonoBehaviour
     }
     private void UpdateBlendShapeWeight(int skinnedMeshIndex, int blendNum, float blendWeight)
     {
-        if (blendNum != -1)
-        {
-            skinnedMeshRenderers[skinnedMeshIndex].SetBlendShapeWeight(blendNum, Mathf.Clamp(blendWeight,0,100));
-        }
+        if (blendNum < 0)
+            return;
+        if (skinnedMeshRenderers == null || skinnedMeshRenderers.Length == 0)
+            return;
+        if (skinnedMeshIndex < 0 || skinnedMeshIndex >= skinnedMeshRenderers.Length)
+            return;
+
+        SkinnedMeshRenderer smr = skinnedMeshRenderers[skinnedMeshIndex];
+        if (smr == null || smr.sharedMesh == null)
+            return;
+
+        int count = smr.sharedMesh.blendShapeCount;
+        if (blendNum >= count)
+            return;
+
+        float blendshapeValue = Mathf.Clamp(blendWeight, 0, 100) / 100f * maxBlendShapeValue;
+        
+        smr.SetBlendShapeWeight(blendNum, blendshapeValue);
     }
     
 

@@ -118,8 +118,14 @@ public class Pose3DMapper : CharacterMapper
                 jointsDebug[i] = Instantiate(debugGameObject);
             }
         }
-        
 
+        if (anim.avatar == null)
+        {
+            Debug.LogError("Avatar is null. Please set the avatar for the character.");
+            character.transform.rotation = characterPlacement.rotation;
+            character.transform.position = characterPlacement.position;
+            return;
+        }
         // Right Arm
         jointPoints[(int) BodyPoints.RightShoulder].Transform = anim.GetBoneTransform(HumanBodyBones.RightUpperArm);
         jointPoints[(int) BodyPoints.RightElbow].Transform = anim.GetBoneTransform(HumanBodyBones.RightLowerArm);
@@ -278,7 +284,6 @@ public class Pose3DMapper : CharacterMapper
                 jointPoints[i].LandmarkPose = jointPoints[i].Transform.position;
         }
         
-        Debug.Log("wtf");
         character.transform.rotation = characterPlacement.rotation;
         hips.position = characterPlacement.position;
 
