@@ -1,24 +1,30 @@
 # DigiHuman
 
-Digihuman is a project which aims to automatically generate <b>whole body pose animation + facial animation</b> on 3D Character models based on the camera input.
-<br/>
-This project is my B.Sc thesis of Computer Engineering at Amirkabir University of Technology(AUT).
+DigiHuman is a project which aims to automatically generate <b>whole body pose animation + facial animation</b> on 3D character models based on camera input.
 
-
+This project is my B.Sc thesis of Computer Engineering at Amirkabir University of Technology (AUT).
 
 ## About DigiHuman
-DigiHuman is a system for bringing automation in animation generation on 3D virtual characters.
-It uses Pose estimation and facial landmark generator models to create entire body and face animation on 3D virtual characters.
-<br/>
-DigiHuman is developed with [**MediaPipe**](https://github.com/google/mediapipe) and **Unity3D**.
-MediaPipe generates 3D landmarks for the human whole body and face, and Unity3D is used to render the final animation after processing the generated landmarks from MediaPipe. The diagram below, shows the whole architucture of the application.
+
+DigiHuman automates animation generation on 3D virtual characters. It uses pose estimation and facial landmark models for full-body and face animation.
+
+DigiHuman is developed with [**MediaPipe**](https://github.com/google/mediapipe) and **Unity**. MediaPipe produces 3D landmarks (body, hands, face), and Unity renders the character after consuming that data over HTTP. The diagram below shows the overall architecture.
+
 <div align="center">
-    <img src="https://github.com/Danial-Kord/DigiHuman/blob/images/images/dataFlow.png?raw=true" alt="Logo">
+    <img src="https://github.com/Danial-Kord/DigiHuman/blob/images/images/dataFlow.png?raw=true" alt="DigiHuman data flow diagram">
 </div>
 
+## How it works
 
+1. **Upload** — From Unity, the user selects a video. `NetworkManager` uploads it to the Flask backend (`/uploader`, `/handUploader`, full-pose and face upload routes as applicable).
+2. **Process** — The server saves the file under `Backend/temp/`, starts a background thread, and runs MediaPipe (`pose_estimator.py` for body/hands/holistic pose, `mediaPipeFace.py` for face / blendshape data). Each frame becomes a JSON object appended to an in-memory list keyed by the temp file path.
+3. **Stream** — Unity polls with `POST` and JSON `{ "fileName", "index" }` until the response body is `Done`. Frame endpoints include `/pose` (body), `/hand` (hands), `/holistc` (full body + hands; spelling matches the server route), and `/face` (facial blendshape weights).
+4. **Animate** — `FrameReader` aligns body, hand, and face data per frame and drives `Pose3DMapper`, hand preprocessing, and `FacialExpressionHandler` / `BlendShapeController` on a **Humanoid** rig with optional blend shapes.
 
-## Sample Outputs of the project
+Default server URL in the sample scene is `http://127.0.0.1:5000`. Ensure the `NetworkManager` URLs in Unity match your host and port.
+
+## Sample outputs
+
 <div align="center">
 <a href="https://youtu.be/maUUXfe_EcU">Project demo</a> | <a href="https://youtu.be/L62w5AMaFOk">Tutorial</a>
 </div>
@@ -27,201 +33,231 @@ MediaPipe generates 3D landmarks for the human whole body and face, and Unity3D 
 
 <div align="center">
   <a href="https://github.com/Danial-Kord/DigiHuman/blob/images/images/2828_ok.gif">
-    <img src="https://github.com/Danial-Kord/DigiHuman/blob/images/images/2828_ok.gif?raw=true" alt="Logo">
+    <img src="https://github.com/Danial-Kord/DigiHuman/blob/images/images/2828_ok.gif?raw=true" alt="Hands animation sample">
   </a>
   
   <a href="https://thumbs.gfycat.com/VibrantDearestKomododragon-size_restricted.gif">
-    <img src="https://github.com/Danial-Kord/DigiHuman/blob/images/images/2828_1t05.gif?raw=true" alt="Logo">
+    <img src="https://github.com/Danial-Kord/DigiHuman/blob/images/images/2828_1t05.gif?raw=true" alt="Hands animation sample">
   </a>
   
 </div>
 
-
 ### Full body animation
+
 <div align="center">
   <a href="https://github.com/Danial-Kord/DigiHuman/blob/images/images/figure_headphone.gif">
-    <img src="https://github.com/Danial-Kord/DigiHuman/blob/images/images/figure_headphone.gif" alt="Logo">
+    <img src="https://github.com/Danial-Kord/DigiHuman/blob/images/images/figure_headphone.gif" alt="Full body sample">
   </a>
     <a href="https://gfycat.com/braveglumguanaco">
-    <img src="https://github.com/Danial-Kord/DigiHuman/blob/images/images/hands_greek.gif" alt="Logo">
+    <img src="https://github.com/Danial-Kord/DigiHuman/blob/images/images/hands_greek.gif" alt="Full body sample">
   </a>
 </div>
-
 
 ### Face animation
 
 <div align="center">
   <a href="https://github.com/Danial-Kord/DigiHuman/blob/images/images/mouth_deform_1_japan.gif">
-    <img src="https://github.com/Danial-Kord/DigiHuman/blob/images/images/mouth_deform_1_japan.gif?raw=true" alt="Logo">
+    <img src="https://github.com/Danial-Kord/DigiHuman/blob/images/images/mouth_deform_1_japan.gif?raw=true" alt="Face animation sample">
   </a>
   
   <a href="https://github.com/Danial-Kord/DigiHuman/blob/images/images/blinks_1_japan.gif">
-    <img src="https://github.com/Danial-Kord/DigiHuman/blob/images/images/blinks_1_japan.gif?raw=true" alt="Logo">
+    <img src="https://github.com/Danial-Kord/DigiHuman/blob/images/images/blinks_1_japan.gif?raw=true" alt="Blink animation sample">
   </a>
   
   <a href="https://github.com/Danial-Kord/DigiHuman/blob/images/images/mouth_1_japan.gif">
-    <img src="https://github.com/Danial-Kord/DigiHuman/blob/images/images/mouth_1_japan.gif?raw=true" alt="Logo">
+    <img src="https://github.com/Danial-Kord/DigiHuman/blob/images/images/mouth_1_japan.gif?raw=true" alt="Mouth animation sample">
   </a>
   
    <a href="https://github.com/Danial-Kord/DigiHuman/blob/images/images/mouth_dir_1_japan.gif">
-    <img src="https://github.com/Danial-Kord/DigiHuman/blob/images/images/mouth_dir_1_japan.gif?raw=true" alt="Logo">
+    <img src="https://github.com/Danial-Kord/DigiHuman/blob/images/images/mouth_dir_1_japan.gif?raw=true" alt="Mouth direction sample">
   </a>
   
 </div>
 
-
-<!-- # Donation
-Do you want to support me in this project? :D
-
-<p align="left">
-  <a href="https://ko-fi.com/danialkord">
-  <img src="https://raw.githubusercontent.com/SMotlaq/LoRa/master/bmc.png" width="200" alt="Buy me a Coffee"/>
-  </a>
-</p> -->
-
-
-<!-- GETTING STARTED -->
 ## Installation
-Follow the instructions to run the program!
-### Backend server installtion
-1. Install MediaPipe python.
-  ```py
+
+### Backend server
+
+Use **Python 3** with `pip`.
+
+1. Install MediaPipe:
+
+   ```bash
    pip install mediapipe
    ```
-3. Install OpenCV python.
-  ```py
+
+2. Install OpenCV:
+
+   ```bash
    pip install opencv-python
    ```
-5. Go to `backend` directory and install other requirements:
-  ```py
+
+3. Open a terminal, change to the **`Backend`** folder (repository root contains `Backend/`, not `backend/`), and install the rest of the dependencies:
+
+   ```bash
+   cd Backend
    pip install -r requirements.txt
    ```
-6. You'll need to [download](https://drive.google.com/file/d/15VSa2m2F6Ch0NpewDR7mkKAcXlMgDi5F/view?usp=sharing) the pre-trained generator model for the COCO dataset and place it into `backend/checkpoints/coco_pretrained/`.
 
-### Unity3D Installation
-Install Unity3D and its requirements by the following guidelines(Skip 1-3 if Unity3D is already installed).
-1. Download and install  [UnityHub](https://unity.com/download)
-2. Add a new license in UnityHub and register it
-3. Install a Unity Editor inside UnityHub(`LTS` versions and a version higher than `2020.3.25f1` are recommended).
-4. In the Unity project setting, allow HTTP connections in the player setting.
- 
+4. For the optional GauGAN / SPADE image pipeline used by `/uploader` for **images**, download the [pre-trained COCO generator](https://drive.google.com/file/d/15VSa2m2F6Ch0NpewDR7mkKAcXlMgDi5F/view?usp=sharing) and extract it under `Backend/checkpoints/coco_pretrained/` (create the folders if they are missing). Video mocap does not require this checkpoint. On **Windows**, `server.py` calls the Unix `cp` command in the GauGAN helper; use WSL, Git Bash, or change `copy_file` to a cross-platform copy if you rely on image synthesis.
+
+### Unity
+
+1. Download and install [Unity Hub](https://unity.com/download).
+2. Add a license in Unity Hub.
+3. Install an Editor (LTS recommended; newer than **2020.3.25f1** is suggested in the original project notes).
+4. In **Player Settings**, allow **insecure HTTP** connections so Unity can call `http://127.0.0.1:5000` during development.
+
  <div align="center">
   <a href="https://github.com/Danial-Kord/DigiHuman/blob/images/images/http.png">
-    <img src="https://github.com/Danial-Kord/DigiHuman/blob/images/images/http.png?raw=true" alt="Logo">
+    <img src="https://github.com/Danial-Kord/DigiHuman/blob/images/images/http.png?raw=true" alt="Unity allow HTTP setting">
   </a>
   
 </div>
- 
-5. Download and import the following packages into your project to enable the recording option available with FFmpeg(Download `.unitypackage` files and drag them to your project).
 
-- [FFmpegOut package] (MIT license)
-- [FFmpegOutBinaries package] (GPL)
+5. Optional recording: import [FFmpegOut (MIT)](https://github.com/keijiro/FFmpegOut/releases) and [FFmpegOutBinaries (GPL)](https://github.com/keijiro/FFmpegOutBinaries/releases) as `.unitypackage` files.
 
-[FFmpegOut package]: https://github.com/keijiro/FFmpegOut/releases
-[FFmpegOutBinaries package]:
-    https://github.com/keijiro/FFmpegOutBinaries/releases
+## Usage
 
+1. Start the backend from the **`Backend`** directory:
 
-# Usage
-- Run backend server at `backend` directory with the following command:
-  ```
+   ```bash
+   cd Backend
    python server.py
    ```
-- Run Unity Project and open the main scene at `Assets\Scenes\MainScene.unity`
-- Test the program by uploading videos to backend from the Unity project(You can test the application by selecting provided animations from the right side menu!).
+
+   Flask listens on **port 5000** by default (`http://127.0.0.1:5000`).
+
+2. Open the Unity project and load the main integration scene:
+
+   **`Assets/Scenes/Network Test.unity`**
+
+   (`MainScene.unity` is not present in this repository; `Assets/Scenes/Test.unity` also references `FrameReader` for related tests.)
+
+3. Run Play mode and upload videos from the UI (or use sample clips from the side menu if configured in your scene).
+
+### Real-time webcam landmarks (WebSocket)
+
+The backend can stream **live** holistic body + hands + **40** face blendshape weights (same ordering as offline `/face` / Unity `FaceJson`) from the **machine running `server.py`** (server-side webcam).
+
+- **URL:** `ws://127.0.0.1:5000/ws/live_mocap` (same host/port as Flask; use `ws://` / `wss://` accordingly).
+- **Handshake:** After connecting, send one text frame: `{"cmd":"start","camera_id":0}` (`camera_id` optional, default `0`).
+- **Stream:** The server sends one JSON text message per captured frame until you send `{"cmd":"stop"}` or disconnect.
+- **Concurrency:** Only **one** live session at a time; a second client gets `{"error":"live_stream_already_active"}`.
+
+**Payload shape (each frame):**
+
+- `frame` — integer frame index from the capture device when available.
+- `bodyPose` — same structure as offline full pose (`predictions`, `width`, `height`, `frame`).
+- `handsPose` — `handsR`, `handsL`, `frame` (normalized hand landmarks).
+- `faceData` — `{ "blendShapes": [ 40 floats ], "frame", "time" }` (`time` is capture timestamp in ms when the backend exposes it; otherwise `0.0`). If no face is detected, `blendShapes` are zeros.
+
+**Smoke test** (with the server running):
+
+```bash
+cd Backend
+python scripts/ws_live_client_smoke.py
+```
+
+**Unity client**
+
+1. Add a **`LiveMocapClient`** component to a scene object (e.g. next to `NetworkManager`).
+2. Assign the same **`FrameReader`** used by the rest of the app.
+3. Set **Web Socket Url** to `ws://127.0.0.1:5000/ws/live_mocap` (adjust host if the Python server runs elsewhere).
+4. Optional: assign **Start** / **Stop** UI `Button`s, or call `StartLiveStream()` / `StopLiveStream()` from code (e.g. `NetworkManager` exposes **`StartLiveMocapStream`** / **`StopLiveMocapStream`** if you wire the **`LiveMocapClient`** reference there).
+5. Enter Play mode, start the backend, then start the live stream. The character is driven in **`LateUpdate`** from the latest received frame (timeline **`FixedUpdate`** playback is paused while live mode is active).
+
+Requires **.NET** stack with `System.Net.WebSockets` (Unity **2021+** / **Api Compatibility Level** .NET Standard 2.1 or .NET Framework is typical). The webcam used is always on the **Python server** machine, not the Unity machine.
 
 ## Adding new 3D characters
-You can add your characters to the project!
-Characters should have a standard Humanoid rig to show kinematic animations. For rendering face animations, characters should have a facial rig(Blendmesh).</br>
-Follow these steps to add your character:
-1. Find a 3D character model from [Unity asset store](http://assetstore.unity.com/) or download a free one(You can download them from websites like [Mixamo](http://mixamo.com/)).
-2. Open the character setting and set the rig to humanoid
+
+Characters should use a **Humanoid** rig for body animation. For face animation they need **blend shapes** on a `SkinnedMeshRenderer`.
+
+1. Obtain a model (e.g. [Unity Asset Store](https://assetstore.unity.com/) or [Mixamo](https://www.mixamo.com/)).
+2. In the model Import settings, set **Animation Type** to **Humanoid**.
 
 <div align="left">
   <a href="https://github.com/Danial-Kord/DigiHuman/blob/images/images/3.png">
-    <img src="https://github.com/Danial-Kord/DigiHuman/blob/images/images/3.png?raw=true" alt="Logo" width="300" height="150">
+    <img src="https://github.com/Danial-Kord/DigiHuman/blob/images/images/3.png?raw=true" alt="Humanoid rig settings" width="300" height="150">
   </a>
 </div>
 
-3. Drag and drop your 3D character model to `CharacterChooser/CharacterSlideshow/Parent` object in Unity main Scene like the image below
+3. Drag the character under `CharacterChooser/CharacterSlideshow/Parent` in the scene hierarchy.
 
 <div align="left">
   <a href="https://github.com/Danial-Kord/DigiHuman/blob/images/images/1.png">
-    <img src="https://github.com/Danial-Kord/DigiHuman/blob/images/images/1.png?raw=true" alt="Logo" width="300" height="400">
+    <img src="https://github.com/Danial-Kord/DigiHuman/blob/images/images/1.png?raw=true" alt="Character parent" width="300" height="400">
   </a>
 </div>
 
-4. Add `BlendShapeController` and `QualityData` components to the character object in the scene(which is dragged inside the Parent object in the last step).
-5. Set `BlendShapeController` values
-- Add character `SkinnedMeshRenderer` component to `BlendShapeController` component.
+4. Add **`BlendShapeController`** and **`QualityData`** to the character instance.
+5. Configure **`BlendShapeController`**:
+   - Assign the face **`SkinnedMeshRenderer`**.
+   - Map each relevant **blend shape index** from the mesh to the `BlendShapes` entries on the component.
 
 <div align="left">
   <a href="https://github.com/Danial-Kord/DigiHuman/blob/images/images/5.png">
-    <img src="https://github.com/Danial-Kord/DigiHuman/blob/images/images/5.png?raw=true" alt="Logo" >
+    <img src="https://github.com/Danial-Kord/DigiHuman/blob/images/images/5.png?raw=true" alt="BlendShapeController SkinnedMeshRenderer" >
   </a>
 </div>
-
-- Find each blnedShape weight number under `SkinnedMeshRenderer` and set those numbers in `BlendShapes` field inside `BlendShapeController` (for specifying each blendshape value to the `BlendShapeController` component so the animation would be shown on character face by modification on these blnedShape values)
 
 <div align="left">
   <a href="https://github.com/Danial-Kord/DigiHuman/blob/images/images/6.png">
-    <img src="https://github.com/Danial-Kord/DigiHuman/blob/images/images/6.png?raw=true" alt="Logo" width="300" height="400">
+    <img src="https://github.com/Danial-Kord/DigiHuman/blob/images/images/6.png?raw=true" alt="Blend shape index mapping" width="300" height="400">
   </a>
 </div>
 
-6. Open `CharacterSlideshow` Object on `CharacterChooser/CharacterSlideshow` path inside the scene hierarchy, then add a new dragged character to the `nodes` property(all characters should be referenced inside `nodes`).
+6. Select **`CharacterSlideshow`** under `CharacterChooser/CharacterSlideshow` and add the new character to the **`nodes`** list.
 
 <div align="left">
   <a href="https://github.com/Danial-Kord/DigiHuman/blob/images/images/8.jpg">
-    <img src="https://github.com/Danial-Kord/DigiHuman/blob/images/images/8.jpg?raw=true" alt="Logo" width="500" height="300">
+    <img src="https://github.com/Danial-Kord/DigiHuman/blob/images/images/8.jpg?raw=true" alt="Character slideshow nodes" width="500" height="300">
   </a>
 </div>
 
-7. Run the application and you can now select your character for rendering animation!
+7. Run the app and choose the character from the UI.
 
-# Features
-<!-- ROADMAP -->
+## Features
 
-<!-- ## Available features -->
-- [x] Making full body animation
-- [x] Animating multiple blendShapes on 3D character (up to 40 blendshape animations is supported currently)
-- [x] Supporting any 3D models with Humanoid T-Pose rig
-- [x] Exporting animation in a video file
-- [x] Saving animation data and re-rendering it for future usage
-- [x] Filtering mediaPipe outputs in order to detect and remove noises and better smoothness (Low Pass Filtering is used currently) 
+- [x] Full body animation
+- [x] Multiple blend shapes on the character (up to about 40 supported)
+- [x] Humanoid T-pose–style models
+- [x] Export animation to video (with FFmpegOut)
+- [x] Save animation data and replay later
+- [x] Smoothed MediaPipe output (e.g. low-pass filtering)
 
-<!-- ## TODO -->
+**Roadmap (excerpt)**
 
-- [ ] Animating the character's face in great details
-    - [ ] Training a regression model to generate Blendmesh weights by feeding the output data of mediaPipe FaceMesh(468 points)
-    - [ ] Using StyleGan techniques to replace whole character face mesh
-- [ ] Automatic rigging for 3D models without humanoid rig (Using deep neural network models like RigNet)
-- [ ] Generating complete character mesh automatically using models like PIFuHD (in progress!)
-- [ ] Animating 3D character mouth in great detail using audio signal or natural language processing methods
-- [ ] Generating complete environment in 3D
-
+- [ ] Finer face detail
+    - [ ] Regression model from MediaPipe FaceMesh (468 points) to blendshape weights
+    - [ ] StyleGAN-style face replacement
+- [ ] Automatic rigging without a humanoid rig (e.g. RigNet-style approaches)
+- [ ] Full character mesh from images (e.g. PIFuHD) — in progress
+- [ ] Mouth detail from audio or language models
+- [ ] Full 3D environment generation
 
 ## Resources
-- Body Pose Estimation: BlazePose model
-  - Paper: [BlazePose: On-device Real-time Body Pose Tracking](https://arxiv.org/abs/2006.10204)
-- Hands Pose Estimation: MediaPipe Hands model
-  - Paper: [MediaPipe Hands: On-device Real-time Hand Tracking](https://arxiv.org/abs/2006.10214)
-- Face Detection: BlazeFace model
-  - Paper: [BlazeFace: Sub-millisecond Neural Face Detection on Mobile GPUs](https://arxiv.org/abs/1907.05047)
-- Face Landmark Generator: MediaPipe Face Landmark Model 
-  - Paper: [Real-time Facial Surface Geometry from Monocular Video on Mobile GPUs](https://arxiv.org/abs/1907.06724)
 
-## Licenses & Citations
-### DigiHuman Licence
-   Application License: [GPL-3.0 license](https://github.com/Danial-Kord/DigiHuman/blob/main/LICENSE.md)
-   Non-commercial use only. If you distribute or communicate copies of the modified or unmodified Program, or any portion thereof, you must provide appropriate credit to Danial Kordmodanlou as the original author of the Program. This attribution should be included in any location where the Program is used or displayed.
+- Body pose: BlazePose — [paper](https://arxiv.org/abs/2006.10204)
+- Hands: MediaPipe Hands — [paper](https://arxiv.org/abs/2006.10214)
+- Face detection: BlazeFace — [paper](https://arxiv.org/abs/1907.05047)
+- Face landmarks: MediaPipe Face Landmark model — [paper](https://arxiv.org/abs/1907.06724)
 
-### FFmpeg</br>
-- FFmpeg is licensed under the [GNU Lesser General Public License (LGPL) version 2.1](http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html) or later. However, FFmpeg incorporates several optional parts and optimizations that are covered by the [GNU General Public License (GPL) version 2](http://www.gnu.org/licenses/old-licenses/gpl-2.0.html) or later. If those parts get used the GPL applies to all of FFmpeg. 
-- Unity FFmpeg packages are licensed under [Keijiro Takahashi MIT](https://github.com/keijiro/FFmpegOut/blob/master/LICENSE.md)
+## Licenses & citations
 
-### GauGan
-- Used [SPADE](https://github.com/NVlabs/SPADE) repository developed by NVIDIA and the customization is addapted from [Smart-Sketch](https://github.com/noyoshi/smart-sketch) with [GPL V 3.0](https://github.com/noyoshi/smart-sketch/blob/master/LICENSE) licence
+### DigiHuman license
+
+Application license: [GPL-3.0](https://github.com/Danial-Kord/DigiHuman/blob/main/LICENSE.md). Non-commercial use only. If you distribute the Program, attribute Danial Kordmodanlou as the original author wherever the Program is used or shown.
+
+### FFmpeg
+
+- FFmpeg: [LGPL 2.1+](http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html); some optional parts are [GPL 2+](http://www.gnu.org/licenses/old-licenses/gpl-2.0.html).
+- Keijiro’s Unity FFmpeg packages: [MIT](https://github.com/keijiro/FFmpegOut/blob/master/LICENSE.md)
+
+### GauGAN / SPADE
+
+Uses [SPADE](https://github.com/NVlabs/SPADE) (NVIDIA), with customization adapted from [Smart-Sketch](https://github.com/noyoshi/smart-sketch) ([GPL v3](https://github.com/noyoshi/smart-sketch/blob/master/LICENSE)).
+
 ```
 @inproceedings{park2019SPADE,
   title={Semantic Image Synthesis with Spatially-Adaptive Normalization},
@@ -230,17 +266,17 @@ Follow these steps to add your character:
   year={2019}
 }
 ```
-### 3D Characters
-[Unity-chan model](https://unity-chan.com/contents/license_en/) & [mixamo models](https://www.mixamo.com)
+
+### 3D characters
+
+[Unity-chan](https://unity-chan.com/contents/license_en/) and [Mixamo](https://www.mixamo.com) assets as applicable.
+
+## Contact
+
+Danial Kordmodanlou — [kordmodanloo@gmail.com](mailto:kordmodanloo@gmail.com)
+
+Website: [danial-kord.github.io](https://danial-kord.github.io/)
+
+Project: [github.com/Danial-Kord/DigiHuman](https://github.com/Danial-Kord/DigiHuman)
 
 
-
-<!-- CONTACT -->
-# Contact
-Danial Kordmodanlou - [kordmodanloo@gmail.com](mailto:kordmodanloo@gmail.com)
-
-Website : [danial-kord.github.io](https://danial-kord.github.io/) 
-
-Project Link: [github.com/Danial-Kord/DigiHuman](https://github.com/Danial-Kord/DigiHuman)
-
-Telegram ID: [@Danial_km](https://t.me/Danial_km)

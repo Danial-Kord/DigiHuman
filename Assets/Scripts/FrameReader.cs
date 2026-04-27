@@ -89,6 +89,23 @@ public class FrameData
     public int frame;
 }
 
+/// <summary>WebSocket /live_mocap error payload from Python server.</summary>
+[Serializable]
+public class LiveMocapWsError
+{
+    public string error;
+}
+
+/// <summary>One frame from ws://.../ws/live_mocap (matches Backend realtime_mocap JSON).</summary>
+[Serializable]
+public class LiveMocapFrameDto
+{
+    public int frame;
+    public PoseJson bodyPose;
+    public HandJson handsPose;
+    public FaceJson faceData;
+}
+
 public class FrameReader : MonoBehaviour
 {
     [Header("Requirements")]
@@ -149,6 +166,8 @@ public class FrameReader : MonoBehaviour
     
     [SerializeField] private bool enableVideo;
 
+    /// <summary>When true, FixedUpdate timeline playback is skipped; use ApplyLiveMocap* from WebSocket client.</summary>
+    [HideInInspector] public bool liveStreamSuppressTimeline;
 
     [Header("Camera Zoom")] 
     [SerializeField] private Transform bodyZoomCameraPlace;
@@ -389,8 +408,8 @@ public class FrameReader : MonoBehaviour
     
     private void FixedUpdate()
     {
-
-
+        if (liveStreamSuppressTimeline)
+            return;
 
         if(!pause)
             timer += Time.fixedDeltaTime;
@@ -652,7 +671,7 @@ public class FrameReader : MonoBehaviour
     }
     private PoseJsonVector GetBodyPartsVector(PoseJson poseJson)
     {
-        int len = poseJson.predictions.Length;
+        int len = poseJson.predictions != null ? poseJson.predictions.Length : 0;
         PoseJsonVector poseJsonVector = new PoseJsonVector();
         poseJsonVector.predictions = new BodyPartVector[len];
         poseJsonVector.frame = poseJson.frame;
@@ -668,12 +687,66 @@ public class FrameReader : MonoBehaviour
 
         return poseJsonVector;
     }
+
+    public void SetLiveStreamMode(bool enabled)
+    {
+        liveStreamSuppressTimeline = enabled;
+        if (enabled)
+            pause = true;
+    }
+
+    /// <summary>Apply one server live-mocap JSON text frame (main thread).</summary>
+    public void ApplyLiveMocapFrameJson(string json)
+    {
+        if (string.IsNullOrEmpty(json))
+            return;
+        if (json.IndexOf("\"error\"", StringComparison.Ordinal) >= 0)
+        {
+            var err = JsonUtility.FromJson<LiveMocapWsError>(json);
+            if (!string.IsNullOrEmpty(err.error))
+                Debug.LogWarning("Live mocap: " + err.error);
+            return;
+        }
+
+        LiveMocapFrameDto dto = JsonUtility.FromJson<LiveMocapFrameDto>(json);
+        if (dto == null)
+            return;
+
+        PoseJsonVector poseVec = null;
+        if (dto.bodyPose != null && dto.bodyPose.predictions != null && dto.bodyPose.predictions.Length > 0)
+            poseVec = GetBodyPartsVector(dto.bodyPose);
+
+        HandJsonVector handVec = null;
+        if (dto.handsPose != null)
+            handVec = GetHandsVector(dto.handsPose);
+
+        ApplyLiveMocapSnapshot(poseVec, handVec, dto.faceData);
+    }
+
+    public void ApplyLiveMocapSnapshot(PoseJsonVector poseVec, HandJsonVector handVec, FaceJson face)
+    {
+        try
+        {
+            character.transform.rotation = Quaternion.identity;
+            if (poseVec != null)
+                pose3DMapper.Predict3DPose(poseVec);
+            if (handVec != null && enableHands)
+                handPose.Predict3DPose(handVec);
+            if (face != null && face.blendShapes != null && enableFace)
+                facialExpressionHandler.UpdateData(face);
+            character.transform.rotation = characterRotation;
+        }
+        catch (Exception e)
+        {
+            Debug.LogWarning("Live mocap apply failed: " + e.Message);
+        }
+    }
     
     
     private HandJsonVector GetHandsVector(HandJson handJson)
     {
-        int len = handJson.handsR.Length;
-        int len2 = handJson.handsL.Length;
+        int len = handJson.handsR != null ? handJson.handsR.Length : 0;
+        int len2 = handJson.handsL != null ? handJson.handsL.Length : 0;
         HandJsonVector handJsonVector = new HandJsonVector();
         handJsonVector.handsR = new BodyPartVector[len];
         handJsonVector.handsL = new BodyPartVector[len2];

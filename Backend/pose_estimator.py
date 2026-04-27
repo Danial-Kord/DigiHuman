@@ -341,9 +341,9 @@ def Hands_Full(video_path, debug=False):
     cap.release()
 
 
-def Complete_pose_Video(video_path, debug=False):
-    cap = cv2.VideoCapture(video_path)
-    options = _HolisticLandmarkerOptions(
+def default_holistic_landmarker_options():
+    """HolisticLandmarkerOptions shared by offline full-pose video and live WebSocket capture."""
+    return _HolisticLandmarkerOptions(
         base_options=_BaseOptions(model_asset_path=model_path("holistic_landmarker.task")),
         running_mode=_RunningMode.VIDEO,
         min_face_detection_confidence=0.5,
@@ -352,6 +352,46 @@ def Complete_pose_Video(video_path, debug=False):
         min_pose_landmarks_confidence=0.8,
         min_hand_landmarks_confidence=0.8,
     )
+
+
+def holistic_result_to_full_pose_dict(results, frame, rows, cols):
+    """
+    Build body + hands dict from one HolisticLandmarkerResult (same shape as offline FullPoseJson).
+    """
+    try:
+        if results.pose_world_landmarks:
+            pose_landmarks = landmarks_list_to_array(results.pose_world_landmarks)
+            add_extra_points(pose_landmarks)
+            body_pose = {
+                "predictions": pose_landmarks,
+                "frame": frame,
+                "height": rows,
+                "width": cols,
+            }
+        else:
+            raise ValueError("no pose")
+    except Exception:
+        body_pose = {
+            "predictions": [],
+            "frame": frame,
+            "height": rows,
+            "width": cols,
+        }
+
+    hands_array_R = []
+    hands_array_L = []
+    if results.left_hand_landmarks:
+        hands_array_L = landmarks_list_to_array(results.left_hand_landmarks)
+    if results.right_hand_landmarks:
+        hands_array_R = landmarks_list_to_array(results.right_hand_landmarks)
+    hands_pose = {"handsR": hands_array_R, "handsL": hands_array_L, "frame": frame}
+
+    return {"bodyPose": body_pose, "handsPose": hands_pose, "frame": frame}
+
+
+def Complete_pose_Video(video_path, debug=False):
+    cap = cv2.VideoCapture(video_path)
+    options = default_holistic_landmarker_options()
     face_contours = _FaceLandmarksConnections.FACE_LANDMARKS_CONTOURS
     pose_conn = _PoseLandmarksConnections.POSE_LANDMARKS
     hand_conn = _HandLandmarksConnections.HAND_CONNECTIONS
@@ -375,35 +415,7 @@ def Complete_pose_Video(video_path, debug=False):
             results = holistic.detect_for_video(mp_image, ts)
 
             rows, cols, _ = image_rgb.shape
-            try:
-                if results.pose_world_landmarks:
-                    pose_landmarks = landmarks_list_to_array(results.pose_world_landmarks)
-                    add_extra_points(pose_landmarks)
-                    body_pose = {
-                        "predictions": pose_landmarks,
-                        "frame": frame,
-                        "height": rows,
-                        "width": cols,
-                    }
-                else:
-                    raise ValueError("no pose")
-            except Exception:
-                body_pose = {
-                    "predictions": [],
-                    "frame": frame,
-                    "height": rows,
-                    "width": cols,
-                }
-
-            hands_array_R = []
-            hands_array_L = []
-            if results.left_hand_landmarks:
-                hands_array_L = landmarks_list_to_array(results.left_hand_landmarks)
-            if results.right_hand_landmarks:
-                hands_array_R = landmarks_list_to_array(results.right_hand_landmarks)
-            hands_pose = {"handsR": hands_array_R, "handsL": hands_array_L, "frame": frame}
-
-            json_data = {"bodyPose": body_pose, "handsPose": hands_pose, "frame": frame}
+            json_data = holistic_result_to_full_pose_dict(results, frame, rows, cols)
             yield json_data
 
             if debug:

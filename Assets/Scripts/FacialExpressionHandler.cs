@@ -109,7 +109,10 @@ public class FacialExpressionHandler : MonoBehaviour
     
     public void UpdateData(FaceJson faceJson)
     {
-        for (int i = 0; i < faceJson.blendShapes.Length; i++)
+        if (faceJson.blendShapes == null)
+            return;
+        int n = Mathf.Min(faceJson.blendShapes.Length, faceBlendNodes.Length);
+        for (int i = 0; i < n; i++)
         {
             faceBlendNodes[i].newWeight = faceJson.blendShapes[i];
         }

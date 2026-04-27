@@ -27,6 +27,8 @@ public class NetworkManager : MonoSingleton<NetworkManager>
     [Header("Dependencies")] 
     [SerializeField] private FrameReader frameReader;
 
+    [Header("Live WebSocket mocap (optional)")]
+    [SerializeField] private LiveMocapClient liveMocapClient;
 
     
     //for testing in engine only
@@ -120,6 +122,16 @@ public class NetworkManager : MonoSingleton<NetworkManager>
             StartCoroutine(GetFullBodyPoseEstimates(response,bytes));
             onSuccess?.Invoke();
         })); //Get estimates }));
+    }
+
+    public void StartLiveMocapStream()
+    {
+        liveMocapClient?.StartLiveStream();
+    }
+
+    public void StopLiveMocapStream()
+    {
+        liveMocapClient?.StopLiveStream();
     }
     
     

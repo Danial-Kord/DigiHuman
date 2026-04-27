@@ -1,6 +1,8 @@
 # Flask 2.3+ uses click>=8.1 (compatible with typer); Flask 1.1.x required click<8 and conflicted with typer.
 Flask==2.3.3
 Flask-Cors==4.0.0
+flask-sock==0.7.0
+websocket-client==1.8.0
 tornado==6.1
 
 torch>=1.7.0

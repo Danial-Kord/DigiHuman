@@ -1,7 +1,9 @@
+import json
 import time
 
 from flask import Flask, render_template, request
 from werkzeug.utils import secure_filename
+from flask_sock import Sock
 
 
 import atexit
@@ -14,11 +16,13 @@ import pose_estimator
 import mediaPipeFace
 from flask import jsonify , stream_with_context
 from flask import Response
-from threading import Thread
+from threading import Thread, Lock, Event
 import subprocess
 from color_grey_conversion import color_to_grey
 from test import run
 from flask import send_file
+
+from realtime_mocap import iter_live_mocap_frames
 
 
 mimetypes.init()
@@ -120,6 +124,76 @@ def process_queue():
 
 
 app = Flask(__name__)
+sock = Sock(app)
+
+_live_mocap_lock = Lock()
+_live_mocap_in_use = False
+
+
+@sock.route("/ws/live_mocap")
+def ws_live_mocap(ws):
+    """Real-time holistic pose + hands + 40 blendshape weights from the server webcam."""
+    global _live_mocap_in_use
+    with _live_mocap_lock:
+        if _live_mocap_in_use:
+            try:
+                ws.send(json.dumps({"error": "live_stream_already_active"}))
+            except Exception:
+                pass
+            return
+        _live_mocap_in_use = True
+
+    stop_event = Event()
+    try:
+        first = ws.receive()
+        if first is None:
+            return
+        try:
+            data = json.loads(first)
+        except json.JSONDecodeError:
+            try:
+                ws.send(json.dumps({"error": "invalid_json"}))
+            except Exception:
+                pass
+            return
+        if data.get("cmd") != "start":
+            try:
+                ws.send(json.dumps({"error": "expected_cmd_start"}))
+            except Exception:
+                pass
+            return
+        camera_id = int(data.get("camera_id", 0))
+
+        def poll_stop():
+            while not stop_event.is_set():
+                msg = ws.receive()
+                if msg is None:
+                    stop_event.set()
+                    break
+                try:
+                    j = json.loads(msg)
+                    if j.get("cmd") == "stop":
+                        stop_event.set()
+                        break
+                except json.JSONDecodeError:
+                    continue
+
+        Thread(target=poll_stop, daemon=True).start()
+
+        for payload in iter_live_mocap_frames(camera_id=camera_id):
+            if stop_event.is_set():
+                break
+            try:
+                ws.send(json.dumps(payload))
+            except Exception:
+                stop_event.set()
+                break
+            if payload.get("error"):
+                break
+    finally:
+        stop_event.set()
+        with _live_mocap_lock:
+            _live_mocap_in_use = False
 
 
 # filename = path to video, json_array_len= how many frames data should be sent per request
@@ -471,7 +545,7 @@ def upload_face_video():
 
 
 def run_server():
-    app.run(debug=True)
+    app.run(debug=True, threaded=True)
 
 
 
