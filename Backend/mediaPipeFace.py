@@ -12,6 +12,7 @@ from mediapipe.tasks.python.vision import pose_landmarker as pose_landmarker_mod
 from mediapipe.tasks.python.vision.core import vision_task_running_mode as running_mode_module
 
 from mediapipe_compat import frame_timestamp_ms, model_path, numpy_rgb_to_mp_image
+from pose_estimator import _landmark_sequence
 
 _BaseOptions = base_options_module.BaseOptions
 _FaceLandmarker = face_landmarker_module.FaceLandmarker
@@ -272,7 +273,10 @@ def face_holistic(video_path, debug=False):
             results = holistic.detect_for_video(mp_image, ts)
 
             if results.face_landmarks:
-                lm468 = results.face_landmarks[:468]
+                seq = _landmark_sequence(results.face_landmarks[0])
+                if len(seq) < 468:
+                    continue
+                lm468 = seq[:468]
                 landmarks = np.array([(lm.x, lm.y, lm.z) for lm in lm468])
                 landmarks = landmarks.T
 

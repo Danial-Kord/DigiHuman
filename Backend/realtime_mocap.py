@@ -9,7 +9,11 @@ from blendshapes.facedata import FaceData
 from face_geometry import PCF, get_metric_landmarks
 from mediaPipeFace import blendshapes_for_unity
 from mediapipe_compat import frame_timestamp_ms, numpy_rgb_to_mp_image
-from pose_estimator import default_holistic_landmarker_options, holistic_result_to_full_pose_dict
+from pose_estimator import (
+    _landmark_sequence,
+    default_holistic_landmarker_options,
+    holistic_result_to_full_pose_dict,
+)
 
 _HolisticLandmarker = holistic_landmarker_module.HolisticLandmarker
 
@@ -62,17 +66,20 @@ def iter_live_mocap_frames(camera_id: int = 0):
                 time_msec = float(cap.get(cv2.CAP_PROP_POS_MSEC) or 0.0)
 
                 if results.face_landmarks and len(results.face_landmarks) > 0:
-                    lm_list = results.face_landmarks[0]
-                    lm468 = lm_list[:468]
-                    landmarks = np.array([(lm.x, lm.y, lm.z) for lm in lm468])
-                    landmarks = landmarks.T
-                    metric_landmarks, _ = get_metric_landmarks(landmarks.copy(), pcf)
-                    blendshape_calculator.calculate_blendshapes(
-                        face_data,
-                        metric_landmarks[0:3].T,
-                        lm468,
-                    )
-                    blends = blendshapes_for_unity(face_data)
+                    seq = _landmark_sequence(results.face_landmarks[0])
+                    if len(seq) < 468:
+                        blends = list(zero_blend)
+                    else:
+                        lm468 = seq[:468]
+                        landmarks = np.array([(lm.x, lm.y, lm.z) for lm in lm468])
+                        landmarks = landmarks.T
+                        metric_landmarks, _ = get_metric_landmarks(landmarks.copy(), pcf)
+                        blendshape_calculator.calculate_blendshapes(
+                            face_data,
+                            metric_landmarks[0:3].T,
+                            lm468,
+                        )
+                        blends = blendshapes_for_unity(face_data)
                 else:
                     blends = list(zero_blend)
 
