@@ -9,7 +9,8 @@ public struct BlendShape
 {
     public int num;
     [HideInInspector]public float weight;
-    [Tooltip("Which skinned mesh should be affected")] public int skinnedMeshIndex;
+    [Tooltip("SkinnedMeshRenderer index in BlendShapeController array. Use -1 to apply this blendshape index to every renderer (e.g. face + teeth when shapes align).")]
+    public int skinnedMeshIndex;
 }
 
 public class BlendShapeController : MonoBehaviour
@@ -393,10 +394,23 @@ public class BlendShapeController : MonoBehaviour
             return;
         if (skinnedMeshRenderers == null || skinnedMeshRenderers.Length == 0)
             return;
+
+        if (skinnedMeshIndex == -1)
+        {
+            for (int i = 0; i < skinnedMeshRenderers.Length; i++)
+                SetBlendShapeOnSkinnedMeshAt(i, blendNum, blendWeight);
+            return;
+        }
+
         if (skinnedMeshIndex < 0 || skinnedMeshIndex >= skinnedMeshRenderers.Length)
             return;
 
-        SkinnedMeshRenderer smr = skinnedMeshRenderers[skinnedMeshIndex];
+        SetBlendShapeOnSkinnedMeshAt(skinnedMeshIndex, blendNum, blendWeight);
+    }
+
+    private void SetBlendShapeOnSkinnedMeshAt(int rendererIndex, int blendNum, float blendWeight)
+    {
+        SkinnedMeshRenderer smr = skinnedMeshRenderers[rendererIndex];
         if (smr == null || smr.sharedMesh == null)
             return;
 
@@ -405,7 +419,6 @@ public class BlendShapeController : MonoBehaviour
             return;
 
         float blendshapeValue = Mathf.Clamp(blendWeight, 0, 100) / 100f * maxBlendShapeValue;
-        
         smr.SetBlendShapeWeight(blendNum, blendshapeValue);
     }
     

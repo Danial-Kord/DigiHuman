@@ -37974,6 +37974,7 @@ MonoBehaviour:
   fractionZ: 1.2
   enableVideoAspectRatioEffector: 0
   nextFrameTime: 0
+  fallbackTimelineFps: 30
   currentPoseJson:
     predictions: []
     width: 0
@@ -43968,11 +43969,11 @@ MonoBehaviour:
   EyeBlinkLeft:
     num: 2
     weight: 0
-    skinnedMeshIndex: 0
+    skinnedMeshIndex: -1
   EyeBlinkRight:
     num: 3
     weight: 0
-    skinnedMeshIndex: 0
+    skinnedMeshIndex: -1
   EyeSquintLeft:
     num: -1
     weight: 0
@@ -43996,11 +43997,11 @@ MonoBehaviour:
   MouthSmileLeft:
     num: 1
     weight: 0
-    skinnedMeshIndex: 0
+    skinnedMeshIndex: -1
   MouthFrownRight:
     num: 1
     weight: 0
-    skinnedMeshIndex: 0
+    skinnedMeshIndex: -1
   MouthFrownLeft:
     num: -1
     weight: 0
@@ -44126,29 +44127,118 @@ MonoBehaviour:
     weight: 0
     skinnedMeshIndex: 0
   suppressArkitMouthOnMesh: 1
+  driveExtendedMeshAndVisemes: 1
   normalizationMode: 1
   visemeAa:
-    num: 13
+    num: 14
     weight: 0
-    skinnedMeshIndex: 0
+    skinnedMeshIndex: -1
   visemeO:
     num: 23
     weight: 0
-    skinnedMeshIndex: 0
+    skinnedMeshIndex: -1
   visemeU:
     num: 24
     weight: 0
-    skinnedMeshIndex: 0
+    skinnedMeshIndex: -1
   visemeE:
     num: 21
     weight: 0
-    skinnedMeshIndex: 0
+    skinnedMeshIndex: -1
   visemeI:
     num: 22
     weight: 0
-    skinnedMeshIndex: 0
+    skinnedMeshIndex: -1
   ooShareForO: 0.55
   eeShareForE: 0.55
+  meshMouthOpen:
+    num: 0
+    weight: 0
+    skinnedMeshIndex: -1
+  meshMouthSmile:
+    num: 1
+    weight: 0
+    skinnedMeshIndex: -1
+  meshEyeBlinkLeft:
+    num: 2
+    weight: 0
+    skinnedMeshIndex: -1
+  meshEyeBlinkRight:
+    num: 3
+    weight: 0
+    skinnedMeshIndex: -1
+  visemeSil:
+    num: 4
+    weight: 0
+    skinnedMeshIndex: -1
+  visemePP:
+    num: 5
+    weight: 0
+    skinnedMeshIndex: -1
+  visemeFF:
+    num: 6
+    weight: 0
+    skinnedMeshIndex: -1
+  visemeTH:
+    num: 7
+    weight: 0
+    skinnedMeshIndex: -1
+  visemeDD:
+    num: 8
+    weight: 0
+    skinnedMeshIndex: -1
+  visemeKk:
+    num: 9
+    weight: 0
+    skinnedMeshIndex: -1
+  visemeCH:
+    num: 10
+    weight: 0
+    skinnedMeshIndex: -1
+  visemeSS:
+    num: 11
+    weight: 0
+    skinnedMeshIndex: -1
+  visemeNn:
+    num: 12
+    weight: 0
+    skinnedMeshIndex: -1
+  visemeRR:
+    num: 13
+    weight: 0
+    skinnedMeshIndex: -1
+  visemeAa001:
+    num: 21
+    weight: 0
+    skinnedMeshIndex: -1
+  visemeDD001:
+    num: 15
+    weight: 0
+    skinnedMeshIndex: -1
+  visemeKk001:
+    num: 16
+    weight: 0
+    skinnedMeshIndex: -1
+  visemeCH001:
+    num: 17
+    weight: 0
+    skinnedMeshIndex: -1
+  visemeSS001:
+    num: 18
+    weight: 0
+    skinnedMeshIndex: -1
+  visemeNn001:
+    num: 19
+    weight: 0
+    skinnedMeshIndex: -1
+  visemeRR001:
+    num: 20
+    weight: 0
+    skinnedMeshIndex: -1
+  visemeLaughter:
+    num: 26
+    weight: 0
+    skinnedMeshIndex: -1
   aaMouthOpenCoeff: 0.85
   aaJawOpenCoeff: 0.65
   aaLipSeparationCoeff: 0.35
@@ -44159,6 +44249,23 @@ MonoBehaviour:
   eeStretchCoeff: 0.85
   eeSmileCoeff: 0.55
   eeLipUpperCoeff: 0.35
+  silGain: 1
+  silVowelSuppression: 0.85
+  ppGain: 0.9
+  ffGain: 0.65
+  thGain: 0.55
+  ddOpenGain: 0.35
+  kkPuckerGain: 0.75
+  kkJawGain: 0.2
+  chGain: 0.55
+  ssStretchGain: 0.55
+  ssLipGain: 0.45
+  nnGain: 0.85
+  rrJawAsymGain: 0.65
+  rrRollGain: 0.35
+  laughterSmileGain: 0.85
+  laughterCheekGain: 0.45
+  laughterThresholdSmile: 25
 --- !u!95 &615413918
 Animator:
   serializedVersion: 5
@@ -44529,6 +44636,7 @@ MonoBehaviour:
   fractionZ: -0.8
   enableVideoAspectRatioEffector: 1
   nextFrameTime: 0.00833
+  fallbackTimelineFps: 30
   currentPoseJson:
     predictions: []
     width: 0
@@ -78959,6 +79067,7 @@ MonoBehaviour:
   fractionZ: 1.2
   enableVideoAspectRatioEffector: 0
   nextFrameTime: 0
+  fallbackTimelineFps: 30
   currentPoseJson:
     predictions: []
     width: 0

@@ -87,6 +87,8 @@ public class FrameData
     public FaceJson faceData;
     public HandJsonVector handData;
     public int frame;
+    /// <summary>Playback time in seconds (from video start). Prefer FaceJson.time when present; used to match animation rate to source video.</summary>
+    public float timeSeconds;
 }
 
 /// <summary>WebSocket /live_mocap error payload from Python server.</summary>
@@ -129,6 +131,12 @@ public class FrameReader : MonoBehaviour
     
     [Header("Frame rate")]
     [SerializeField] private float nextFrameTime;
+
+    [Tooltip("Used when JSON has no FaceJson.time (ms); also fallback span between pose/hand-only keys.")]
+    [SerializeField] private float fallbackTimelineFps = 30f;
+
+    /// <summary>Wall-clock playback position when not driving from VideoPlayer.time.</summary>
+    private float playbackElapsedSeconds;
 
     private int currentAnimationSlot = 0;
     
@@ -405,26 +413,91 @@ public class FrameReader : MonoBehaviour
 
         }
     }
-    
+
+    private bool framesLoaded = false;
+
+    /// <summary>Fill <see cref="FrameData.timeSeconds"/> from FaceJson.time (ms) when available, else frame index / FPS.</summary>
+    private void AssignTimelineSecondsToFrameData()
+    {
+        if (frameData == null || frameData.Count == 0)
+            return;
+        float fps = Mathf.Max(fallbackTimelineFps, 1f);
+        if (enableVideo && videoPlayer != null && videoPlayer.frameRate > 1e-3f)
+            fps = (float)videoPlayer.frameRate;
+        float prev = 0f;
+        for (int i = 0; i < frameData.Count; i++)
+        {
+            FrameData fd = frameData[i];
+            float ts = fd.faceData != null && fd.faceData.time > 0.001f
+                ? fd.faceData.time / 1000f
+                : fd.frame / fps;
+            if (ts < prev)
+                ts = prev + 1e-5f;
+            fd.timeSeconds = ts;
+            prev = ts;
+        }
+    }
+
+    private bool UsesVideoTimelineClock()
+    {
+        return enableVideo && videoPlayer != null && !string.IsNullOrEmpty(videoPlayer.url);
+    }
+
+    private float GetPlaybackTimelineSeconds()
+    {
+        if (UsesVideoTimelineClock())
+            return Mathf.Max(0f, (float)videoPlayer.time);
+        return Mathf.Max(0f, playbackElapsedSeconds);
+    }
+
+    private float ComputeTimelineLerpAlpha()
+    {
+        if (frameData == null || frameData.Count == 0)
+            return 0f;
+        int idx = Mathf.Clamp(currentAnimationSlot, 0, frameData.Count - 1);
+        float playT = GetPlaybackTimelineSeconds();
+        float t0 = frameData[idx].timeSeconds;
+        float defaultSpan = 1f / Mathf.Max(fallbackTimelineFps, 1f);
+        float fallbackSpan = nextFrameTime > 1e-5f ? nextFrameTime : defaultSpan;
+        float t1 = idx + 1 < frameData.Count
+            ? frameData[idx + 1].timeSeconds
+            : t0 + Mathf.Max(fallbackSpan, defaultSpan);
+        float span = Mathf.Max(t1 - t0, 1e-5f);
+        return Mathf.Clamp01((playT - t0) / span);
+    }
+
+    private float GetTotalTimelineDurationSeconds()
+    {
+        if (frameData == null || frameData.Count == 0)
+            return 0f;
+        if (enableVideo && videoPlayer != null && videoPlayer.length > 0.01)
+            return (float)videoPlayer.length;
+        float last = frameData[frameData.Count - 1].timeSeconds;
+        float spacing = frameData.Count >= 2
+            ? Mathf.Max(
+                frameData[frameData.Count - 1].timeSeconds - frameData[frameData.Count - 2].timeSeconds,
+                1f / Mathf.Max(fallbackTimelineFps, 1f))
+            : 1f / Mathf.Max(fallbackTimelineFps, 1f);
+        return last + spacing;
+    }
+
     private void FixedUpdate()
     {
         if (liveStreamSuppressTimeline)
             return;
 
-        if(!pause)
+        if (!pause)
             timer += Time.fixedDeltaTime;
-        currentAnimationSlot = (int)slider.value;
+
         if (debug)
         {
-            // videoPlayer.frame = fileIndex-1;
-            // videoPlayer.Play();
-            // videoPlayer.Pause();
             if (timer > nextFrameTime)
             {
                 timer = 0;
-                if(!onlyCurrentIndex)
+                if (!onlyCurrentIndex)
                     fileIndex += 1;
             }
+
             try
             {
                 TestFromFile();
@@ -435,144 +508,97 @@ public class FrameReader : MonoBehaviour
                 throw;
                 Console.Write(e);
             }
-            
-            
 
             return;
         }
 
-        if (currentAnimationSlot >= frameData.Count)
-        {
-            OnAnimationPlayFinish();
+        if (frameData == null || frameData.Count == 0)
             return;
-        }
 
-        if (!pause && enableVideo)
+        currentAnimationSlot = Mathf.Clamp((int)slider.value, 0, frameData.Count - 1);
+
+        if (pause)
         {
-            if (videoPlayer.url != "")
+            if (UsesVideoTimelineClock() && videoPlayer != null && videoPlayer.canSetTime)
+                videoPlayer.time = frameData[currentAnimationSlot].timeSeconds;
+            else
+                playbackElapsedSeconds = frameData[currentAnimationSlot].timeSeconds;
+        }
+        else
+        {
+            if (!UsesVideoTimelineClock())
+                playbackElapsedSeconds += Time.fixedDeltaTime;
+
+            float playT = GetPlaybackTimelineSeconds();
+            while (currentAnimationSlot + 1 < frameData.Count &&
+                   frameData[currentAnimationSlot + 1].timeSeconds <= playT)
+                currentAnimationSlot++;
+
+            if (playT >= GetTotalTimelineDurationSeconds() - 1e-4f)
             {
-                Debug.Log(videoPlayer.time);
-                Debug.Log(currentFaceJson.time);
-                if (videoPlayer.time < currentFaceJson.time / 1000.0f)
-                    return;
-                if (!videoPlayer.isPaused &&
-                    Mathf.Abs((float) (videoPlayer.time - (currentFaceJson.time / 1000.0f))) > 0.2f &&
-                    currentFaceJson.time != 0.0f)
-                {
-                    videoPlayer.Pause();
-                }
-                else if (videoPlayer.isPaused)
-                {
-                    videoPlayer.Play();
-                }
+                OnAnimationPlayFinish();
+                return;
             }
         }
-        
-        
-        // //body pose
-        // if (poseIndex < estimatedPoses.Count)
-        // {
-        //     currentPoseJsonVector = currentPoseJsonVectorNew;
-        //     currentPoseJsonVectorNew = estimatedPoses[poseIndex];
-        // }
-        //
-        // //Hand
-        // if (handIndex < estimatedHandPose.Count)
-        // {
-        //     currentHandJsonVector = currentHandJsonVectorNew;
-        //     currentHandJsonVectorNew = estimatedHandPose[handIndex];
-        // }
-        //
-        // //Face
-        // if (faceIndex < estimatedFacialMocap.Count)
-        // {
-        //     currentFaceJson = currentFaceJsonNew;
-        //     currentFaceJsonNew = estimatedFacialMocap[faceIndex];
-        // }
 
-        //Current Frame data
-        
+        currentAnimationSlot = Mathf.Clamp(currentAnimationSlot, 0, frameData.Count - 1);
+
         currentFrameData = frameData[currentAnimationSlot];
-        //Body
         currentPoseJsonVector = currentPoseJsonVectorNew;
         currentPoseJsonVectorNew = currentFrameData.poseData;
-        //Hand
         currentHandJsonVector = currentHandJsonVectorNew;
         currentHandJsonVectorNew = currentFrameData.handData;
-        //Face
-        // currentFaceJson = currentFaceJsonNew;
-        // currentFaceJsonNew = currentFrameData.faceData;
         currentFaceJson = currentFrameData.faceData;
-        
-        if (timer >= nextFrameTime)
-        {  
-            if (debug)
-            {
-                videoPlayer.frame = frameData[currentAnimationSlot].frame;
-                videoPlayer.Play();
-                videoPlayer.Pause();
-            }
-            timer = 0;
-            currentAnimationSlot++;
-            // currentFaceJson = estimatedFacialMocap[faceIndex];
-            // faceIndex++;
-        }
+
+        float lerpAlpha = ComputeTimelineLerpAlpha();
 
         try
         {
             character.transform.rotation = Quaternion.identity;
-            //-------- Body Pose ------
             if (currentPoseJsonVector != null)
             {
-                
-                //TODO change maybe looking for 5 frames later!
                 if (currentPoseJsonVectorNew != null)
                 {
-                    //for each bone position in the current frame
                     for (int i = 0; i < currentPoseJsonVector.predictions.Length; i++)
                     {
                         currentPoseJsonVector.predictions[i].position = Vector3.Lerp(
                             currentPoseJsonVector.predictions[i].position,
                             currentPoseJsonVectorNew.predictions[i].position,
-                            timer / nextFrameTime);
+                            lerpAlpha);
                     }
                 }
 
                 pose3DMapper.Predict3DPose(currentPoseJsonVector);
             }
 
-            //----- Hands -----
             if (currentHandJsonVector != null && enableHands)
             {
                 if (currentHandJsonVectorNew != null)
                 {
-                    if(currentHandJsonVector.handsR.Length == currentHandJsonVectorNew.handsR.Length)
-                        //for each bone position in the current frame
+                    if (currentHandJsonVector.handsR.Length == currentHandJsonVectorNew.handsR.Length)
                         for (int i = 0; i < currentHandJsonVector.handsR.Length; i++)
                         {
                             currentHandJsonVector.handsR[i].position = Vector3.Lerp(
                                 currentHandJsonVector.handsR[i].position,
                                 currentHandJsonVectorNew.handsR[i].position,
-                                timer / nextFrameTime);
+                                lerpAlpha);
                         }
-                    if(currentHandJsonVector.handsL.Length == currentHandJsonVectorNew.handsL.Length)
-                        //for each bone position in the current frame
+
+                    if (currentHandJsonVector.handsL.Length == currentHandJsonVectorNew.handsL.Length)
                         for (int i = 0; i < currentHandJsonVector.handsL.Length; i++)
                         {
                             currentHandJsonVector.handsL[i].position = Vector3.Lerp(
                                 currentHandJsonVector.handsL[i].position,
                                 currentHandJsonVectorNew.handsL[i].position,
-                                timer / nextFrameTime);
+                                lerpAlpha);
                         }
                 }
+
                 handPose.Predict3DPose(currentHandJsonVector);
             }
 
-            //----- Facial Mocap -------
             if (currentFaceJson != null && enableFace)
-            {
                 facialExpressionHandler.UpdateData(currentFaceJson);
-            }
 
             character.transform.rotation = characterRotation;
             slider.value = currentAnimationSlot;
@@ -586,28 +612,15 @@ public class FrameReader : MonoBehaviour
             Console.WriteLine(e);
             throw;
         }
-
-        try
-        {
-
-            // if(currentFaceJson != null)
-            //     if(videoPlayer.frame > currentFaceJson.frame || pause)
-            //         videoPlayer.frame = currentFaceJson.frame;
-            
-
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            throw;
-        }
     }
 
 
     private void OnAnimationPlayFinish()
     {
-        videoPlayer.Pause();
-        if(recording)
+        pause = true;
+        if (videoPlayer != null)
+            videoPlayer.Pause();
+        if (recording)
             StopRecording();
     }
     
@@ -803,7 +816,6 @@ public class FrameReader : MonoBehaviour
         estimatedFacialMocap = estimated;
     }
 
-    private bool framesLoaded = false;
     public void LoadFrames(FrameData[] frameData)
     {
         this.frameData = frameData.ToList<FrameData>();
@@ -818,6 +830,7 @@ public class FrameReader : MonoBehaviour
         //     }
         // }
         Debug.Log(frameData.Length);
+        AssignTimelineSecondsToFrameData();
         MakeSceneReady();
     }
     public void ArrangeDataFrames()
@@ -890,6 +903,8 @@ public class FrameReader : MonoBehaviour
             frameData.Add(currentFrameData);
             index++;
         }
+
+        AssignTimelineSecondsToFrameData();
 
         MakeSceneReady();
     }
@@ -969,21 +984,23 @@ public class FrameReader : MonoBehaviour
 
     public void OnTogglePlay()
     {
-        if(enableVideo && videoPlayer.url != "")
-            nextFrameTime = 1 / videoPlayer.frameRate;
-        timer = 10;
-        videoPlayer.frame = 0;
-        
+        if (videoPlayer != null && enableVideo && !string.IsNullOrEmpty(videoPlayer.url))
+        {
+            float fr = (float)videoPlayer.frameRate;
+            nextFrameTime = fr > 1e-3f ? 1f / fr : 1f / Mathf.Max(fallbackTimelineFps, 1f);
+            videoPlayer.frame = 0;
+        }
+        else
+            nextFrameTime = 1f / Mathf.Max(fallbackTimelineFps, 1f);
+
+        timer = 0;
         pause = !pause;
-        // videoPlayer.Play();
-        if(enableVideo && videoPlayer.url != "")
+
+        if (!pause)
+            playbackElapsedSeconds = 0f;
+
+        if (videoPlayer != null && enableVideo && !string.IsNullOrEmpty(videoPlayer.url))
             test();
-
-        // nextFrameTime = (float) (videoPlayer.length / videoPlayer.frameCount);
-
-        // StartCoroutine(TestCo());
-        // Invoke("test",1.5f);
-    
     }
 
 
@@ -1020,13 +1037,15 @@ public class FrameReader : MonoBehaviour
 
     public void SetFaceOriginalVideo(string path)
     {
-        if(!enableVideo)
+        if (!enableVideo || videoPlayer == null)
             return;
         videoPlayer.url = path;
         videoPlayer.Prepare();
         videoPlayer.Play();
         videoPlayer.frame = 0;
         videoPlayer.Pause();
+        if (frameData != null && frameData.Count > 0)
+            AssignTimelineSecondsToFrameData();
     }
     
     //Set Camera Zoom
