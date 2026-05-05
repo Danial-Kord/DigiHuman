@@ -235,7 +235,7 @@ public class BlendShapeController : MonoBehaviour
 
     
     
-    public void UpdateBlendShape()
+    public virtual void UpdateBlendShape()
     {
         // Apply deformation weights
         
@@ -383,11 +383,11 @@ public class BlendShapeController : MonoBehaviour
     
     
     
-    private void UpdateBlendShapeWeight(BlendShape blend)
+    protected void UpdateBlendShapeWeight(BlendShape blend)
     {
         UpdateBlendShapeWeight(blend.skinnedMeshIndex,blend.num,blend.weight);
     }
-    private void UpdateBlendShapeWeight(int skinnedMeshIndex, int blendNum, float blendWeight)
+    protected void UpdateBlendShapeWeight(int skinnedMeshIndex, int blendNum, float blendWeight)
     {
         if (blendNum < 0)
             return;
@@ -411,7 +411,7 @@ public class BlendShapeController : MonoBehaviour
     
 
     //change the value between 0 upto effectOrder
-    private float MappingEffect(float value, float maxValue, float effectOrder, float offset)
+    protected float MappingEffect(float value, float maxValue, float effectOrder, float offset)
     {
         return (value / maxValue) * effectOrder + offset;
     }
