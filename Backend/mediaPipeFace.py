@@ -163,6 +163,7 @@ def Calculate_Face_Mocap(path=None, debug=False):
     )
     with _FaceLandmarker.create_from_options(options) as face_landmarker:
         frame_index = 0
+        last_mp_ts = -1
         while cap.isOpened():
             success, image = cap.read()
             frame_index += 1
@@ -176,8 +177,8 @@ def Calculate_Face_Mocap(path=None, debug=False):
             image.flags.writeable = False
             image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
             mp_image = numpy_rgb_to_mp_image(image_rgb)
-            ts = frame_timestamp_ms(cap, frame_index)
-            face_result = face_landmarker.detect_for_video(mp_image, ts)
+            last_mp_ts = frame_timestamp_ms(cap, frame_index, last_ts=last_mp_ts)
+            face_result = face_landmarker.detect_for_video(mp_image, last_mp_ts)
 
             if face_result.face_landmarks:
                 for lm_list in face_result.face_landmarks:
@@ -259,6 +260,7 @@ def face_holistic(video_path, debug=False):
 
     with _HolisticLandmarker.create_from_options(options) as holistic:
         frame_index = 0
+        last_mp_ts = -1
         while cap.isOpened():
             success, image = cap.read()
             frame_index += 1
@@ -269,8 +271,8 @@ def face_holistic(video_path, debug=False):
             image.flags.writeable = True
             image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
             mp_image = numpy_rgb_to_mp_image(image_rgb)
-            ts = frame_timestamp_ms(cap, frame_index)
-            results = holistic.detect_for_video(mp_image, ts)
+            last_mp_ts = frame_timestamp_ms(cap, frame_index, last_ts=last_mp_ts)
+            results = holistic.detect_for_video(mp_image, last_mp_ts)
 
             if results.face_landmarks:
                 seq = _landmark_sequence(results.face_landmarks[0])

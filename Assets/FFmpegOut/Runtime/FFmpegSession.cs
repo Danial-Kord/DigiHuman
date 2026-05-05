@@ -4,7 +4,6 @@
 using UnityEngine;
 using UnityEngine.Rendering;
 using System.Collections.Generic;
-using UnityEditor;
 
 namespace FFmpegOut
 {
@@ -20,8 +19,6 @@ namespace FFmpegOut
         {
             name += System.DateTime.Now.ToString(" yyyy MMdd HHmmss");
             var path = name.Replace(" ", "_") + preset.GetSuffix();
-            path = Application.dataPath + "/" + path;
-            Debug.Log(path);
             return CreateWithOutputPath(path, width, height, frameRate, preset);
         }
 

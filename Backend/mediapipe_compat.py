@@ -69,9 +69,18 @@ class LegacyLandmarkList:
         self.landmark = landmarks
 
 
-def frame_timestamp_ms(cap, frame_index: int) -> int:
-    """Monotonic-ish timestamp in ms for MediaPipe video mode."""
+def frame_timestamp_ms(cap, frame_index: int, *, last_ts: int = -1) -> int:
+    """Timestamp in ms for MediaPipe VIDEO mode.
+
+    OpenCV's CAP_PROP_POS_MSEC can stall, repeat, or jump backward depending on
+    codec/backend; MediaPipe requires strictly increasing timestamps per stream.
+    """
     t = cap.get(cv2.CAP_PROP_POS_MSEC)
     if t and t > 0:
-        return int(t)
-    return int(frame_index * (1000.0 / 30.0))
+        candidate = int(t)
+    else:
+        fps = cap.get(cv2.CAP_PROP_FPS)
+        if fps is None or fps <= 1e-3:
+            fps = 30.0
+        candidate = int(round(frame_index * (1000.0 / fps)))
+    return max(candidate, last_ts + 1)

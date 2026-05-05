@@ -211,6 +211,7 @@ def Pose_Video(video_path, debug=False):
 
     with _PoseLandmarker.create_from_options(options) as pose:
         frame_index = 0
+        last_mp_ts = -1
         while cap.isOpened():
             success, image = cap.read()
             frame_index += 1
@@ -221,8 +222,8 @@ def Pose_Video(video_path, debug=False):
             image.flags.writeable = False
             image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
             mp_image = numpy_rgb_to_mp_image(image_rgb)
-            ts = frame_timestamp_ms(cap, frame_index)
-            results = pose.detect_for_video(mp_image, ts)
+            last_mp_ts = frame_timestamp_ms(cap, frame_index, last_ts=last_mp_ts)
+            results = pose.detect_for_video(mp_image, last_mp_ts)
 
             try:
                 if not results.pose_world_landmarks or not results.pose_world_landmarks[0]:
@@ -276,6 +277,7 @@ def Hands_Full(video_path, debug=False):
 
     with _HolisticLandmarker.create_from_options(options) as holistic:
         frame_index = 0
+        last_mp_ts = -1
         while cap.isOpened():
             success, image = cap.read()
             frame_index += 1
@@ -286,8 +288,8 @@ def Hands_Full(video_path, debug=False):
             image.flags.writeable = True
             image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
             mp_image = numpy_rgb_to_mp_image(image_rgb)
-            ts = frame_timestamp_ms(cap, frame_index)
-            results = holistic.detect_for_video(mp_image, ts)
+            last_mp_ts = frame_timestamp_ms(cap, frame_index, last_ts=last_mp_ts)
+            results = holistic.detect_for_video(mp_image, last_mp_ts)
 
             rows, cols, _ = image_rgb.shape
             try:
@@ -401,6 +403,7 @@ def Complete_pose_Video(video_path, debug=False):
 
     with _HolisticLandmarker.create_from_options(options) as holistic:
         frame_index = 0
+        last_mp_ts = -1
         while cap.isOpened():
             success, image = cap.read()
             frame_index += 1
@@ -411,8 +414,8 @@ def Complete_pose_Video(video_path, debug=False):
             image.flags.writeable = True
             image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
             mp_image = numpy_rgb_to_mp_image(image_rgb)
-            ts = frame_timestamp_ms(cap, frame_index)
-            results = holistic.detect_for_video(mp_image, ts)
+            last_mp_ts = frame_timestamp_ms(cap, frame_index, last_ts=last_mp_ts)
+            results = holistic.detect_for_video(mp_image, last_mp_ts)
 
             rows, cols, _ = image_rgb.shape
             json_data = holistic_result_to_full_pose_dict(results, frame, rows, cols)
@@ -471,6 +474,7 @@ def Hand_pose_video(video_path, debug=False):
 
     with _HandLandmarker.create_from_options(options) as hands:
         frame_index = 0
+        last_mp_ts = -1
         while cap.isOpened():
             success, image = cap.read()
             frame_index += 1
@@ -482,8 +486,8 @@ def Hand_pose_video(video_path, debug=False):
             image.flags.writeable = False
             image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
             mp_image = numpy_rgb_to_mp_image(image_rgb)
-            ts = frame_timestamp_ms(cap, frame_index)
-            results = hands.detect_for_video(mp_image, ts)
+            last_mp_ts = frame_timestamp_ms(cap, frame_index, last_ts=last_mp_ts)
+            results = hands.detect_for_video(mp_image, last_mp_ts)
 
             image_bgr = cv2.cvtColor(image_rgb, cv2.COLOR_RGB2BGR)
             hands_array_R = []

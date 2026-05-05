@@ -1104,6 +1104,7 @@ MonoBehaviour:
   serverUploadURL: http://127.0.0.1:5000/uploader
   serverPoseEstimatorURL: http://127.0.0.1:5000/pose
   frameReader: {fileID: 620901066}
+  liveMocapClient: {fileID: 418001002}
   enableDebug: 1
   filePath: C:/Danial/Projects/Danial/DigiHuman/Assets/video/Action_with_wiper_Trim.mp4
 --- !u!4 &203192803
@@ -7238,3 +7239,65 @@ Transform:
   m_Father: {fileID: 330030758}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &418001000
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 418001001}
+  - component: {fileID: 418001002}
+  - component: {fileID: 418001003}
+  m_Layer: 0
+  m_Name: Live Mocap Controller
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &418001001
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 418001000}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 24
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &418001002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 418001000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f8e3c2b1a09f4e6d8c7b5a4039281716, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  frameReader: {fileID: 620901066}
+  webSocketUrl: ws://127.0.0.1:5000/ws/live_mocap
+  cameraId: 0
+  startButton: {fileID: 0}
+  stopButton: {fileID: 0}
+--- !u!114 &418001003
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 418001000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c3e9a2d1f0b4e6a9bc7d5e2f8a1b3c4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  liveMocapClient: {fileID: 418001002}

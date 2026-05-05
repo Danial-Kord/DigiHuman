@@ -13756,6 +13756,7 @@ MonoBehaviour:
   serverFaceUploadURL: http://127.0.0.1:5000/faceUploader
   serverFaceMocapURL: http://127.0.0.1:5000/face
   frameReader: {fileID: 620901066}
+  liveMocapClient: {fileID: 0}
   enableDebug: 0
   filePath: C:/Danial/Projects/Danial/DigiHuman/Assets/video/Action_with_wiper_Trim.mp4
 --- !u!4 &203192803
@@ -38013,6 +38014,7 @@ MonoBehaviour:
   pause: 1
   slider: {fileID: 0}
   enableVideo: 0
+  liveStreamSuppressTimeline: 0
   bodyZoomCameraPlace: {fileID: 0}
   faceZoomCameraPlace: {fileID: 0}
   camera: {fileID: 0}
@@ -40949,7 +40951,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1031314122523792215, guid: bce30a6cc7e9c834db1091b45a8adf7b, type: 3}
       propertyPath: nodes.Array.size
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 1031314122523792215, guid: bce30a6cc7e9c834db1091b45a8adf7b, type: 3}
       propertyPath: nodes.Array.data[0]
@@ -40966,7 +40968,7 @@ PrefabInstance:
     - target: {fileID: 1031314122523792215, guid: bce30a6cc7e9c834db1091b45a8adf7b, type: 3}
       propertyPath: nodes.Array.data[3]
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 615413913}
     - target: {fileID: 1031314122523792215, guid: bce30a6cc7e9c834db1091b45a8adf7b, type: 3}
       propertyPath: nodes.Array.data[4]
       value: 
@@ -41296,6 +41298,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1031314122546512827, guid: bce30a6cc7e9c834db1091b45a8adf7b, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1239324286}
+    - targetCorrespondingSourceObject: {fileID: 1031314122546512827, guid: bce30a6cc7e9c834db1091b45a8adf7b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 615413911}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 1031314121711542605, guid: bce30a6cc7e9c834db1091b45a8adf7b, type: 3}
       insertIndex: -1
@@ -43790,7 +43795,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 0}
+    m_TransformParent: {fileID: 2079876359}
     m_Modifications:
     - target: {fileID: -6769691430286951708, guid: ba5b4fbe09219464788f0f941bb124f1, type: 3}
       propertyPath: m_LocalPosition.x
@@ -43798,11 +43803,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -6769691430286951708, guid: ba5b4fbe09219464788f0f941bb124f1, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 0.46
       objectReference: {fileID: 0}
     - target: {fileID: -6769691430286951708, guid: ba5b4fbe09219464788f0f941bb124f1, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.15433884
+      value: -5.095661
       objectReference: {fileID: 0}
     - target: {fileID: -6769691430286951708, guid: ba5b4fbe09219464788f0f941bb124f1, type: 3}
       propertyPath: m_LocalRotation.w
@@ -43838,7 +43843,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6635245195314443262, guid: ba5b4fbe09219464788f0f941bb124f1, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8400633817671896289, guid: ba5b4fbe09219464788f0f941bb124f1, type: 3}
       propertyPath: m_BlendShapeWeights.Array.data[0]
@@ -43871,6 +43876,11 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 615413915}
   m_SourcePrefab: {fileID: -4161369568681901532, guid: ba5b4fbe09219464788f0f941bb124f1, type: 3}
+--- !u!4 &615413911 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -6769691430286951708, guid: ba5b4fbe09219464788f0f941bb124f1, type: 3}
+  m_PrefabInstance: {fileID: 615413910}
+  m_PrefabAsset: {fileID: 0}
 --- !u!137 &615413912 stripped
 SkinnedMeshRenderer:
   m_CorrespondingSourceObject: {fileID: 8400633817671896289, guid: ba5b4fbe09219464788f0f941bb124f1, type: 3}
@@ -43901,7 +43911,7 @@ MonoBehaviour:
   enableNose: 0
   enableSimultaneouslyEyesOpenClose: 0
   enableSimultaneouslyFrown: 0
-  maxBlendShapeValue: 100
+  maxBlendShapeValue: 1
   eyeWideMethod: 0
   mouthOpenMethod: 1
   mouthSmileFrownMethod: 0
@@ -44468,6 +44478,7 @@ MonoBehaviour:
   pause: 1
   slider: {fileID: 1986810590}
   enableVideo: 0
+  liveStreamSuppressTimeline: 0
   bodyZoomCameraPlace: {fileID: 528959223}
   faceZoomCameraPlace: {fileID: 979542748}
   camera: {fileID: 1848088946}
@@ -78897,6 +78908,7 @@ MonoBehaviour:
   pause: 1
   slider: {fileID: 0}
   enableVideo: 0
+  liveStreamSuppressTimeline: 0
   bodyZoomCameraPlace: {fileID: 0}
   faceZoomCameraPlace: {fileID: 0}
   camera: {fileID: 0}
@@ -148347,7 +148359,6 @@ SceneRoots:
   - {fileID: 620901067}
   - {fileID: 1295087776}
   - {fileID: 1231570337}
-  - {fileID: 615413910}
   - {fileID: 586117031}
   - {fileID: 1691256444}
   - {fileID: 670222377}
